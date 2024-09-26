@@ -1,55 +1,87 @@
-# Miscellaneous
-*.java.hsp
-*.sonarj
-*.sw*
-.DS_Store
-build.sh
-integration-repo
-ivy-cache
-argfile*
-activemq-data/
-classes/
+# Compiled class files
+*.class
 
 # Log files
-jxl.log
-jmx.log
-derby.log
+*.log
 
-# Gradle artifacts
-.gradle
-.gradletasknamecache
-/build
-buildSrc/build
-/spring-*/build
-/framework-*/build
-/integration-tests/build
-/src/asciidoc/build
-spring-test/test-output/
+# BlueJ files
+*.ctxt
 
-# Maven artifacts
-pom.xml
-/target/
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
 
-# Eclipse artifacts, including WTP generated manifests
-bin
-.classpath
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs, core dumps, and heap dumps
+hs_err_pid*
+
+# Ignore Mac-specific files
+.DS_Store
+
+# Eclipse/STS/IntelliJ IDEA
 .project
-.settings
-.springBeans
-spring-*/src/main/java/META-INF/MANIFEST.MF
-
-# IDEA artifacts and output dirs
+.classpath
+.settings/
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea
-out
-test-output
-atlassian-ide-plugin.xml
+target/
+out/
 
-# VS Code
-.vscode/
+# Maven
+.mvn/
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
 
-cached-antora-playbook.yml
+# Gradle
+.gradle/
+build/
+!gradle-wrapper.jar
+gradle-app.setting
 
-node_modules
+# Lombok generated files
+.lombok/
+
+# Spring Boot specific files
+spring.log
+
+# Node modules if applicable
+node_modules/
+
+# OS-specific files
+Thumbs.db
+ehthumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*~
+
+# Environment and other configuration files
+.env
+.env.local
+.env.*.local
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
