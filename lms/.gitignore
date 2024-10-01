@@ -81,6 +81,9 @@ ehthumbs.db
 .env.local
 .env.*.local
 
+# Application.properties for Spring Boot
+application.properties
+
 # JetBrains Rider
 .idea/
 *.sln.iml
