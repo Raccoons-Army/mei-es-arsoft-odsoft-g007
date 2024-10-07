@@ -18,9 +18,17 @@ springdoc.swagger-ui.path=/swagger-ui
 jwt.private.key=classpath:rsa.private.key
 jwt.public.key=classpath:rsa.public.key
 
+
 ##
+## DB Configuration
+##
+database.type=h2
+
+# mongodb (comment lines below to use another database)
+spring.data.mongodb.uri=mongodb://localhost:27017/psoft-g1
+
 ## datasource
-##
+# h2 (comment lines below to use another database)
 spring.datasource.url=jdbc:h2:tcp://localhost:1521/psoft-g1;IGNORECASE=TRUE
 # ^ H2 Console needs to be running, and file needs to be previously created in path ^
 #spring.datasource.url=jdbc:h2:~/psoft-g1
@@ -32,17 +40,13 @@ spring.datasource.username=lof
 spring.datasource.password=
 #spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 #spring.jpa.hibernate.dialect=org.hibernate.dialect.H2Dialect
-
-## show SQL
+# show SQL
 spring.jpa.show-sql=false
 #hibernate.show_sql=false
 #spring.jpa.hibernate.format_sql=true
-#Ricardo: what is this for?
-
-## database schema generation
+# database schema generation
 spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=update
-
 ##
 ## H2 console for development purposes.
 ## e.g., http://localhost:8080/h2-console
