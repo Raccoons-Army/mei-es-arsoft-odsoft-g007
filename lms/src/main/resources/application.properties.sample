@@ -22,7 +22,7 @@ jwt.public.key=classpath:rsa.public.key
 ##
 ## DB Configuration
 ##
-database.type=h2
+app.persistence.strategy=jpa
 
 # mongodb (comment lines below to use another database)
 spring.data.mongodb.uri=mongodb://localhost:27017/psoft-g1

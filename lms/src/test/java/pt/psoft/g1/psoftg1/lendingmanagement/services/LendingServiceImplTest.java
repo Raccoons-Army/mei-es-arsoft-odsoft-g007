@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookMongoRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
@@ -40,7 +40,7 @@ class LendingServiceImplTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private BookRepository bookRepository;
+    private BookMongoRepository bookRepository;
     @Autowired
     private GenreRepository genreRepository;
     @Autowired

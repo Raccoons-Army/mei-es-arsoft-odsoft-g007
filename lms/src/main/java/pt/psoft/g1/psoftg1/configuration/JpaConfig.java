@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.configuration;
 
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -28,6 +29,7 @@ public class JpaConfig {
      * @return
      */
     @Bean("auditorProvider")
+    @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "jpa")
     public AuditorAware<String> auditorProvider() {
         return () -> Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
