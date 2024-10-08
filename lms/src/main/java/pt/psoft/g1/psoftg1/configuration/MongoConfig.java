@@ -12,11 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 @Configuration
+@ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
 @EnableMongoAuditing(auditorAwareRef = "auditorProvider")
 public class MongoConfig {
 
     @Bean("auditorProvider")
-    @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
     public AuditorAware<String> auditorProvider() {
         return () -> Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)

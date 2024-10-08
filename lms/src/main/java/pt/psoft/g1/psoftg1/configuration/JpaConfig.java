@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  */
 @Configuration
+@ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "jpa")
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @EnableTransactionManagement
 public class JpaConfig {
@@ -29,7 +30,6 @@ public class JpaConfig {
      * @return
      */
     @Bean("auditorProvider")
-    @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "jpa")
     public AuditorAware<String> auditorProvider() {
         return () -> Optional.ofNullable(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)

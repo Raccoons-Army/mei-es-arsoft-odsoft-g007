@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface CRUDRepository<T, ID> {
     T save(T entity);
-    void delete(ID id);
+    void delete(T entity);
     List<T> findAll();
     T findById(ID id);
 }

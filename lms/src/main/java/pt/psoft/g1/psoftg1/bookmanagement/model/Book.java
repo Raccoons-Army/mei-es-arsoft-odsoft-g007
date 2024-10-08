@@ -20,6 +20,7 @@ import java.util.Objects;
         @UniqueConstraint(name = "uc_book_isbn", columnNames = {"ISBN"})
 })
 public class Book extends EntityWithPhoto {
+    @Getter
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     long pk;
@@ -124,4 +125,5 @@ public class Book extends EntityWithPhoto {
     public String getIsbn(){
         return this.isbn.toString();
     }
+
 }

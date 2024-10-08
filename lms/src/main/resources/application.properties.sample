@@ -25,11 +25,15 @@ jwt.public.key=classpath:rsa.public.key
 app.persistence.strategy=jpa
 
 # mongodb (comment lines below to use another database)
-spring.data.mongodb.uri=mongodb://localhost:27017/psoft-g1
+#spring.data.mongodb.uri=mongodb://localhost:27017/psoft-g1
+# this prop avoid starting JPA stuff
+#spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
 
 ## datasource
 # h2 (comment lines below to use another database)
 spring.datasource.url=jdbc:h2:tcp://localhost:1521/psoft-g1;IGNORECASE=TRUE
+# this prop avoid starting MongoDB stuff
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration,org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
 # ^ H2 Console needs to be running, and file needs to be previously created in path ^
 #spring.datasource.url=jdbc:h2:~/psoft-g1
 # ^ H2 Console CAN'T be running, and file needs to be previously created in path ^

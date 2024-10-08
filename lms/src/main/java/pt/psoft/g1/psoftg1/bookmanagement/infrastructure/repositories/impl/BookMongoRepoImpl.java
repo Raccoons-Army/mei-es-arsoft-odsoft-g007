@@ -62,7 +62,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public void delete(Isbn isbn) {
+    public void delete(Book book) {
 
     }
 
