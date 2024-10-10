@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -125,6 +126,8 @@ public class BookJpaRepoImpl implements BookRepository {
             em.persist(entity);
             return entity;
         } else {
+            // check version
+            JpaBookDTO book = em.find(JpaBookDTO.class, entity.getPk());
             return em.merge(entity);
         }
     }

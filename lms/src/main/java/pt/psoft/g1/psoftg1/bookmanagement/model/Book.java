@@ -15,38 +15,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "Book", uniqueConstraints = {
-        @UniqueConstraint(name = "uc_book_isbn", columnNames = {"ISBN"})
-})
 public class Book extends EntityWithPhoto {
     @Getter
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
     long pk;
 
-    @Version
     @Getter
     private Long version;
 
-    @Embedded
     Isbn isbn;
 
     @Getter
-    @Embedded
-    @NotNull
     Title title;
 
     @Getter
-    @ManyToOne
-    @NotNull
     Genre genre;
 
     @Getter
-    @ManyToMany
     private List<Author> authors = new ArrayList<>();
 
-    @Embedded
     Description description;
 
     private void setTitle(String title) {this.title = new Title(title);}
@@ -92,7 +78,7 @@ public class Book extends EntityWithPhoto {
         setPhotoInternal(null);
     }
 
-    public void applyPatch(final Long desiredVersion, UpdateBookRequest request) {
+    public void applyPatch(Long desiredVersion, UpdateBookRequest request) {
         if (!Objects.equals(this.version, desiredVersion))
             throw new StaleObjectStateException("Object was already modified by another user", this.pk);
 
