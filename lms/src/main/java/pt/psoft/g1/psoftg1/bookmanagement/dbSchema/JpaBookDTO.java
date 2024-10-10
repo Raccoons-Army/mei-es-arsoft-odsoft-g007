@@ -22,42 +22,45 @@ public class JpaBookDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Setter
     @Getter
     private long pk;
 
     @Version
-    @Setter
     @Getter
     private Long version;
 
     @Size(min = 10, max = 13)
     @Column(name="ISBN", length = 16)
-    @Setter
     @Getter
     private String isbn;
 
     @Size(max = 128)
     @Column(name = "TITLE", length = 128)
-    @Setter
     @Getter
     private String title;
 
     @ManyToOne
-    @Setter
     @Getter
     private Genre genre;
 
     @ManyToMany
-    @Setter
     @Getter
     private List<Author> authors = new ArrayList<>();
 
     @Size(max = 4096)
     @Column(length = 4096)
-    @Setter
     @Getter
     private String description;
+
+    public JpaBookDTO(long pk, Long version, String isbn, String title, Genre genre, List<Author> authors, String description) {
+        this.pk = pk;
+        this.version = version;
+        this.isbn = isbn;
+        this.title = title;
+        this.genre = genre;
+        this.authors = authors;
+        this.description = description;
+    }
 
     // default constructor for JPA
     protected JpaBookDTO() {}
