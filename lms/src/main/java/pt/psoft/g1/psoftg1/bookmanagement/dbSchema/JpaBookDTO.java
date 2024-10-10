@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.bookmanagement.dbSchema;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
@@ -29,15 +31,17 @@ public class JpaBookDTO {
     @Getter
     private Long version;
 
-    @Embedded
+    @Size(min = 10, max = 13)
+    @Column(name="ISBN", length = 16)
     @Setter
     @Getter
-    private Isbn isbn;
+    private String isbn;
 
-    @Embedded
+    @Size(max = 128)
+    @Column(name = "TITLE", length = 128)
     @Setter
     @Getter
-    private Title title;
+    private String title;
 
     @ManyToOne
     @Setter
@@ -49,10 +53,11 @@ public class JpaBookDTO {
     @Getter
     private List<Author> authors = new ArrayList<>();
 
-    @Embedded
+    @Size(max = 4096)
+    @Column(length = 4096)
     @Setter
     @Getter
-    private Description description;
+    private String description;
 
     // default constructor for JPA
     protected JpaBookDTO() {}
