@@ -1,8 +1,5 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;

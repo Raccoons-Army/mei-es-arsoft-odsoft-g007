@@ -5,9 +5,6 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 import java.util.Optional;
 
 
-public interface PhotoRepository {
-    //Optional<Photo> findById(long id);
-
-    //Photo save(Photo photo);
+public interface PhotoRepository extends CRUDRepository<Photo, Long> {
     void deleteByPhotoFile(String photoFile);
 }

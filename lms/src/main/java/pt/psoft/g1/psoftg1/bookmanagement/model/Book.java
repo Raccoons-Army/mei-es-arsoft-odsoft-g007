@@ -1,8 +1,5 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
@@ -16,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Book extends EntityWithPhoto {
+
     @Getter
     long pk;
 
