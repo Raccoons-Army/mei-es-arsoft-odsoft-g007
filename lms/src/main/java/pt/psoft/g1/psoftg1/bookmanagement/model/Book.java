@@ -80,7 +80,7 @@ public class Book extends EntityWithPhoto {
 
         String title = request.getTitle();
         String description = request.getDescription();
-        long genre = request.getGenreObj();
+        long genre = request.getGenreId();
         List<Long> authors = request.getAuthorObjList();
         String photoURI = request.getPhotoURI();
         if(title != null) {
