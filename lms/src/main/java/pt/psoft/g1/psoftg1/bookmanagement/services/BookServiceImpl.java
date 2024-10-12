@@ -66,7 +66,7 @@ public class BookServiceImpl implements BookService {
         final var genre = genreRepository.findByString(request.getGenre())
                 .orElseThrow(() -> new NotFoundException("Genre not found"));
 
-        Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre, authorNumbers, photoURI);
+        Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre.getId(), authorNumbers, photoURI);
 
         return bookRepository.save(newBook);
     }
@@ -96,11 +96,11 @@ public class BookServiceImpl implements BookService {
         }
 
         if (request.getGenre() != null) {
-            Optional<Genre> genre = genreRepository.findByString(request.getGenre());
+            Optional<Genre> genre = genreRepository.findById(request.getGenreId());
             if (genre.isEmpty()) {
                 throw new NotFoundException("Genre not found");
             }
-            request.setGenreObj(genre.get());
+            request.setGenreId(genre.get().getId());
         }
 
         book.applyPatch(Long.parseLong(currentVersion), request);

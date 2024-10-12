@@ -143,7 +143,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Book findById(Isbn isbn) {
-        return em.find(Book.class, isbn);
+    public Optional<Book> findById(Isbn isbn) {
+       return Optional.ofNullable(em.find(Book.class, isbn));
     }
 }

@@ -7,6 +7,7 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PhotoMongoRepoImpl implements PhotoRepository {
 
@@ -32,10 +33,10 @@ public class PhotoMongoRepoImpl implements PhotoRepository {
     }
 
     @Override
-    public Photo findById(Long id) {
+    public Optional<Photo> findById(Long id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(id));
-        return mongoTemplate.findOne(query, Photo.class);
+        return Optional.ofNullable(mongoTemplate.findOne(query, Photo.class));
     }
 
     @Override

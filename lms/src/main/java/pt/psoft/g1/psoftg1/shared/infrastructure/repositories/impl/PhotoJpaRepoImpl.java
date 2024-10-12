@@ -8,6 +8,7 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PhotoJpaRepoImpl implements PhotoRepository {
 
@@ -40,8 +41,8 @@ public class PhotoJpaRepoImpl implements PhotoRepository {
     }
 
     @Override
-    public Photo findById(Long aLong) {
-        return em.find(Photo.class, aLong);
+    public Optional<Photo> findById(Long aLong) {
+        return Optional.ofNullable(em.find(Photo.class, aLong));
     }
 
     @Override

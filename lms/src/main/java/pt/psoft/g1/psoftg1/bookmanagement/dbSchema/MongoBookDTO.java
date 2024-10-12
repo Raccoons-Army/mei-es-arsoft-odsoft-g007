@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorDTO;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 import java.util.List;
@@ -20,13 +21,13 @@ public class MongoBookDTO {
 
     private String title;
 
-    private Genre genre;
+    private Long genre;
 
-    private List<MongoAuthorDTO> authors;
+    private List<Long> authors;
 
     private String description;
 
-    public MongoBookDTO(Long id, String isbn, String title, Genre genre, List<MongoAuthorDTO> authors, String description) {
+    public MongoBookDTO(Long id, String isbn, String title, Long genre, List<Long> authors, String description) {
         this.id = id;
         this.isbn = isbn;
         this.title = title;

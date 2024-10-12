@@ -72,7 +72,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public Book findById(Isbn isbn) {
+    public Optional<Book> findById(Isbn isbn) {
         return null;
     }
 }

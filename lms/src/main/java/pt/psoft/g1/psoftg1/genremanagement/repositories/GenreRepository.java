@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface GenreRepository extends CRUDRepository<Genre, String> {
+public interface GenreRepository extends CRUDRepository<Genre, Long> {
 
     Optional<Genre> findByString(String genreName);
     Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable);

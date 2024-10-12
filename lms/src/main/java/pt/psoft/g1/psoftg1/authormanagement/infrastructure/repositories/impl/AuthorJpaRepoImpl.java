@@ -66,7 +66,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Author findById(Long aLong) {
+    public Optional<Author> findById(Long aLong) {
         return null;
     }
 }

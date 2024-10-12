@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Description;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class JpaBookDTO {
 
     @ManyToOne
     @Getter
-    private Genre genre;
+    private JpaGenreDTO genre;
 
     @ManyToMany
     @Getter
@@ -53,7 +54,7 @@ public class JpaBookDTO {
     @Getter
     private String description;
 
-    public JpaBookDTO(long pk, Long version, String isbn, String title, Genre genre, List<JpaAuthorDTO> authors, String description) {
+    public JpaBookDTO(long pk, Long version, String isbn, String title, JpaGenreDTO genre, List<JpaAuthorDTO> authors, String description) {
         this.pk = pk;
         this.version = version;
         this.isbn = isbn;

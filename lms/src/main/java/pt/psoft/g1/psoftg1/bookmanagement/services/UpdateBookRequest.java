@@ -32,7 +32,7 @@ public class UpdateBookRequest {
 
 
     @Setter
-    private Genre genreObj;
+    private long genreId;
 
     private String genre;
 

@@ -1,10 +1,10 @@
 package pt.psoft.g1.psoftg1.bookmanagement.mapper;
 
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorDTO;
-import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreDTO;
 import pt.psoft.g1.psoftg1.shared.mapper.Mapper;
 
 import java.util.List;
@@ -19,10 +19,10 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
         }
 
         // Extract authors ids from authors
-        List<Long> authorsIds = extractAuthorsIds(jpaBookDTO.getAuthors(), JpaAuthorDTO::getAuthorNumber);
+        List<Long> authorsIds = extractEntitiesIds(jpaBookDTO.getAuthors(), JpaAuthorDTO::getAuthorNumber);
 
         return new Book(jpaBookDTO.getIsbn(), jpaBookDTO.getTitle(), jpaBookDTO.getDescription(),
-                jpaBookDTO.getGenre(), authorsIds, null);
+                jpaBookDTO.getGenre().getId(), authorsIds, null);
     }
 
     @Override
@@ -31,11 +31,8 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
             return null;
         }
 
-        // Extract authors ids from authors
-        List<Long> authorsIds = extractAuthorsIds(mongoBookDTO.getAuthors(), MongoAuthorDTO::getAuthorNumber);
-
         return new Book(mongoBookDTO.getIsbn(), mongoBookDTO.getTitle(), mongoBookDTO.getDescription(),
-                mongoBookDTO.getGenre(), authorsIds, null);
+                mongoBookDTO.getGenre(), mongoBookDTO.getAuthors(), null);
     }
 
     @Override
@@ -45,10 +42,10 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
         }
 
         // Extract authors from book
-        List<JpaAuthorDTO> authors = extractAuthors(book.getAuthors(), JpaAuthorDTO::new);
+        List<JpaAuthorDTO> authors = extractEntities(book.getAuthors(), JpaAuthorDTO::new);
 
         return new JpaBookDTO(book.getPk(), book.getVersion(), book.getIsbn(), book.getTitle().toString(),
-                book.getGenre(), authors, book.getDescription());
+                new JpaGenreDTO(book.getGenre()), authors, book.getDescription());
     }
 
     @Override
@@ -57,22 +54,19 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
             return null;
         }
 
-        // Extract authors from book
-        List<MongoAuthorDTO> authors = extractAuthors(book.getAuthors(), MongoAuthorDTO::new);
-
         return new MongoBookDTO(book.getPk(), book.getIsbn(), book.getTitle().toString(),
-                book.getGenre(), authors, book.getDescription());
+                book.getGenre(), book.getAuthors(), book.getDescription());
     }
 
-    // Extract authors ids from authors
-    private <T> List<Long> extractAuthorsIds(List<T> authors, Function<T, Long> idExtractor) {
+    // Extract, for example, authors ids from Author db schema
+    private <T> List<Long> extractEntitiesIds(List<T> authors, Function<T, Long> idExtractor) {
         return authors.stream()
                 .map(idExtractor)
                 .toList();
     }
 
-    // Extract authors from authors ids
-    private <T> List<T> extractAuthors(List<Long> authorsIds, Function<Long, T> authorExtractor) {
+    // Extract, for example, authors from authors ids (it creates a Author db schema with only the id)
+    private <T> List<T> extractEntities(List<Long> authorsIds, Function<Long, T> authorExtractor) {
         return authorsIds.stream()
                 .map(authorExtractor)
                 .toList();
