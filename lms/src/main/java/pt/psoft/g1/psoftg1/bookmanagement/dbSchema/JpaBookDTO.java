@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorDTO;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Description;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
@@ -45,14 +46,14 @@ public class JpaBookDTO {
 
     @ManyToMany
     @Getter
-    private List<Author> authors = new ArrayList<>();
+    private List<JpaAuthorDTO> authors = new ArrayList<>();
 
     @Size(max = 4096)
     @Column(length = 4096)
     @Getter
     private String description;
 
-    public JpaBookDTO(long pk, Long version, String isbn, String title, Genre genre, List<Author> authors, String description) {
+    public JpaBookDTO(long pk, Long version, String isbn, String title, Genre genre, List<JpaAuthorDTO> authors, String description) {
         this.pk = pk;
         this.version = version;
         this.isbn = isbn;

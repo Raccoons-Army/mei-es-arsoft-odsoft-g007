@@ -21,6 +21,10 @@ public class MongoAuthorDTO {
         this.bio = bio;
     }
 
+    public MongoAuthorDTO(Long authorNumber) {
+        this.authorNumber = authorNumber;
+    }
+
     public MongoAuthorDTO() {
     }
 }

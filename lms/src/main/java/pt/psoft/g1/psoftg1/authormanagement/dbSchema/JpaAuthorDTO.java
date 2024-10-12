@@ -37,6 +37,11 @@ public class JpaAuthorDTO {
         this.bio = bio;
     }
 
+
+    public JpaAuthorDTO(Long authorNumber) {
+        this.authorNumber = authorNumber;
+    }
+
     public JpaAuthorDTO() {
     }
 }

@@ -29,7 +29,7 @@ public class Book extends EntityWithPhoto {
     Genre genre;
 
     @Getter
-    private List<Author> authors = new ArrayList<>();
+    private List<Long> authors = new ArrayList<>();
 
     Description description;
 
@@ -43,11 +43,11 @@ public class Book extends EntityWithPhoto {
 
     private void setGenre(Genre genre) {this.genre = genre; }
 
-    private void setAuthors(List<Author> authors) {this.authors = authors; }
+    private void setAuthors(List<Long> authors) {this.authors = authors; }
 
     public String getDescription(){ return this.description.toString(); }
 
-    public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
+    public Book(String isbn, String title, String description, Genre genre, List<Long> authors, String photoURI) {
         setTitle(title);
         setIsbn(isbn);
         if(description != null)
@@ -83,7 +83,7 @@ public class Book extends EntityWithPhoto {
         String title = request.getTitle();
         String description = request.getDescription();
         Genre genre = request.getGenreObj();
-        List<Author> authors = request.getAuthorObjList();
+        List<Long> authors = request.getAuthorObjList();
         String photoURI = request.getPhotoURI();
         if(title != null) {
             setTitle(title);
