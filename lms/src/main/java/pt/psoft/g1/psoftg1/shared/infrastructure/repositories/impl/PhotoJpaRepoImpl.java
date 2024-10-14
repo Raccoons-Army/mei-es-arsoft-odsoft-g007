@@ -1,8 +1,6 @@
 package pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.shared.dbSchema.JpaPhotoDTO;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;

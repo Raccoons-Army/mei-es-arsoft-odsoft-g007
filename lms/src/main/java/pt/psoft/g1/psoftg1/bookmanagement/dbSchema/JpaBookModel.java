@@ -1,17 +1,10 @@
 package pt.psoft.g1.psoftg1.bookmanagement.dbSchema;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.Setter;
-import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorDTO;
-import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Description;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
-import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreDTO;
-import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +13,7 @@ import java.util.List;
 @Table(name = "Book", uniqueConstraints = {
         @UniqueConstraint(name = "uc_book_isbn", columnNames = {"ISBN"})
 })
-public class JpaBookDTO {
+public class JpaBookModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,18 +36,18 @@ public class JpaBookDTO {
 
     @ManyToOne
     @Getter
-    private JpaGenreDTO genre;
+    private JpaGenreModel genre;
 
     @ManyToMany
     @Getter
-    private List<JpaAuthorDTO> authors = new ArrayList<>();
+    private List<JpaAuthorModel> authors = new ArrayList<>();
 
     @Size(max = 4096)
     @Column(length = 4096)
     @Getter
     private String description;
 
-    public JpaBookDTO(String id, Long version, String isbn, String title, JpaGenreDTO genre, List<JpaAuthorDTO> authors, String description) {
+    public JpaBookModel(String id, Long version, String isbn, String title, JpaGenreModel genre, List<JpaAuthorModel> authors, String description) {
         this.id = id;
         this.version = version;
         this.isbn = isbn;
@@ -65,5 +58,5 @@ public class JpaBookDTO {
     }
 
     // default constructor for JPA
-    protected JpaBookDTO() {}
+    protected JpaBookModel() {}
 }

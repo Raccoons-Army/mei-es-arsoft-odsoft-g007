@@ -6,17 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
-import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorDTO;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
-import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
-import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +83,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
             return entity;
         } else {
             // check version
-            JpaAuthorDTO author = em.find(JpaAuthorDTO.class, entity.getAuthorNumber());
+            JpaAuthorModel author = em.find(JpaAuthorModel.class, entity.getAuthorNumber());
             return em.merge(entity);
         }
     }

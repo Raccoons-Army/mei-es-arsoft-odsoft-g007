@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.BookId;
@@ -57,8 +57,8 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         try {
-            String query = "SELECT b FROM JpaBookDTO b WHERE b.isbn = :isbn";
-            JpaBookDTO jpaBook = em.createQuery(query, JpaBookDTO.class)
+            String query = "SELECT b FROM JpaBookModel b WHERE b.isbn = :isbn";
+            JpaBookModel jpaBook = em.createQuery(query, JpaBookModel.class)
                     .setParameter("isbn", isbn)
                     .getSingleResult();
             return Optional.of(BookMapper.fromJpaToDomain( jpaBook));
@@ -128,7 +128,7 @@ public class BookJpaRepoImpl implements BookRepository {
             return entity;
         } else {
             // check version
-            JpaBookDTO book = em.find(JpaBookDTO.class, entity.getId());
+            JpaBookModel book = em.find(JpaBookModel.class, entity.getId());
             return em.merge(entity);
         }
     }
@@ -145,7 +145,7 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public Optional<Book> findById(BookId id) {
-        JpaBookDTO jpaBook = em.find(JpaBookDTO.class, id);
+        JpaBookModel jpaBook = em.find(JpaBookModel.class, id);
        return Optional.ofNullable(BookMapper.fromJpaToDomain(jpaBook));
     }
 }

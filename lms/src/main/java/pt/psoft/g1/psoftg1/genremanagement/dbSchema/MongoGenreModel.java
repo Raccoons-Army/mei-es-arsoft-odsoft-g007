@@ -6,18 +6,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Document(collection = "genres")
-public class MongoGenreDTO {
+public class MongoGenreModel {
     @Id
     private Long id;
 
     String genre;
 
-    public MongoGenreDTO(Long id, String genre) {
+    public MongoGenreModel(Long id, String genre) {
         this.id = id;
         this.genre = genre;
     }
 
-    public MongoGenreDTO(Long id) {
+    public MongoGenreModel(Long id) {
         this.id = id;
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Document(collection = "authors")
-public class MongoAuthorDTO {
+public class MongoAuthorModel {
 
     @Id
     private Long authorNumber;
@@ -15,16 +15,16 @@ public class MongoAuthorDTO {
 
     private String bio;
 
-    public MongoAuthorDTO(Long authorNumber, String name, String bio) {
+    public MongoAuthorModel(Long authorNumber, String name, String bio) {
         this.authorNumber = authorNumber;
         this.name = name;
         this.bio = bio;
     }
 
-    public MongoAuthorDTO(Long authorNumber) {
+    public MongoAuthorModel(Long authorNumber) {
         this.authorNumber = authorNumber;
     }
 
-    public MongoAuthorDTO() {
+    public MongoAuthorModel() {
     }
 }

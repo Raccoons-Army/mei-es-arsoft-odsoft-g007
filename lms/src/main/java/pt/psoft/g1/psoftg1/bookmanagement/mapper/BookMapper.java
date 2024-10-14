@@ -1,11 +1,11 @@
 package pt.psoft.g1.psoftg1.bookmanagement.mapper;
 
-import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorDTO;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookDTO;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.BookId;
-import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 
 import java.util.List;
 import java.util.function.Function;
@@ -13,48 +13,48 @@ import java.util.function.Function;
 public class BookMapper {
 
     
-    public static Book fromJpaToDomain(JpaBookDTO jpaBookDTO) {
-        if (jpaBookDTO == null) {
+    public static Book fromJpaToDomain(JpaBookModel jpaBookModel) {
+        if (jpaBookModel == null) {
             return null;
         }
 
         // Extract authors ids from authors
-        List<Long> authorsIds = extractEntitiesIds(jpaBookDTO.getAuthors(), JpaAuthorDTO::getAuthorNumber);
+        List<Long> authorsIds = extractEntitiesIds(jpaBookModel.getAuthors(), JpaAuthorModel::getAuthorNumber);
 
-        return new Book(new BookId(jpaBookDTO.getId()), jpaBookDTO.getIsbn(), jpaBookDTO.getTitle(), jpaBookDTO.getDescription(),
-                jpaBookDTO.getGenre().getId(), authorsIds, null);
+        return new Book(new BookId(jpaBookModel.getId()), jpaBookModel.getIsbn(), jpaBookModel.getTitle(), jpaBookModel.getDescription(),
+                jpaBookModel.getGenre().getId(), authorsIds, null);
     }
 
     
-    public static Book fromMongoToDomain(MongoBookDTO mongoBookDTO) {
-        if (mongoBookDTO == null) {
+    public static Book fromMongoToDomain(MongoBookModel mongoBookModel) {
+        if (mongoBookModel == null) {
             return null;
         }
 
-        return new Book(new BookId(mongoBookDTO.getId()), mongoBookDTO.getIsbn(), mongoBookDTO.getTitle(), mongoBookDTO.getDescription(),
-                mongoBookDTO.getGenre(), mongoBookDTO.getAuthors(), null);
+        return new Book(new BookId(mongoBookModel.getId()), mongoBookModel.getIsbn(), mongoBookModel.getTitle(), mongoBookModel.getDescription(),
+                mongoBookModel.getGenre(), mongoBookModel.getAuthors(), null);
     }
 
     
-    public static JpaBookDTO fromDomainToJpa(Book book) {
+    public static JpaBookModel fromDomainToJpa(Book book) {
         if (book == null) {
             return null;
         }
 
         // Extract authors from book
-        List<JpaAuthorDTO> authors = extractEntities(book.getAuthors(), JpaAuthorDTO::new);
+        List<JpaAuthorModel> authors = extractEntities(book.getAuthors(), JpaAuthorModel::new);
 
-        return new JpaBookDTO(book.getId().toString(), book.getVersion(), book.getIsbn(), book.getTitle().toString(),
-                new JpaGenreDTO(book.getGenre()), authors, book.getDescription());
+        return new JpaBookModel(book.getId().toString(), book.getVersion(), book.getIsbn(), book.getTitle().toString(),
+                new JpaGenreModel(book.getGenre()), authors, book.getDescription());
     }
 
     
-    public static MongoBookDTO fromDomainToMongo(Book book) {
+    public static MongoBookModel fromDomainToMongo(Book book) {
         if (book == null) {
             return null;
         }
 
-        return new MongoBookDTO(book.getId().toString(), book.getIsbn(), book.getTitle().toString(),
+        return new MongoBookModel(book.getId().toString(), book.getIsbn(), book.getTitle().toString(),
                 book.getGenre(), book.getAuthors(), book.getDescription());
     }
 

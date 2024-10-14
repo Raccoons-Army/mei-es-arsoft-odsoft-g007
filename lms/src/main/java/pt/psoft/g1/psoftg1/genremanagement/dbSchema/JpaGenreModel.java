@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Entity
 @Table
-public class JpaGenreDTO {
+public class JpaGenreModel {
     @Transient
     private final int GENRE_MAX_LENGTH = 100;
 
@@ -21,14 +21,14 @@ public class JpaGenreDTO {
     String genre;
 
     // Empty constructor for JPA
-    protected JpaGenreDTO(){}
+    protected JpaGenreModel(){}
 
-    public JpaGenreDTO(long id, String genre) {
+    public JpaGenreModel(long id, String genre) {
         this.id = id;
         this.genre = genre;
     }
 
-    public JpaGenreDTO(long id) {
+    public JpaGenreModel(long id) {
         this.id = id;
     }
 

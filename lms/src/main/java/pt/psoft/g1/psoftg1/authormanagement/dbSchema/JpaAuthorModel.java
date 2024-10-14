@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Entity
-public class JpaAuthorDTO {
+public class JpaAuthorModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,7 +30,7 @@ public class JpaAuthorDTO {
     @Getter
     private String bio;
 
-    public JpaAuthorDTO(Long authorNumber, long version, String name, String bio) {
+    public JpaAuthorModel(Long authorNumber, long version, String name, String bio) {
         this.authorNumber = authorNumber;
         this.version = version;
         this.name = name;
@@ -38,10 +38,10 @@ public class JpaAuthorDTO {
     }
 
 
-    public JpaAuthorDTO(Long authorNumber) {
+    public JpaAuthorModel(Long authorNumber) {
         this.authorNumber = authorNumber;
     }
 
-    public JpaAuthorDTO() {
+    public JpaAuthorModel() {
     }
 }
