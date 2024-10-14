@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Book extends EntityWithPhoto {
 
     @Getter
-    long id;
+    BookId id;
 
     @Getter
     private Long version;
@@ -45,7 +45,8 @@ public class Book extends EntityWithPhoto {
 
     public String getDescription(){ return this.description.toString(); }
 
-    public Book(String isbn, String title, String description, long genre, List<Long> authors, String photoURI) {
+    public Book(BookId id, String isbn, String title, String description, long genre, List<Long> authors, String photoURI) {
+        this.id = (id != null) ? id : new BookId();
         setTitle(title);
         setIsbn(isbn);
         if(description != null)

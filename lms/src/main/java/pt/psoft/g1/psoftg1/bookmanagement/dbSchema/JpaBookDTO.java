@@ -25,7 +25,7 @@ public class JpaBookDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
-    private long id;
+    private String id;
 
     @Version
     @Getter
@@ -54,7 +54,7 @@ public class JpaBookDTO {
     @Getter
     private String description;
 
-    public JpaBookDTO(long id, Long version, String isbn, String title, JpaGenreDTO genre, List<JpaAuthorDTO> authors, String description) {
+    public JpaBookDTO(String id, Long version, String isbn, String title, JpaGenreDTO genre, List<JpaAuthorDTO> authors, String description) {
         this.id = id;
         this.version = version;
         this.isbn = isbn;

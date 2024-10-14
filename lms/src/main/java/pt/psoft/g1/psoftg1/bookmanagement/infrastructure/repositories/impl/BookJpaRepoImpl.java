@@ -3,12 +3,14 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -24,6 +26,8 @@ import java.util.Optional;
 public class BookJpaRepoImpl implements BookRepository {
 
     private final EntityManager em;
+    @Autowired
+    private final BookMapper mapper;
 
     public BookJpaRepoImpl(EntityManager em) {
         this.em = em;
@@ -57,9 +61,10 @@ public class BookJpaRepoImpl implements BookRepository {
     public Optional<Book> findByIsbn(String isbn) {
         try {
             String query = "SELECT b FROM Book b WHERE b.isbn.isbn = :isbn";
-            Book book = em.createQuery(query, Book.class)
-                    .setParameter("isbn", isbn)
-                    .getSingleResult();
+//            JpaBookDTO book = em.createQuery(query, Book.class)
+//                    .setParameter("isbn", isbn)
+//                    .getSingleResult();
+            BookMapper.fromJpaToDomain(null, null);
             return Optional.of(book);
         } catch (jakarta.persistence.NoResultException e) {
             return Optional.empty();
@@ -122,7 +127,7 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public Book save(Book entity) {
-        if (entity.getId() == 0) {
+        if (entity.getId() == null || entity.getId().toString() == "") {
             em.persist(entity);
             return entity;
         } else {

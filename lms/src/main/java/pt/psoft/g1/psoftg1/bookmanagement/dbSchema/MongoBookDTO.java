@@ -15,7 +15,7 @@ import java.util.List;
 public class MongoBookDTO {
 
     @Id
-    private Long id;
+    private String id;
 
     private String isbn;
 
@@ -27,7 +27,7 @@ public class MongoBookDTO {
 
     private String description;
 
-    public MongoBookDTO(Long id, String isbn, String title, Long genre, List<Long> authors, String description) {
+    public MongoBookDTO(String id, String isbn, String title, Long genre, List<Long> authors, String description) {
         this.id = id;
         this.isbn = isbn;
         this.title = title;
