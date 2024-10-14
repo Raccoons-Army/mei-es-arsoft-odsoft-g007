@@ -31,7 +31,7 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public List<Book> findByGenre(String genre) {
-        String query = "SELECT b FROM Book b WHERE b.genre.genre = :genre";
+        String query = "SELECT b FROM Book b WHERE b.genre = :genre";
         return em.createQuery(query, Book.class)
                 .setParameter("genre", genre)
                 .getResultList();
