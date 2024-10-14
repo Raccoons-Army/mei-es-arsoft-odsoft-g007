@@ -12,13 +12,13 @@ public class JpaPhotoDTO {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private long pk;
+    private long id;
 
     @NotNull
     private String photoFile;
 
-    public JpaPhotoDTO(long pk, String photoFile) {
-        this.pk = pk;
+    public JpaPhotoDTO(long id, String photoFile) {
+        this.id = id;
         this.photoFile = photoFile;
     }
 

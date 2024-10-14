@@ -20,12 +20,12 @@ public class PhotoJpaRepoImpl implements PhotoRepository {
 
     @Override
     public Photo save(Photo entity) {
-        if (entity.getPk() == 0) {
+        if (entity.getId() == 0) {
             em.persist(entity);
             return entity;
         } else {
             // check version
-            JpaPhotoDTO photo = em.find(JpaPhotoDTO.class, entity.getPk());
+            JpaPhotoDTO photo = em.find(JpaPhotoDTO.class, entity.getId());
             return em.merge(entity);
         }
     }

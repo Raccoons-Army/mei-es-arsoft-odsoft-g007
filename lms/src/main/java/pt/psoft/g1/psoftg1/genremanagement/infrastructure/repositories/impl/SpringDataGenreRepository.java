@@ -34,7 +34,7 @@ public interface SpringDataGenreRepository extends GenreRepository, GenreRepoCus
     @Override
     @Query("SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO(g.genre, COUNT(b))" +
             "FROM Genre g " +
-            "JOIN Book b ON b.genre.pk = g.pk " +
+            "JOIN Book b ON b.genre.id = g.id " +
             "GROUP BY g " +
             "ORDER BY COUNT(b) DESC")
     Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable);
@@ -115,11 +115,11 @@ class GenreRepoCustomImpl implements GenreRepoCustom {
         Join<Lending, Book> bookJoin = lendingRoot.join("book", JoinType.LEFT);
         Join<Book, Genre> genreJoin = bookJoin.join("genre", JoinType.LEFT);
 
-        Expression<Long> loanCount = cb.count(lendingRoot.get("pk"));
+        Expression<Long> loanCount = cb.count(lendingRoot.get("id"));
         Expression<Number> dailyAvgLoans = cb.quot(cb.toDouble(loanCount), cb.literal(days));
 
         cq.multiselect(genreJoin, dailyAvgLoans);
-        cq.groupBy(genreJoin.get("pk"));
+        cq.groupBy(genreJoin.get("id"));
 
         Predicate startDatePredicate = cb.greaterThanOrEqualTo(lendingRoot.get("startDate"), firstOfMonth);
         Predicate endDatePredicate = cb.lessThanOrEqualTo(lendingRoot.get("startDate"), lastOfMonth);

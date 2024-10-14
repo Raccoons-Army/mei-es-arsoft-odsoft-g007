@@ -39,7 +39,7 @@ public class Lending {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private Long id;
 
     /**
      * Natural key, which is not in use as it has its own business rules.
@@ -161,7 +161,7 @@ public class Lending {
 
         // check current version
         if (this.version != desiredVersion)
-            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
+            throw new StaleObjectStateException("Object was already modified by another user", this.id);
 
         if(commentary != null)
             this.commentary = commentary;

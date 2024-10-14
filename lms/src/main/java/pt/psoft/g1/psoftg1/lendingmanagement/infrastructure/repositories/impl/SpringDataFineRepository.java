@@ -13,7 +13,7 @@ public interface SpringDataFineRepository extends FineRepository, CrudRepository
     @Override
     @Query("SELECT f " +
             "FROM Fine f " +
-            "JOIN Lending l ON f.lending.pk = l.pk " +
+            "JOIN Lending l ON f.lending.id = l.id " +
             "WHERE l.lendingNumber.lendingNumber = :lendingNumber")
     Optional<Fine> findByLendingNumber(String lendingNumber);
 

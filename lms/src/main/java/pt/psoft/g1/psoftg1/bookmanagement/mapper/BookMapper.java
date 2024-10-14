@@ -44,7 +44,7 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
         // Extract authors from book
         List<JpaAuthorDTO> authors = extractEntities(book.getAuthors(), JpaAuthorDTO::new);
 
-        return new JpaBookDTO(book.getPk(), book.getVersion(), book.getIsbn(), book.getTitle().toString(),
+        return new JpaBookDTO(book.getId(), book.getVersion(), book.getIsbn(), book.getTitle().toString(),
                 new JpaGenreDTO(book.getGenre()), authors, book.getDescription());
     }
 
@@ -54,7 +54,7 @@ public class BookMapper implements Mapper<JpaBookDTO, MongoBookDTO, Book> {
             return null;
         }
 
-        return new MongoBookDTO(book.getPk(), book.getIsbn(), book.getTitle().toString(),
+        return new MongoBookDTO(book.getId(), book.getIsbn(), book.getTitle().toString(),
                 book.getGenre(), book.getAuthors(), book.getDescription());
     }
 

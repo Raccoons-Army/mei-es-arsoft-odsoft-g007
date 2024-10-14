@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Book extends EntityWithPhoto {
 
     @Getter
-    long pk;
+    long id;
 
     @Getter
     private Long version;
@@ -76,7 +76,7 @@ public class Book extends EntityWithPhoto {
 
     public void applyPatch(Long desiredVersion, UpdateBookRequest request) {
         if (!Objects.equals(this.version, desiredVersion))
-            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
+            throw new StaleObjectStateException("Object was already modified by another user", this.id);
 
         String title = request.getTitle();
         String description = request.getDescription();

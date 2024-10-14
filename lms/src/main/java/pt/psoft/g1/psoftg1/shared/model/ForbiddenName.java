@@ -12,7 +12,7 @@ public class ForbiddenName{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private Long id;
 
     @Getter
     @Setter

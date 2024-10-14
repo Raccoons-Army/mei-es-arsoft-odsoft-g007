@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Fine {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private Long id;
 
     @PositiveOrZero
     @Column(updatable = false)
@@ -28,7 +28,7 @@ public class Fine {
 
     @Setter
     @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "lending_pk", nullable = false, unique = true)
+    @JoinColumn(name = "lending_id", nullable = false, unique = true)
     private Lending lending;
 
     /**

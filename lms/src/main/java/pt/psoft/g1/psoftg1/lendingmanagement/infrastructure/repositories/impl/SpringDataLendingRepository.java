@@ -36,8 +36,8 @@ public interface SpringDataLendingRepository extends LendingRepository, LendingR
     @Override
     @Query("SELECT l " +
             "FROM Lending l " +
-            "JOIN Book b ON l.book.pk = b.pk " +
-            "JOIN ReaderDetails r ON l.readerDetails.pk = r.pk " +
+            "JOIN Book b ON l.book.id = b.id " +
+            "JOIN ReaderDetails r ON l.readerDetails.id = r.id " +
             "WHERE b.isbn.isbn = :isbn " +
             "AND r.readerNumber.readerNumber = :readerNumber ")
     List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn);
@@ -51,7 +51,7 @@ public interface SpringDataLendingRepository extends LendingRepository, LendingR
     @Override
     @Query("SELECT l " +
             "FROM Lending l " +
-                "JOIN ReaderDetails r ON l.readerDetails.pk = r.pk " +
+                "JOIN ReaderDetails r ON l.readerDetails.id = r.id " +
             "WHERE r.readerNumber.readerNumber = :readerNumber " +
                 "AND l.returnedDate IS NULL")
     List<Lending> listOutstandingByReaderNumber(@Param("readerNumber") String readerNumber);

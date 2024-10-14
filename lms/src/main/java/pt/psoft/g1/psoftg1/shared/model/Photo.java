@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public class Photo {
 
     @Getter
-    private long pk;
+    private long id;
 
     @Getter
     @Setter

@@ -122,12 +122,12 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public Book save(Book entity) {
-        if (entity.getPk() == 0) {
+        if (entity.getId() == 0) {
             em.persist(entity);
             return entity;
         } else {
             // check version
-            JpaBookDTO book = em.find(JpaBookDTO.class, entity.getPk());
+            JpaBookDTO book = em.find(JpaBookDTO.class, entity.getId());
             return em.merge(entity);
         }
     }

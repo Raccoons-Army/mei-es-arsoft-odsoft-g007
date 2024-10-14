@@ -46,7 +46,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
 
     @Override
     public Page<AuthorLendingView> findTopAuthorByLendings(Pageable pageableRules) {
-        String jpql = "SELECT new pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView(a.name.name, COUNT(l.pk)) " +
+        String jpql = "SELECT new pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView(a.name.name, COUNT(l.id)) " +
                 "FROM Author a " +
                 "JOIN Lending l ON l.bookId IN (SELECT b.id FROM Book b WHERE :authorId MEMBER OF b.authorIds) " +
                 "GROUP BY a.name " +
