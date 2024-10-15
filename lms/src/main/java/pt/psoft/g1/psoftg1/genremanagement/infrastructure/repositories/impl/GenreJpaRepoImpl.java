@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.genremanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
@@ -13,14 +14,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class GenreJpaRepoImpl implements GenreRepository {
 
     private final EntityManager em;
-
-    public GenreJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
-
+    
     @Override
     public Optional<Genre> findByString(String genreName) {
         return Optional.empty();

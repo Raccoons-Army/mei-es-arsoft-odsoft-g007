@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
@@ -9,13 +10,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class LendingMongoRepoImpl implements LendingRepository {
 
-    public MongoTemplate mongoTemplate;
-
-    public LendingMongoRepoImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
+    public final MongoTemplate mongoTemplate;
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {

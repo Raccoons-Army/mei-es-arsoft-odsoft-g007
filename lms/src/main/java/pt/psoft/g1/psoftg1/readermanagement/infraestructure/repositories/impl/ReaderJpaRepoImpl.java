@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
@@ -13,13 +14,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class ReaderJpaRepoImpl implements ReaderRepository {
 
     private final EntityManager em;
-
-    public ReaderJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
 
     @Override
     public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {

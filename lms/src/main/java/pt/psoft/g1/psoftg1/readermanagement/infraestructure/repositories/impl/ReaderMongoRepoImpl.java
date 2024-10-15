@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,13 +14,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class ReaderMongoRepoImpl implements ReaderRepository {
 
-    public MongoTemplate mongoTemplate;
-
-    public ReaderMongoRepoImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
+    public final MongoTemplate mongoTemplate;
 
     @Override
     public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {

@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -8,15 +9,13 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 
 import java.util.List;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 public class AuthorMongoRepoImpl implements AuthorRepository {
 
-    public MongoTemplate mongoTemplate;
-
-    public AuthorMongoRepoImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
+    public final MongoTemplate mongoTemplate;
+    
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
         return null;
@@ -35,6 +34,11 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     @Override
     public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
         return null;
+    }
+
+    @Override
+    public Optional<Author> findByAuthorNumber(Long authorNumber) {
+        return Optional.empty();
     }
 
     @Override

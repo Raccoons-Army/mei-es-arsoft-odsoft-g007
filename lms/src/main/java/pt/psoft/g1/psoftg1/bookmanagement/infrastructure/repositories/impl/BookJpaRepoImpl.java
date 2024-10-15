@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class BookJpaRepoImpl implements BookRepository {
 
     private final EntityManager em;
-
-    public BookJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
 
     @Override
     public List<Book> findByGenre(String genre) {

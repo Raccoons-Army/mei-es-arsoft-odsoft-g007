@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -9,14 +10,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class LendingJpaRepoImpl implements LendingRepository {
 
     private final EntityManager em;
-
-    public LendingJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
-
+    
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
         return Optional.empty();

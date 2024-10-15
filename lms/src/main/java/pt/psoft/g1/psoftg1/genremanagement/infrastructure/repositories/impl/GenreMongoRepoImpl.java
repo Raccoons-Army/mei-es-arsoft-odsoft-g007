@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.genremanagement.infrastructure.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,14 +14,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class GenreMongoRepoImpl implements GenreRepository {
 
-    public MongoTemplate mongoTemplate;
-
-    public GenreMongoRepoImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
+    public final MongoTemplate mongoTemplate;
+    
     @Override
     public Optional<Genre> findByString(String genreName) {
         return Optional.empty();

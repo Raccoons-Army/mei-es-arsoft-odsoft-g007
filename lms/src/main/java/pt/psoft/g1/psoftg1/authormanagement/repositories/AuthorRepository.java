@@ -15,5 +15,7 @@ public interface AuthorRepository extends CRUDRepository<Author, Long> {
     List<Author> searchByNameName(String name);
     Page<AuthorLendingView> findTopAuthorByLendings (Pageable pageableRules);
     List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+    Optional<Author> findByAuthorNumber(Long authorNumber);
+
 
 }
