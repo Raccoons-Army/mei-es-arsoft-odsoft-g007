@@ -1,7 +1,9 @@
 package pt.psoft.g1.psoftg1.genremanagement.repositories;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
@@ -19,4 +21,5 @@ public interface GenreRepository extends CRUDRepository<Genre, String> {
     List<GenreLendingsDTO> getAverageLendingsInMonth(LocalDate month, pt.psoft.g1.psoftg1.shared.services.Page page);
     List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre();
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
+    List<Genre> findAllGenres();
 }

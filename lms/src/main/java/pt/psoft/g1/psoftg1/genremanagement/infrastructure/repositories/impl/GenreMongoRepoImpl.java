@@ -45,6 +45,11 @@ public class GenreMongoRepoImpl implements GenreRepository {
     }
 
     @Override
+    public List<Genre> findAllGenres() {
+        return List.of();
+    }
+
+    @Override
     public Genre save(Genre entity) {
         return null;
     }
