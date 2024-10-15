@@ -16,6 +16,7 @@ import java.util.Objects;
 public class Fine {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
     private Long pk;
 
     @PositiveOrZero
