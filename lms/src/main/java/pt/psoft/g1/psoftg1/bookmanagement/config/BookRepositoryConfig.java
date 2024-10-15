@@ -20,7 +20,7 @@ public class BookRepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
-    public BookRepository mongoBookRepository(MongoTemplate mongoTemplate) {
-        return new BookMongoRepoImpl(mongoTemplate);
+    public BookRepository mongoBookRepository(MongoTemplate mt) {
+        return new BookMongoRepoImpl(mt);
     }
 }

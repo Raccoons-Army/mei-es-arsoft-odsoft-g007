@@ -16,10 +16,10 @@ import java.util.Optional;
 
 public class BookMongoRepoImpl implements BookRepository {
 
-    public MongoTemplate mongoTemplate;
+    public MongoTemplate mt;
 
-    public BookMongoRepoImpl(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    public BookMongoRepoImpl(MongoTemplate mt) {
+        this.mt = mt;
     }
 
     @Override

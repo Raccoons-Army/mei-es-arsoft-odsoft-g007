@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 @RequiredArgsConstructor
 public class UserMongoRepoImpl {
-    public final MongoTemplate mongoTemplate;
+    public final MongoTemplate mt;
 }

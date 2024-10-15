@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReaderMongoRepoImpl implements ReaderRepository {
 
-    public final MongoTemplate mongoTemplate;
+    public final MongoTemplate mt;
 
     @Override
     public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {

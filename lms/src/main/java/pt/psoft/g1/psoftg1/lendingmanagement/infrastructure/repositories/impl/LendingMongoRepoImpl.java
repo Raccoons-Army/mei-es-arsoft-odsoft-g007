@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LendingMongoRepoImpl implements LendingRepository {
 
-    public final MongoTemplate mongoTemplate;
+    public final MongoTemplate mt;
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {

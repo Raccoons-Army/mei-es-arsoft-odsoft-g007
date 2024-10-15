@@ -20,8 +20,8 @@ public class AuthorRepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
-    public AuthorRepository mongoAuthorRepository(MongoTemplate mongoTemplate) {
-        return new AuthorMongoRepoImpl(mongoTemplate);
+    public AuthorRepository mongoAuthorRepository(MongoTemplate mt) {
+        return new AuthorMongoRepoImpl(mt);
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GenreMongoRepoImpl implements GenreRepository {
 
-    public final MongoTemplate mongoTemplate;
+    public final MongoTemplate mt;
     
     @Override
     public Optional<Genre> findByString(String genreName) {

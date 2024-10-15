@@ -20,7 +20,7 @@ public class GenreRepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
-    public GenreRepository mongoGenreRepository(MongoTemplate mongoTemplate) {
-        return new GenreMongoRepoImpl(mongoTemplate);
+    public GenreRepository mongoGenreRepository(MongoTemplate mt) {
+        return new GenreMongoRepoImpl(mt);
     }
 }

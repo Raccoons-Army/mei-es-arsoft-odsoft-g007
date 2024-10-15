@@ -20,7 +20,7 @@ public class LendingRepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
-    public LendingRepository mongoLendingRepository(MongoTemplate mongoTemplate) {
-        return new LendingMongoRepoImpl(mongoTemplate);
+    public LendingRepository mongoLendingRepository(MongoTemplate mt) {
+        return new LendingMongoRepoImpl(mt);
     }
 }

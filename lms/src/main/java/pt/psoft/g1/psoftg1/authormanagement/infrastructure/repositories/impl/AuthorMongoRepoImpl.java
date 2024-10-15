@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthorMongoRepoImpl implements AuthorRepository {
 
-    public final MongoTemplate mongoTemplate;
+    public final MongoTemplate mt;
     
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {

@@ -20,7 +20,7 @@ public class ReaderRepositoryConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
-    public ReaderRepository mongoReaderRepository(MongoTemplate mongoTemplate) {
-        return new ReaderMongoRepoImpl(mongoTemplate);
+    public ReaderRepository mongoReaderRepository(MongoTemplate mt) {
+        return new ReaderMongoRepoImpl(mt);
     }
 }
