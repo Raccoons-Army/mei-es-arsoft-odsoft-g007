@@ -197,13 +197,11 @@ public class GenreJpaRepoImpl implements GenreRepository {
 
     @Override
     public Genre save(Genre entity) {
-        if (entity.getGenre() != null) {
-            // Update existing entity
-            return em.merge(entity);
+        if (entity.getPk() == null) {
+            em.persist(entity); // If it's a new entity, persist it
+            return entity; // Return the persisted entity
         } else {
-            // Save new entity
-            em.persist(entity);
-            return entity;
+            return em.merge(entity); // If it's an existing entity, merge it
         }
     }
 

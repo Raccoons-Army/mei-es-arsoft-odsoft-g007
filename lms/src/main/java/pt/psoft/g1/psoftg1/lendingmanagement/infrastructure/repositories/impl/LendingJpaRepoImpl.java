@@ -170,7 +170,12 @@ public class LendingJpaRepoImpl implements LendingRepository {
 
     @Override
     public Lending save(Lending entity) {
-        return em.merge(entity); // Use merge to save or update the entity
+        if (entity.getPk() == null) {
+            em.persist(entity); // If it's a new entity, persist it
+            return entity; // Return the persisted entity
+        } else {
+            return em.merge(entity); // If it's an existing entity, merge it
+        }
     }
 
     @Override
