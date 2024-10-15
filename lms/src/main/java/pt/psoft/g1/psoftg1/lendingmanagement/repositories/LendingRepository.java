@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.repositories;
 
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.shared.repositories.CRUDRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface LendingRepository extends CRUDRepository<Lending, Long> {
 
 
-    Optional<Lending> findByLendingNumber(String lendingNumber);
+    Optional<Fine> findByLendingNumber(String lendingNumber);
     List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn);
     int getCountFromCurrentYear();
     List<Lending> listOutstandingByReaderNumber(String readerNumber);
