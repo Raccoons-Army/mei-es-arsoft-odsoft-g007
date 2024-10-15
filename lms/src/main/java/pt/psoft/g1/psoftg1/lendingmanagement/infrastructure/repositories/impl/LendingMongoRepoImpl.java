@@ -17,7 +17,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
     public final MongoTemplate mt;
 
     @Override
-    public Optional<Fine> findByLendingNumber(String lendingNumber) {
+    public Optional<Lending> findByLendingNumber(String lendingNumber) {
         return Optional.empty();
     }
 

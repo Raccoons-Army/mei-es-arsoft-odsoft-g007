@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
@@ -150,22 +152,36 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public Reader save(Reader entity) {
-        return null;
+    public ReaderDetails save(ReaderDetails entity) {
+        if (entity.getPk() == null) {
+            em.persist(entity); // If it's a new entity, persist it
+            return entity; // Return the persisted entity
+        } else {
+            return em.merge(entity); // If it's an existing entity, merge it
+        }
     }
 
     @Override
-    public void delete(Reader entity) {
-
+    public void delete(ReaderDetails entity) {
+        if (em.contains(entity)) {
+            em.remove(entity);  // If managed, remove directly
+        } else {
+            ReaderDetails managedReaderDetails = em.merge(entity);  // If detached, merge to manage
+            em.remove(managedReaderDetails);  // Then remove
+        }
     }
 
     @Override
-    public List<Reader> findAll() {
-        return null;
+    public List<ReaderDetails> findAll() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ReaderDetails> query = cb.createQuery(ReaderDetails.class);
+        query.from(ReaderDetails.class);  // Create query for Author class
+
+        return em.createQuery(query).getResultList();  // Execute and return result
     }
 
     @Override
-    public Reader findById(Long aLong) {
-        return null;
+    public ReaderDetails findById(Long aLong) {
+        return em.find(ReaderDetails.class, aLong);
     }
 }

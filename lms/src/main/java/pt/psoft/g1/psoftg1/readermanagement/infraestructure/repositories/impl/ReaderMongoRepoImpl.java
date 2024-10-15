@@ -59,23 +59,24 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
         return null;
     }
 
+
     @Override
-    public Reader save(Reader entity) {
+    public ReaderDetails save(ReaderDetails entity) {
         return null;
     }
 
     @Override
-    public void delete(Reader entity) {
+    public void delete(ReaderDetails entity) {
 
     }
 
     @Override
-    public List<Reader> findAll() {
+    public List<ReaderDetails> findAll() {
         return null;
     }
 
     @Override
-    public Reader findById(Long aLong) {
+    public ReaderDetails findById(Long aLong) {
         return null;
     }
 }

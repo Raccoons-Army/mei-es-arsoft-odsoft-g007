@@ -18,6 +18,7 @@ import java.util.List;
 public class ReaderDetails extends EntityWithPhoto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
     private Long pk;
 
     @Getter

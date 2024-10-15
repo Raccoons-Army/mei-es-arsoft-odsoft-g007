@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface LendingRepository extends CRUDRepository<Lending, Long> {
 
 
-    Optional<Fine> findByLendingNumber(String lendingNumber);
+    Optional<Lending> findByLendingNumber(String lendingNumber);
     List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn);
     int getCountFromCurrentYear();
     List<Lending> listOutstandingByReaderNumber(String readerNumber);

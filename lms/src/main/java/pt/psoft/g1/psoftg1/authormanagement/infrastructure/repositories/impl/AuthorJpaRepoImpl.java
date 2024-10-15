@@ -39,9 +39,9 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
         CriteriaQuery<Author> query = cb.createQuery(Author.class);
         Root<Author> root = query.from(Author.class);
 
-        query.select(root)
-                .where(cb.equal(root.get("name"), name));  // Matches the exact name
+        Predicate namePredicate = cb.equal(root.get("name").get("name"), name); // Accessing the 'name' property of the embedded 'Name' object
 
+        query.select(root).where(namePredicate);
         return em.createQuery(query).getResultList();
     }
 

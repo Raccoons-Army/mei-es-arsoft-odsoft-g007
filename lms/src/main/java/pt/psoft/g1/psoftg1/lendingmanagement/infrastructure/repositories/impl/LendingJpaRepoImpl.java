@@ -23,20 +23,16 @@ public class LendingJpaRepoImpl implements LendingRepository {
     private final EntityManager em;
 
     @Override
-    public Optional<Fine> findByLendingNumber(String lendingNumber) {
+    public Optional<Lending> findByLendingNumber(String lendingNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Fine> query = cb.createQuery(Fine.class);
-        Root<Fine> fineRoot = query.from(Fine.class);
-        Join<Fine, Lending> lendingJoin = fineRoot.join("lending"); // Assuming a relationship to Lending
+        CriteriaQuery<Lending> cq = cb.createQuery(Lending.class);
+        Root<Lending> lending = cq.from(Lending.class);
 
-        // Assuming Lending has a property called lendingNumber that is an object with the field lendingNumber
-        query.select(fineRoot)
-                .where(cb.equal(lendingJoin.get("lendingNumber").get("lendingNumber"), lendingNumber));
+        // Define the criteria: lendingNumber should match
+        cq.select(lending).where(cb.equal(lending.get("lendingNumber").get("lendingNumber"), lendingNumber));
 
-        return em.createQuery(query)
-                .setMaxResults(1) // Limit to one result
-                .getResultStream() // Convert results to stream
-                .findFirst(); // Retrieve the first element as Optional
+        // Execute the query
+        return em.createQuery(cq).getResultStream().findFirst();
     }
 
     @Override
