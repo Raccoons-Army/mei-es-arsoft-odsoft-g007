@@ -15,6 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -24,42 +25,43 @@ public class GoogleAuth implements IamAuthentication {
     private final Logger log = LoggerFactory.getLogger(GoogleAuth.class);
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${spring.security.oauth2.client.registration.client-id}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.scope}")
-    private String scopes;
+    @Value("${spring.security.oauth2.client.registration.google.scope[0]}")
+    private String emailScope;
 
-    @Value("${spring.security.oauth2.client.registration.authorization-url}")
+    @Value("${spring.security.oauth2.client.registration.google.scope[1]}")
+    private String profileScope;
+
+    @Value("${auth.authorization-url}")
     private String authorizationUrl;
 
-    @Value("${spring.security.oauth2.client.provider.authorization-uri}")
+    @Value("${spring.security.oauth2.client.provider.google.authorization-uri}")
     private String authorizationUri;
 
-    @Value("${spring.security.oauth2.client.provider.token-uri}")
+    @Value("${spring.security.oauth2.client.provider.google.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.user-info-uri}")
+    @Value("${spring.security.oauth2.client.provider.google.user-info-uri}")
     private String userInfoUri;
 
     @Override
     public String getAuthorizationUrl() {
-        // URL encode each part of the scope
-        String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8);
-
         // Construct the authorization URL
         return String.format(authorizationUrl,
                 authorizationUri,
                 clientId,
                 URLEncoder.encode(redirectUri, StandardCharsets.UTF_8),
-                encodedScopes);
+                URLEncoder.encode(emailScope + " " + profileScope, StandardCharsets.UTF_8));
     }
+
     @Override
     public String handleCallback(String authorizationCode) {
         // Exchange the authorization code for an access token
@@ -103,7 +105,7 @@ public class GoogleAuth implements IamAuthentication {
             return response.getBody();
 
         } catch (Exception e) {
-            log.error("Unexpected error while exchanging authorization code" , e);
+            log.error("Unexpected error while exchanging authorization code", e);
             // Handle other exceptions
             throw new RuntimeException("Unexpected error while exchanging authorization code", e);
         }
@@ -131,7 +133,7 @@ public class GoogleAuth implements IamAuthentication {
                 throw new RuntimeException("Failed to retrieve user info: " + response.getStatusCode());
             }
         } catch (Exception e) {
-            log.error("Unexpected error while exchanging authorization code" , e);
+            log.error("Unexpected error while exchanging authorization code", e);
             // Handle other exceptions
             throw new RuntimeException("Unexpected error while retrieving user info", e);
         }

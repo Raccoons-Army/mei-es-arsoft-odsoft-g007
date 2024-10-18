@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -17,31 +20,42 @@ public class FacebookAuth implements IamAuthentication {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${spring.security.oauth2.client.registration.client-id}")
+    @Value("${spring.security.oauth2.client.registration.facebook.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.facebook.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.authorization-url}")
+    @Value("${spring.security.oauth2.client.registration.google.scope[0]}")
+    private String emailScope;
+
+    @Value("${spring.security.oauth2.client.registration.google.scope[1]}")
+    private String profileScope;
+
+    @Value("${auth.authorization-url}")
     private String authorizationUrl;
 
-    @Value("${spring.security.oauth2.client.provider.authorization-uri}")
+    @Value("${spring.security.oauth2.client.provider.facebook.authorization-uri}")
     private String authorizationUri;
 
-    @Value("${spring.security.oauth2.client.provider.token-uri}")
+    @Value("${spring.security.oauth2.client.provider.facebook.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.user-info-uri}")
+    @Value("${spring.security.oauth2.client.provider.facebook.user-info-uri}")
     private String userInfoUri;
 
     @Override
     public String getAuthorizationUrl() {
+        List<String> scopes = List.of(emailScope, profileScope);
         // Build the Facebook OAuth2 authorization URL
-        return String.format(authorizationUrl, authorizationUri, clientId, redirectUri);
+        return String.format(authorizationUrl,
+                authorizationUri,
+                clientId,
+                URLEncoder.encode(redirectUri, StandardCharsets.UTF_8),
+                emailScope+","+profileScope);
     }
 
     @Override
