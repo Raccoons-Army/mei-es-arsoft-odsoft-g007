@@ -24,34 +24,37 @@ public class GoogleAuth implements IamAuthentication {
     private final Logger log = LoggerFactory.getLogger(GoogleAuth.class);
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+    @Value("${spring.security.oauth2.client.registration.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.provider.google.authorization-uri}")
+    @Value("${spring.security.oauth2.client.registration.scope}")
+    private String scopes;
+
+    @Value("${spring.security.oauth2.client.registration.authorization-url}")
+    private String authorizationUrl;
+
+    @Value("${spring.security.oauth2.client.provider.authorization-uri}")
     private String authorizationUri;
 
-    @Value("${spring.security.oauth2.client.provider.google.token-uri}")
+    @Value("${spring.security.oauth2.client.provider.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.google.user-info-uri}")
+    @Value("${spring.security.oauth2.client.provider.user-info-uri}")
     private String userInfoUri;
 
     @Override
     public String getAuthorizationUrl() {
-        // Define your scopes as a space-separated string
-        String scopes = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
-
         // URL encode each part of the scope
         String encodedScopes = URLEncoder.encode(scopes, StandardCharsets.UTF_8);
 
         // Construct the authorization URL
-        return String.format("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=%s",
+        return String.format(authorizationUrl,
                 authorizationUri,
                 clientId,
                 URLEncoder.encode(redirectUri, StandardCharsets.UTF_8),

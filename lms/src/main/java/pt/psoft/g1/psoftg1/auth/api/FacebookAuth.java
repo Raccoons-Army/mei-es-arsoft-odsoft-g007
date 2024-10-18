@@ -17,31 +17,31 @@ public class FacebookAuth implements IamAuthentication {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${spring.security.oauth2.client.registration.facebook.client-id}")
+    @Value("${spring.security.oauth2.client.registration.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.facebook.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.provider.facebook.authorization-uri}")
+    @Value("${spring.security.oauth2.client.registration.authorization-url}")
+    private String authorizationUrl;
+
+    @Value("${spring.security.oauth2.client.provider.authorization-uri}")
     private String authorizationUri;
 
-    @Value("${spring.security.oauth2.client.provider.facebook.token-uri}")
+    @Value("${spring.security.oauth2.client.provider.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.facebook.user-info-uri}")
+    @Value("${spring.security.oauth2.client.provider.user-info-uri}")
     private String userInfoUri;
 
     @Override
     public String getAuthorizationUrl() {
         // Build the Facebook OAuth2 authorization URL
-        return String.format(
-                "%s?client_id=%s&redirect_uri=%s&response_type=code&scope=email,public_profile",
-                authorizationUri, clientId, redirectUri
-        );
+        return String.format(authorizationUrl, authorizationUri, clientId, redirectUri);
     }
 
     @Override
