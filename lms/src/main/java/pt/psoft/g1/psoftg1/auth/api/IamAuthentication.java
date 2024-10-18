@@ -18,4 +18,6 @@ public interface IamAuthentication {
      * @return The authorization URL as a String.
      */
     String getAuthorizationUrl();
+
+    String handleCallback(String authorizationCode);
 }

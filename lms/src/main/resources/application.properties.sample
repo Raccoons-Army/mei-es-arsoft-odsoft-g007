@@ -24,6 +24,11 @@ jwt.public.key=classpath:rsa.public.key
 ##
 app.persistence.strategy=jpa
 
+##
+## IAM Configuration
+##
+app.iam.provider=google
+
 # mongodb (comment lines below to use another database)
 #spring.data.mongodb.uri=mongodb://localhost:27017/psoft-g1
 # this prop avoid starting JPA stuff
