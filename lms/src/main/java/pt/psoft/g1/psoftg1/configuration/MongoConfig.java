@@ -1,6 +1,6 @@
 package pt.psoft.g1.psoftg1.configuration;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -12,7 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 @Configuration
-@ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "mongodb")
+@Profile("mongo")
 @EnableMongoAuditing(auditorAwareRef = "auditorProvider")
 public class MongoConfig {
 
