@@ -86,7 +86,9 @@ class LendingServiceImplTest {
         readerRepository.save(readerDetails);
 
         // Create and save the lending
-        lending = Lending.newBootstrappingLending(book,
+        lending = Lending.newBootstrappingLending(
+                "aa1",
+                book,
                 readerDetails,
                 LocalDate.now().getYear(),
                 999,
@@ -134,7 +136,9 @@ class LendingServiceImplTest {
         assertThrows(LendingForbiddenException.class, () -> lendingService.create(request));
 
         lendingRepository.delete(lending3);
-        lendingRepository.save(Lending.newBootstrappingLending(book,
+        lendingRepository.save(Lending.newBootstrappingLending(
+                "aa1",
+                book,
                 readerDetails,
                 2024,
                 997,
@@ -151,7 +155,9 @@ class LendingServiceImplTest {
     @Test
     void testSetReturned() {
         int year = 2024, seq = 888;
-        var notReturnedLending = lendingRepository.save(Lending.newBootstrappingLending(book,
+        var notReturnedLending = lendingRepository.save(Lending.newBootstrappingLending(
+                "aa1",
+                book,
                 readerDetails,
                 year,
                 seq,

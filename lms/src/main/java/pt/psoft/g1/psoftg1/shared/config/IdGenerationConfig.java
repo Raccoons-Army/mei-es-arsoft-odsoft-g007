@@ -3,9 +3,9 @@ package pt.psoft.g1.psoftg1.shared.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import pt.psoft.g1.psoftg1.shared.strategies.HashIdGenerationStrategy;
-import pt.psoft.g1.psoftg1.shared.strategies.HexIdGenerationStrategy;
-import pt.psoft.g1.psoftg1.shared.model.IdGenerationStrategy;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.HashIdGenerationStrategy;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.HexIdGenerationStrategy;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 
 @Configuration
 public class IdGenerationConfig {

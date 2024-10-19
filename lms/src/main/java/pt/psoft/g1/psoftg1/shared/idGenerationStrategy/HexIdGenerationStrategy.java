@@ -1,15 +1,15 @@
-package pt.psoft.g1.psoftg1.shared.strategies;
+package pt.psoft.g1.psoftg1.shared.idGenerationStrategy;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import pt.psoft.g1.psoftg1.shared.model.IdGenerationStrategy;
+import org.springframework.context.annotation.PropertySource;
 
 import java.security.SecureRandom;
 
+@PropertySource({"classpath:config/library.properties"})
 public class HexIdGenerationStrategy implements IdGenerationStrategy<String> {
     private static final SecureRandom random = new SecureRandom();
 
-    @Value("${app.id.strategy.size}")
+    @Value("${charactersSize}")
     private int idSize;
 
     @Override

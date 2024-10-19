@@ -12,7 +12,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
-import pt.psoft.g1.psoftg1.shared.model.IdGenerationStrategy;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;

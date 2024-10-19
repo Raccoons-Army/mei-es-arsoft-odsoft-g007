@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -207,4 +208,10 @@ public class BookServiceImpl implements BookService {
 		}
 		return bookRepository.searchBooks(page, query);
 	}
+
+	@Override
+	public List<Book> getRecommendationsForReader(String readerNumber) {
+		return List.of();
+	}
+
 }

@@ -54,7 +54,7 @@ public class BookController {
     @Operation(summary = "Register a new Book")
     @PutMapping(value = "/{isbn}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<BookView> create( CreateBookRequest resource, @PathVariable("isbn") String isbn) {
+    public ResponseEntity<BookView> create(CreateBookRequest resource, @PathVariable("isbn") String isbn) {
 
 
         //Guarantee that the client doesn't provide a link on the body, null = no photo or error
@@ -70,7 +70,7 @@ public class BookController {
         Book book;
         try {
             book = bookService.create(resource, isbn);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //final var savedBook = bookService.save(book);
@@ -101,7 +101,7 @@ public class BookController {
     public ResponseEntity<Void> deleteBookPhoto(@PathVariable("isbn") final String isbn) {
 
         var book = bookService.findByIsbn(isbn);
-        if(book.getPhoto() == null) {
+        if (book.getPhoto() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
@@ -111,15 +111,15 @@ public class BookController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary= "Gets a book photo")
+    @Operation(summary = "Gets a book photo")
     @GetMapping("/{isbn}/photo")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getSpecificBookPhoto(@PathVariable("isbn") final String isbn){
+    public ResponseEntity<byte[]> getSpecificBookPhoto(@PathVariable("isbn") final String isbn) {
 
         Book book = bookService.findByIsbn(isbn);
 
         //In case the user has no photo, just return a 200 OK without body
-        if(book.getPhoto() == null) {
+        if (book.getPhoto() == null) {
             return ResponseEntity.ok().build();
         }
 
@@ -127,7 +127,7 @@ public class BookController {
         byte[] image = fileStorageService.getFile(photoFile);
         String fileFormat = fileStorageService.getExtension(book.getPhoto().getPhotoFile()).orElseThrow(() -> new ValidationException("Unable to get file extension"));
 
-        if(image == null) {
+        if (image == null) {
             return ResponseEntity.ok().build();
         }
 
@@ -160,8 +160,8 @@ public class BookController {
         resource.setIsbn(isbn);
         try {
             book = bookService.update(resource, String.valueOf(concurrencyService.getVersionFromIfMatchHeader(ifMatchValue)));
-        }catch (Exception e){
-            throw new ConflictException("Could not update book: "+ e.getMessage());
+        } catch (Exception e) {
+            throw new ConflictException("Could not update book: " + e.getMessage());
         }
         return ResponseEntity.ok()
                 .eTag(Long.toString(book.getVersion()))
@@ -190,18 +190,18 @@ public class BookController {
             booksByAuthorName = bookService.findByAuthorName(authorName);
 
         Set<Book> bookSet = new HashSet<>();
-        if (booksByTitle!= null)
+        if (booksByTitle != null)
             bookSet.addAll(booksByTitle);
-        if(booksByGenre != null)
+        if (booksByGenre != null)
             bookSet.addAll(booksByGenre);
-        if(booksByAuthorName != null)
+        if (booksByAuthorName != null)
             bookSet.addAll(booksByAuthorName);
 
         List<Book> books = bookSet.stream()
                 .sorted(Comparator.comparing(b -> b.getTitle().toString()))
                 .collect(Collectors.toList());
 
-        if(books.isEmpty())
+        if (books.isEmpty())
             throw new NotFoundException("No books found with the provided criteria");
 
         return new ListResponse<>(bookViewMapper.toBookView(books));
@@ -225,7 +225,7 @@ public class BookController {
 
     @Operation(summary = "Get average lendings duration")
     @GetMapping(value = "/{isbn}/avgDuration")
-    public @ResponseBody ResponseEntity<BookAverageLendingDurationView>getAvgLendingDurationByIsbn(
+    public @ResponseBody ResponseEntity<BookAverageLendingDurationView> getAvgLendingDurationByIsbn(
             @PathVariable("isbn") final String isbn) {
         final var book = bookService.findByIsbn(isbn);
         Double avgDuration = lendingService.getAvgLendingDurationByIsbn(isbn);
@@ -239,5 +239,16 @@ public class BookController {
         final var bookList = bookService.searchBooks(request.getPage(), request.getQuery());
         return new ListResponse<>(bookViewMapper.toBookView(bookList));
     }
+
+    @Operation(summary = "Get recommending books based on a defined algorithm")
+    @GetMapping(value = "/recommend")
+    public ListResponse<BookView> getRecommendations(Authentication authentication) {
+        User loggedUser = userService.getAuthenticatedUser(authentication);
+        ReaderDetails readerDetails = readerService.findByUsername(loggedUser.getUsername())
+                .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
+
+        return new ListResponse<>(bookViewMapper.toBookView(bookService.getRecommendationsForReader(readerDetails.getReaderNumber())));
+    }
+
 }
 
