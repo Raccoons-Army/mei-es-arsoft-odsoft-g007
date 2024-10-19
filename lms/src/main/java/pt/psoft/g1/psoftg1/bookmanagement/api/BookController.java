@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
-import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
-import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.services.*;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
@@ -43,6 +40,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
+    private final RecommendationService recommendationService;
     private final LendingService lendingService;
     private final ConcurrencyService concurrencyService;
     private final FileStorageService fileStorageService;
@@ -247,7 +245,7 @@ public class BookController {
         ReaderDetails readerDetails = readerService.findByUsername(loggedUser.getUsername())
                 .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
-        return new ListResponse<>(bookViewMapper.toBookView(bookService.getRecommendationsForReader(readerDetails.getReaderNumber())));
+        return new ListResponse<>(bookViewMapper.toBookView(recommendationService.getRecommendationsForReader(readerDetails.getReaderNumber())));
     }
 
 }

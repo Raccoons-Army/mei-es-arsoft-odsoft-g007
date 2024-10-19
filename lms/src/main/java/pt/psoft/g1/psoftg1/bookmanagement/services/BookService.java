@@ -21,5 +21,4 @@ public interface BookService {
     Book removeBookPhoto(String isbn, long desiredVersion);
     List<Book> getBooksSuggestionsForReader(String readerNumber);
     List<Book> searchBooks(Page page, SearchBooksQuery query);
-    List<Book> getRecommendationsForReader(String readerNumber);
 }
