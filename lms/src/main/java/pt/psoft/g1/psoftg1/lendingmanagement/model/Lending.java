@@ -38,9 +38,8 @@ public class Lending {
      * @author pgsousa
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
-    private Long pk;
+    private String pk;
 
     /**
      * Natural key, which is not in use as it has its own business rules.
@@ -130,13 +129,14 @@ public class Lending {
      * @param       seq sequential number, which should be obtained from the year's count on the database.
      * @throws      NullPointerException if any of the arguments is {@code null}
      * */
-    public Lending(Book book, ReaderDetails readerDetails, int seq, int lendingDuration, int fineValuePerDayInCents){
+    public Lending(String id, Book book, ReaderDetails readerDetails, int seq, int lendingDuration, int fineValuePerDayInCents){
         try {
             this.book = Objects.requireNonNull(book);
             this.readerDetails = Objects.requireNonNull(readerDetails);
         }catch (NullPointerException e){
             throw new IllegalArgumentException("Null objects passed to lending");
         }
+        this.pk = id;
         this.lendingNumber = new LendingNumber(seq);
         this.startDate = LocalDate.now();
         this.limitDate = LocalDate.now().plusDays(lendingDuration);
@@ -235,7 +235,7 @@ public class Lending {
     protected Lending() {}
 
     /**Factory method meant to be only used in bootstrapping.*/
-    public static Lending newBootstrappingLending(Book book,
+    public static Lending newBootstrappingLending(String id, Book book,
                                     ReaderDetails readerDetails,
                                     int year,
                                     int seq,
@@ -251,6 +251,7 @@ public class Lending {
         }catch (NullPointerException e){
             throw new IllegalArgumentException("Null objects passed to lending");
         }
+        lending.pk = id;
         lending.lendingNumber = new LendingNumber(year, seq);
         lending.startDate = startDate;
         lending.limitDate = startDate.plusDays(lendingDuration);

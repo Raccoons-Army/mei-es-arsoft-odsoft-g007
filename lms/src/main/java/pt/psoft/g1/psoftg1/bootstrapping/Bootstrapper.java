@@ -438,7 +438,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 1, 31 - i);
                 returnedDate = LocalDate.of(2024, 2, 15 + i);
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -448,7 +448,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 3, 25 + i);
-                lending = Lending.newBootstrappingLending(books.get(1 + i), readers.get(1 + i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(1 + i), readers.get(1 + i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -457,7 +457,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 4, (1 + 2 * i));
-                lending = Lending.newBootstrappingLending(books.get(3 / (i + 1)), readers.get(i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(3 / (i + 1)), readers.get(i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -468,7 +468,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 1));
                 returnedDate = LocalDate.of(2024, 5, (i + 2));
-                lending = Lending.newBootstrappingLending(books.get(3 - i), readers.get(1 + i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(3 - i), readers.get(1 + i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -479,7 +479,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 2));
                 returnedDate = LocalDate.of(2024, 5, (i + 2 * 2));
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(i), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -490,7 +490,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 8));
                 returnedDate = LocalDate.of(2024, 5, (2 * i + 8));
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(1 + i % 4), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(1 + i % 4), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -501,7 +501,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 18));
                 returnedDate = LocalDate.of(2024, 5, (2 * i + 18));
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(i % 2 + 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i % 2 + 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -511,7 +511,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 6, (i / 3 + 1));
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(i % 2 + 3), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i % 2 + 3), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -521,7 +521,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 6, (2 + i / 4));
-                lending = Lending.newBootstrappingLending(books.get(i), readers.get(4 - i % 4), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(4 - i % 4), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
