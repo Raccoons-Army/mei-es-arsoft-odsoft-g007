@@ -3,7 +3,7 @@ spring.application.name=psoft-g1
 ##
 ## Profiles
 ##
-spring.profiles.active=bootstrap,jpa,google
+spring.profiles.active=bootstrap,jpa,google,hash
 
 ##
 ## OpenAPI
@@ -40,3 +40,7 @@ file.photo_max_size=20000
 
 ## Api Ninjas key
 my.ninjas-key=a5nSlaa4JxIubY09H+NYuQ==cY9FegnFmAvYi6fN
+
+## Id generation strategy
+app.id.strategy=hash
+app.id.strategy.size=20
