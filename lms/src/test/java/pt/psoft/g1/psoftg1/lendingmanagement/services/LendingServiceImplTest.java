@@ -55,7 +55,7 @@ class LendingServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author("Manuel Antonio Pina",
+        author = new Author("aa1","Manuel Antonio Pina",
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
         authorRepository.save(author);

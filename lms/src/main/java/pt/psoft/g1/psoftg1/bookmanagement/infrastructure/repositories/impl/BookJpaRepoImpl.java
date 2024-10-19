@@ -76,7 +76,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         String query = "SELECT b FROM Book b JOIN b.authors a WHERE a.authorNumber = :authorNumber";
         return em.createQuery(query, Book.class)
                 .setParameter("authorNumber", authorNumber)

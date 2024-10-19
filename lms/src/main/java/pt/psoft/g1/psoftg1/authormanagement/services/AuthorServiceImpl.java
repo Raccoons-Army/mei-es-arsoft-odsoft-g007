@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.model.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.List;
@@ -23,6 +26,8 @@ public class AuthorServiceImpl implements AuthorService {
     private final BookRepository bookRepository;
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
+    private final IdGenerationStrategy<String> idGenerationStrategy;
+
 
     @Override
     public Iterable<Author> findAll() {
@@ -30,7 +35,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(final Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(final String authorNumber) {
         return authorRepository.findByAuthorNumber(authorNumber);
     }
 
@@ -55,16 +60,16 @@ public class AuthorServiceImpl implements AuthorService {
 
         MultipartFile photo = resource.getPhoto();
         String photoURI = resource.getPhotoURI();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
-        final Author author = mapper.create(resource);
+        final Author author = mapper.create(idGenerationStrategy.generateId(), resource);
         return authorRepository.save(author);
     }
 
     @Override
-    public Author partialUpdate(final Long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
+    public Author partialUpdate(final String authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
         // first let's check if the object exists so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
@@ -83,7 +88,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         MultipartFile photo = request.getPhoto();
         String photoURI = request.getPhotoURI();
-        if(photo == null && photoURI != null || photo != null && photoURI == null) {
+        if (photo == null && photoURI != null || photo != null && photoURI == null) {
             request.setPhoto(null);
             request.setPhotoURI(null);
         }
@@ -96,23 +101,25 @@ public class AuthorServiceImpl implements AuthorService {
         // this updated object
         return authorRepository.save(author);
     }
+
     @Override
     public List<AuthorLendingView> findTopAuthorByLendings() {
-        Pageable pageableRules = PageRequest.of(0,5);
+        Pageable pageableRules = PageRequest.of(0, 5);
         return authorRepository.findTopAuthorByLendings(pageableRules).getContent();
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber){
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         return bookRepository.findBooksByAuthorNumber(authorNumber);
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         return authorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
+
     @Override
-    public Optional<Author> removeAuthorPhoto(Long authorNumber, long desiredVersion) {
+    public Optional<Author> removeAuthorPhoto(String authorNumber, long desiredVersion) {
         Author author = authorRepository.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 

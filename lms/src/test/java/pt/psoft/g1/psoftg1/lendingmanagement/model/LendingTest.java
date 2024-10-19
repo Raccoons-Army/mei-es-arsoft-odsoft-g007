@@ -28,7 +28,7 @@ class LendingTest {
 
     @BeforeAll
     public static void setup(){
-        Author author = new Author("Manuel Antonio Pina",
+        Author author = new Author("aa1","Manuel Antonio Pina",
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
         authors.add(author);

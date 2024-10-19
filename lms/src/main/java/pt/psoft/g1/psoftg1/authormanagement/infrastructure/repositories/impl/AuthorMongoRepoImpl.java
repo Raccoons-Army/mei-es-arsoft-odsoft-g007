@@ -32,12 +32,12 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         return null;
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(String authorNumber) {
         return Optional.empty();
     }
 

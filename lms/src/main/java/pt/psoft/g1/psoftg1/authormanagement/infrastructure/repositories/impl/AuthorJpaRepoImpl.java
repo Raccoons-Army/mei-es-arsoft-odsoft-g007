@@ -70,7 +70,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Author> query = cb.createQuery(Author.class);
         Root<Book> bookRoot = query.from(Book.class);
@@ -94,7 +94,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(Long authorNumber) {
+    public Optional<Author> findByAuthorNumber(String authorNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Author> query = cb.createQuery(Author.class);
         Root<Author> root = query.from(Author.class);

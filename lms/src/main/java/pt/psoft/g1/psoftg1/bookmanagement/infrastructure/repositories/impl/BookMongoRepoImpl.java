@@ -48,7 +48,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         return null;
     }
 
