@@ -76,7 +76,7 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public ReaderDetails findById(Long aLong) {
-        return null;
+    public Optional<ReaderDetails> findById(Long aLong) {
+        return Optional.empty();
     }
 }

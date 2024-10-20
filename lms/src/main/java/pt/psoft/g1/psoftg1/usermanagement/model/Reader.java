@@ -4,9 +4,7 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class Reader extends User {
-    protected Reader() {
-        // for ORM only
-    }
+
     public Reader(String username, String password) {
         super(username, password);
         this.addAuthority(new Role(Role.READER));
@@ -15,6 +13,10 @@ public class Reader extends User {
     public Reader(String username) {
         super(username);
         this.addAuthority(new Role(Role.READER));
+    }
+
+    protected Reader() {
+        // for ORM only
     }
 
     /**

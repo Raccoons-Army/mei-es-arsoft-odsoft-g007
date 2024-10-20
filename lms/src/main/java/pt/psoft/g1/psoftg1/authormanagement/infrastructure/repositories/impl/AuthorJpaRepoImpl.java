@@ -139,7 +139,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Author findById(Long aLong) {
-        return em.find(Author.class, aLong);  // Use find method to get Author by ID
+    public Optional<Author> findById(Long aLong) {
+        return Optional.ofNullable(em.find(Author.class, aLong));  // Use find method to get Author by ID
     }
 }

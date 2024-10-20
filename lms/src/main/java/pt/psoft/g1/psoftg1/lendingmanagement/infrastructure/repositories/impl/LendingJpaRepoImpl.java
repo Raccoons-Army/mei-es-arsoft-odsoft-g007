@@ -188,8 +188,8 @@ public class LendingJpaRepoImpl implements LendingRepository {
     }
 
     @Override
-    public Lending findById(Long id) {
-        return em.find(Lending.class, id); // Use find to retrieve the entity by ID
+    public Optional<Lending> findById(Long id) {
+        return Optional.ofNullable(em.find(Lending.class, id)); // Use find to retrieve the entity by ID
     }
 
 }

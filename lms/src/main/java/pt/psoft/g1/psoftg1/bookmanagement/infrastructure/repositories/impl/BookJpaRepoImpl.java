@@ -16,6 +16,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +139,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Book findById(Isbn isbn) {
-        return em.find(Book.class, isbn);
+    public Optional<Book> findById(Isbn isbn) {
+        return Optional.ofNullable(em.find(Book.class, isbn));
     }
 }

@@ -181,7 +181,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public ReaderDetails findById(Long aLong) {
-        return em.find(ReaderDetails.class, aLong);
+    public Optional<ReaderDetails> findById(Long aLong) {
+        return Optional.ofNullable(em.find(ReaderDetails.class, aLong));
     }
 }

@@ -111,10 +111,6 @@ public class User implements UserDetails {
 	@Getter
 	private final Set<Role> authorities = new HashSet<>();
 
-	protected User() {
-		// for ORM only
-	}
-
 	/**
 	 *
 	 * @param username
@@ -127,6 +123,10 @@ public class User implements UserDetails {
 
 	public User(final String username) {
 		this.username = username;
+	}
+
+	protected User() {
+		// for ORM only
 	}
 
 	/**

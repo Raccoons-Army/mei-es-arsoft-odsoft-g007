@@ -57,7 +57,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Author findById(Long aLong) {
-        return null;
+    public Optional<Author> findById(Long aLong) {
+        return Optional.empty();
     }
 }

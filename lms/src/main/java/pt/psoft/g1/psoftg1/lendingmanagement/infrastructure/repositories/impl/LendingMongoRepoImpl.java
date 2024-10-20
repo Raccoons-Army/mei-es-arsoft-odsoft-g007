@@ -72,7 +72,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
     }
 
     @Override
-    public Lending findById(Long aLong) {
-        return null;
+    public Optional<Lending> findById(Long aLong) {
+        return Optional.empty();
     }
 }
