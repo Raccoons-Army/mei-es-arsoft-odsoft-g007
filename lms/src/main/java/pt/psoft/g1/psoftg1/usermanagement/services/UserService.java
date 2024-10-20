@@ -98,6 +98,18 @@ public class UserService implements UserDetailsService {
 	}
 
 	@Transactional
+	public User createIam(final CreateIamUserRequest request) {
+		if (userRepo.findByUsername(request.getUsername()).isPresent()) {
+			throw new ConflictException("Username already exists!");
+		}
+
+		User user;
+		user = Reader.newReader(request.getUsername(), request.getName());
+
+		return userRepo.save(user);
+	}
+
+	@Transactional
 	public User update(final Long id, final EditUserRequest request) {
 		final User user = userRepo.getById(id);
 		userEditMapper.update(request, user);

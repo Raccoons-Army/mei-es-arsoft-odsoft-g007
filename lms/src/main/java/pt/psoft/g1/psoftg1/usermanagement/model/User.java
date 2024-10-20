@@ -99,10 +99,7 @@ public class User implements UserDetails {
 	@NotBlank
 	private String username;
 
-	@Column(nullable = false)
 	@Getter
-	@NotNull
-	@NotBlank
 	private String password;
 
 	@Getter
@@ -128,6 +125,10 @@ public class User implements UserDetails {
 		setPassword(password);
 	}
 
+	public User(final String username) {
+		this.username = username;
+	}
+
 	/**
 	 * factory method. since mapstruct does not handle protected/private setters
 	 * neither more than one public constructor, we use these factory methods for
@@ -140,6 +141,12 @@ public class User implements UserDetails {
 	 */
 	public static User newUser(final String username, final String password, final String name) {
 		final var u = new User(username, password);
+		u.setName(name);
+		return u;
+	}
+
+	public static User newUser(final String username, final String name) {
+		final var u = new User(username);
 		u.setName(name);
 		return u;
 	}

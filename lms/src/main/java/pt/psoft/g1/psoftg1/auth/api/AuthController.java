@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pt.psoft.g1.psoftg1.auth.api.service.AuthenticationService;
 
 import java.net.URI;
 

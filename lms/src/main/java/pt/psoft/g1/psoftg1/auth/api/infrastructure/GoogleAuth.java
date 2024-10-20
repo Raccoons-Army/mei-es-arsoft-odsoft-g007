@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.auth.api;
+package pt.psoft.g1.psoftg1.auth.api.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -7,17 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class GoogleAuth implements IamAuthentication {

@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.auth.api;
+package pt.psoft.g1.psoftg1.auth.api.infrastructure;
 
 import java.util.Map;
 
