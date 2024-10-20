@@ -208,7 +208,7 @@ public class GenreJpaRepoImpl implements GenreRepository {
         cq.groupBy(genreJoin);
         cq.orderBy(cb.desc(lendingCount));
 
-        Predicate readerPredicate = cb.equal(lendingRoot.get("reader").get("readerNumber"), readerNumber);
+        Predicate readerPredicate = cb.equal(lendingRoot.get("readerDetails").get("readerNumber").get("readerNumber"), readerNumber);
         cq.where(readerPredicate);
 
         TypedQuery<Tuple> query = em.createQuery(cq);

@@ -125,9 +125,10 @@ public class User implements UserDetails {
 		this.username = username;
 	}
 
-	protected User() {
+	public User() {
 		// for ORM only
 	}
+
 
 	/**
 	 * factory method. since mapstruct does not handle protected/private setters
