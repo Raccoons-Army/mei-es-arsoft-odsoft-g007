@@ -85,26 +85,26 @@ public class Bootstrapper implements CommandLineRunner {
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Filipe Portela").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"Filipe Portela",
+            final Author author = new Author(idGenerationStrategy.generateId(), "Filipe Portela",
                     " «Docente convidado na Escola de Engenharia da Universidade do Minho. Investigador integrado do Centro Algoritmi. CEO e fundador da startup tecnológica IOTech - Innovation on Technology. Coautor do livro Introdução ao Desenvolvimento Moderno para a Web. ",
                     null);
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Ricardo Queirós").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"Ricardo Queirós",
+            final Author author = new Author(idGenerationStrategy.generateId(), "Ricardo Queirós",
                     "Docente na Escola Superior de Media Artes e Design do Politécnico do Porto. Diretor da uniMAD (ESMAD) e membro efetivo do CRACS (INESC TEC). Autor de vários livros sobre tecnologias Web e programação móvel, publicados pela FCA. Coautor do livro Introdução ao Desenvolvimento Moderno para a Web.",
                     null);
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Freida Mcfadden").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"Freida Mcfadden",
+            final Author author = new Author(idGenerationStrategy.generateId(), "Freida Mcfadden",
                     "Freida McFadden é médica e especialista em lesões cerebrais. Autora de diversos thrillers psicológicos, todos eles bestsellers, já traduzidos para mais de 30 idiomas. As suas obras foram selecionadas para «O Melhor Livro do Ano» na Amazon e também para «Melhor Thriller» dos Goodreads Choice Awards.\n" +
                             "Freida vive com a sua família e o gato preto numa casa de três andares com vista para o oceano, com escadas que rangem e gemem a cada passo, e ninguém conseguiria ouvi-la se gritasse. A menos que gritasse muito alto, talvez.",
                     null);
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("J R R Tolkien").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"J R R Tolkien",
+            final Author author = new Author(idGenerationStrategy.generateId(), "J R R Tolkien",
                     "J.R.R. Tolkien nasceu a 3 de Janeiro de 1892, em Bloemfontein.\n" +
                             "Depois de ter combatido na Primeira Guerra Mundial, dedicou-se a uma ilustre carreira académica e foi reconhecido como um dos grandes filólogos do planeta.\n" +
                             "Foi a criação da Terra Média, porém, a trazer-lhe a celebridade. Autor de extraordinários clássicos da ficção, de que são exemplo O Hobbit, O Senhor dos Anéis e O Silmarillion, os seus livros foram traduzidos em mais de 60 línguas e venderam largos milhões de exemplares no mundo inteiro.\n" +
@@ -114,16 +114,34 @@ public class Bootstrapper implements CommandLineRunner {
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Gardner Dozois").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"Gardner Dozois",
+            final Author author = new Author(idGenerationStrategy.generateId(), "Gardner Dozois",
                     "Gardner Raymond Dozois (23 de julho de 1947 – 27 de maio de 2018) foi um autor de ficção científica norte-americano.\n" +
                             "Foi o fundador e editor do Melhores Do Ano de Ficção científica antologias (1984–2018) e foi editor da revista Asimov Ficção científica (1984-2004), ganhando vários prémios.",
                     null);
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Lisa Tuttle").isEmpty()) {
-            final Author author = new Author(idGenerationStrategy.generateId(),"Lisa Tuttle",
+            final Author author = new Author(idGenerationStrategy.generateId(), "Lisa Tuttle",
                     "Lisa Gracia Tuttle (nascida a 16 de setembro de 1952) é uma autora americana de ficção científica, fantasia e terror. Publicou mais de uma dúzia de romances, sete coleções de contos e vários títulos de não-ficção, incluindo um livro de referência sobre feminismo, \"Enciclopédia do Feminismo\" (1986). Também editou várias antologias e fez críticas de livros para diversas publicações. Vive no Reino Unido desde 1981.\n" +
                             "Tuttle ganhou o Prémio John W. Campbell para Melhor Novo Escritor em 1974, recebeu o Prémio Nebula de Melhor Conto em 1982 por \"The Bone Flute\", que recusou, e o Prémio BSFA de Ficção Curta em 1989 por \"In Translation\".",
+                    null);
+            authorRepository.save(author);
+        }
+        if (authorRepository.searchByNameName("Markus Zusak").isEmpty()) {
+            final Author author = new Author(idGenerationStrategy.generateId(), "Markus Zusak",
+                    "Markus Zusak é um escritor australiano, conhecido por suas obras juvenis e adultas. Seu livro mais famoso, 'A Menina que Roubava Livros', foi traduzido para mais de 40 idiomas e adaptado para o cinema.",
+                    null);
+            authorRepository.save(author);
+        }
+        if (authorRepository.searchByNameName("J K Rowling").isEmpty()) {
+            final Author author = new Author(idGenerationStrategy.generateId(), "J K Rowling",
+                    "J K Rowling é uma autora britânica mundialmente famosa pela série 'Harry Potter'. A série de livros a consagrou como uma das escritoras mais vendidas da história, com mais de 500 milhões de cópias vendidas.",
+                    null);
+            authorRepository.save(author);
+        }
+        if (authorRepository.searchByNameName("Rick Riordan").isEmpty()) {
+            final Author author = new Author(idGenerationStrategy.generateId(), "Rick Riordan",
+                    "Rick Riordan é um autor americano, conhecido por suas séries de fantasia mitológica. Ele escreveu a famosa série 'Percy Jackson e os Olimpianos', que mistura mitologia grega e aventuras contemporâneas.",
                     null);
             authorRepository.save(author);
         }
@@ -386,6 +404,56 @@ public class Bootstrapper implements CommandLineRunner {
                 bookRepository.save(book);
             }
         }
+        // 11 - A Menina que Roubava Livros
+        if (bookRepository.findByIsbn("9781101934180").isEmpty()) {
+            List<Author> authors = new ArrayList<>();
+            genre = Optional.ofNullable(genreRepository.findByString("Juvenil"))
+                    .orElseThrow(() -> new NotFoundException("Cannot find genre"));
+            author = authorRepository.searchByNameName("Markus Zusak");
+            if (genre.isPresent() && !author.isEmpty()) {
+                authors.add(author.get(0));
+                Book book = new Book("9781101934180",
+                        "A Menina que Roubava Livros",
+                        "Durante a Segunda Guerra Mundial, a jovem Liesel encontra conforto nos livros que rouba e compartilha com os outros. Em meio ao caos da guerra, sua relação com as palavras torna-se sua salvação.",
+                        genre.get(),
+                        authors, null);
+
+                bookRepository.save(book);
+            }
+        }
+
+        // 12 - Harry Potter e a Pedra Filosofal
+        if (bookRepository.findByIsbn("9788869183157").isEmpty()) {
+            List<Author> authors = new ArrayList<>();
+            author = authorRepository.searchByNameName("J K Rowling");
+            if (genre.isPresent() && !author.isEmpty()) {
+                authors.add(author.get(0));
+                Book book = new Book("9788869183157",
+                        "Harry Potter e a Pedra Filosofal",
+                        "O primeiro livro da série Harry Potter, onde o jovem Harry descobre que é um bruxo e começa sua jornada na escola de magia de Hogwarts, enfrentando desafios e fazendo amizades inesquecíveis.",
+                        genre.get(),
+                        authors, null);
+
+                bookRepository.save(book);
+            }
+        }
+
+        // 13 - Percy Jackson e o Ladrão de Raios
+        if (bookRepository.findByIsbn("9788580575392").isEmpty()) {
+            List<Author> authors = new ArrayList<>();
+            author = authorRepository.searchByNameName("Rick Riordan");
+            if (genre.isPresent() && !author.isEmpty()) {
+                authors.add(author.get(0));
+                Book book = new Book("9788580575392",
+                        "Percy Jackson e o Ladrão de Raios",
+                        "Percy Jackson descobre que é um semideus, filho de Poseidon, e parte em uma jornada épica para recuperar o raio de Zeus, que foi roubado. Ele enfrenta monstros mitológicos e descobre mais sobre seu verdadeiro destino.",
+                        genre.get(),
+                        authors, null);
+
+                bookRepository.save(book);
+            }
+        }
+
     }
 
     protected void loadForbiddenNames() {
@@ -406,15 +474,21 @@ public class Bootstrapper implements CommandLineRunner {
         final var book8 = bookRepository.findByIsbn("9789896379636");
         final var book9 = bookRepository.findByIsbn("9789896378905");
         final var book10 = bookRepository.findByIsbn("9789896375225");
+        final var book11 = bookRepository.findByIsbn("9781101934180");
+        final var book12 = bookRepository.findByIsbn("9788869183157");
+        final var book13 = bookRepository.findByIsbn("9788580575392");
         List<Book> books = new ArrayList<>();
         if (book1.isPresent() && book2.isPresent()
                 && book3.isPresent() && book4.isPresent()
                 && book5.isPresent() && book6.isPresent()
                 && book7.isPresent() && book8.isPresent()
-                && book9.isPresent() && book10.isPresent()) {
+                && book9.isPresent() && book10.isPresent()
+                && book11.isPresent() && book12.isPresent()
+                && book13.isPresent()) {
             books = List.of(new Book[]{book1.get(), book2.get(), book3.get(),
                     book4.get(), book5.get(), book6.get(), book7.get(),
-                    book8.get(), book9.get(), book10.get()});
+                    book8.get(), book9.get(), book10.get(), book11.get(),
+                    book12.get(), book13.get()});
         }
 
         final var readerDetails1 = readerRepository.findByReaderNumber("2024/1");
@@ -423,11 +497,17 @@ public class Bootstrapper implements CommandLineRunner {
         final var readerDetails4 = readerRepository.findByReaderNumber("2024/4");
         final var readerDetails5 = readerRepository.findByReaderNumber("2024/5");
         final var readerDetails6 = readerRepository.findByReaderNumber("2024/6");
+        final var readerDetails7 = readerRepository.findByReaderNumber("2024/7");
+        final var readerDetails8 = readerRepository.findByReaderNumber("2024/8");
+        final var readerDetails9 = readerRepository.findByReaderNumber("2024/9");
 
         List<ReaderDetails> readers = new ArrayList<>();
-        if (readerDetails1.isPresent() && readerDetails2.isPresent() && readerDetails3.isPresent()) {
+        if (readerDetails1.isPresent() && readerDetails2.isPresent() && readerDetails3.isPresent()
+                && readerDetails4.isPresent() && readerDetails5.isPresent() && readerDetails6.isPresent()
+                && readerDetails7.isPresent() && readerDetails8.isPresent() && readerDetails9.isPresent()) {
             readers = List.of(new ReaderDetails[]{readerDetails1.get(), readerDetails2.get(), readerDetails3.get(),
-                    readerDetails4.get(), readerDetails5.get(), readerDetails6.get()});
+                    readerDetails4.get(), readerDetails5.get(), readerDetails6.get(),
+                    readerDetails7.get(), readerDetails8.get(), readerDetails9.get()});
         }
 
         LocalDate startDate;
@@ -440,7 +520,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 1, 31 - i);
                 returnedDate = LocalDate.of(2024, 2, 15 + i);
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -450,7 +530,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 3, 25 + i);
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(1 + i), readers.get(1 + i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(1 + i), readers.get(1 + i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -459,7 +539,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 4, (1 + 2 * i));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(3 / (i + 1)), readers.get(i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(3 / (i + 1)), readers.get(i * 2), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -470,7 +550,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 1));
                 returnedDate = LocalDate.of(2024, 5, (i + 2));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(3 - i), readers.get(1 + i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(3 - i), readers.get(1 + i * 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -481,7 +561,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 2));
                 returnedDate = LocalDate.of(2024, 5, (i + 2 * 2));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(i), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -492,7 +572,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 8));
                 returnedDate = LocalDate.of(2024, 5, (2 * i + 8));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(1 + i % 4), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(1 + i % 4), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -503,7 +583,7 @@ public class Bootstrapper implements CommandLineRunner {
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 5, (i + 18));
                 returnedDate = LocalDate.of(2024, 5, (2 * i + 18));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i % 2 + 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(i % 2 + 2), 2024, seq, startDate, returnedDate, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -513,7 +593,7 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 6, (i / 3 + 1));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(i % 2 + 3), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(i % 2 + 3), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
                 lendingRepository.save(lending);
             }
         }
@@ -523,7 +603,37 @@ public class Bootstrapper implements CommandLineRunner {
             ++seq;
             if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
                 startDate = LocalDate.of(2024, 6, (2 + i / 4));
-                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(),books.get(i), readers.get(4 - i % 4), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lending = Lending.newBootstrappingLending(idGenerationStrategy.generateId(), books.get(i), readers.get(4 - i % 4), 2024, seq, startDate, null, lendingDurationInDays, fineValuePerDayInCents);
+                lendingRepository.save(lending);
+            }
+        }
+
+        // Create lendings for book11, book12, and book13
+        List<Book> newBooks = new ArrayList<>();
+        List<ReaderDetails> newReaders = new ArrayList<>();
+        if (book11.isPresent() && book12.isPresent() && book13.isPresent()) {
+            newBooks = List.of(book11.get(), book12.get(), book13.get());
+        }
+        if (readerDetails7.isPresent() && readerDetails8.isPresent() && readerDetails9.isPresent()) {
+            newReaders = List.of(readerDetails7.get(), readerDetails8.get(), readerDetails9.get());
+        }
+
+        for (i = 0; i < 3; i++) {
+            seq++;
+            if (lendingRepository.findByLendingNumber("2024/" + seq).isEmpty()) {
+                startDate = LocalDate.of(2024, 7, i + 1); // Example: start dates in July
+                returnedDate = LocalDate.of(2024, 7, i + 10); // Example: returned 10 days later
+                lending = Lending.newBootstrappingLending(
+                        idGenerationStrategy.generateId(),
+                        newBooks.get(i),
+                        newReaders.get(i),
+                        2024,
+                        seq,
+                        startDate,
+                        returnedDate,
+                        lendingDurationInDays,
+                        fineValuePerDayInCents
+                );
                 lendingRepository.save(lending);
             }
         }
