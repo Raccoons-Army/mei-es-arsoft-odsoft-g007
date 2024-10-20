@@ -15,7 +15,7 @@ public class Reader extends User {
         this.addAuthority(new Role(Role.READER));
     }
 
-    protected Reader() {
+    public Reader() {
         // for ORM only
     }
 
