@@ -196,6 +196,58 @@ public class GenreJpaRepoImpl implements GenreRepository {
     }
 
     @Override
+    public Optional<Genre> findReaderMostRequestedGenre(String readerNumber) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<Lending> lendingRoot = cq.from(Lending.class);
+        Join<Lending, Book> bookJoin = lendingRoot.join("book");
+        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+
+        Expression<Long> lendingCount = cb.count(lendingRoot);
+        cq.multiselect(genreJoin, lendingCount);
+        cq.groupBy(genreJoin);
+        cq.orderBy(cb.desc(lendingCount));
+
+        Predicate readerPredicate = cb.equal(lendingRoot.get("reader").get("readerNumber"), readerNumber);
+        cq.where(readerPredicate);
+
+        TypedQuery<Tuple> query = em.createQuery(cq);
+        query.setMaxResults(1);
+
+        List<Tuple> results = query.getResultList();
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(results.get(0).get(0, Genre.class));
+    }
+
+    @Override
+    public List<Genre> getTopYGenresByLendings(int y) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<Lending> lendingRoot = cq.from(Lending.class);
+        Join<Lending, Book> bookJoin = lendingRoot.join("book");
+        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+
+        Expression<Long> lendingCount = cb.count(lendingRoot);
+        cq.multiselect(genreJoin, lendingCount);
+        cq.groupBy(genreJoin);
+        cq.orderBy(cb.desc(lendingCount));
+
+        TypedQuery<Tuple> query = em.createQuery(cq);
+        query.setMaxResults(y);
+
+        List<Tuple> results = query.getResultList();
+        List<Genre> genres = new ArrayList<>();
+        for (Tuple result : results) {
+            genres.add(result.get(0, Genre.class));
+        }
+
+        return genres;
+    }
+
+    @Override
     public Genre save(Genre entity) {
         if (entity.getPk() == null) {
             em.persist(entity); // If it's a new entity, persist it
@@ -225,8 +277,8 @@ public class GenreJpaRepoImpl implements GenreRepository {
     }
 
     @Override
-    public Genre findById(String s) {
-        return em.find(Genre.class, s);
+    public Optional<Genre> findById(String s) {
+        return Optional.ofNullable(em.find(Genre.class, s));
     }
 
     @NotNull

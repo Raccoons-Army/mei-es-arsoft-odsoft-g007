@@ -50,6 +50,16 @@ public class GenreMongoRepoImpl implements GenreRepository {
     }
 
     @Override
+    public Optional<Genre> findReaderMostRequestedGenre(String readerNumber) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Genre> getTopYGenresByLendings(int y) {
+        return List.of();
+    }
+
+    @Override
     public Genre save(Genre entity) {
         return null;
     }
@@ -65,7 +75,7 @@ public class GenreMongoRepoImpl implements GenreRepository {
     }
 
     @Override
-    public Genre findById(String s) {
-        return null;
+    public Optional<Genre> findById(String s) {
+        return Optional.empty();
     }
 }

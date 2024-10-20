@@ -150,6 +150,10 @@ public class Bootstrapper implements CommandLineRunner {
             final Genre g5 = new Genre("Thriller");
             genreRepository.save(g5);
         }
+        if (genreRepository.findByString("Juvenil").isEmpty()) {
+            final Genre g6 = new Genre("Juvenil");
+            genreRepository.save(g6);
+        }
     }
 
     protected void createBooks() {
