@@ -1,11 +1,12 @@
 package pt.psoft.g1.psoftg1.auth.api.infrastructure;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FacebookAuth implements IamAuthentication {
 
+    private final Logger log = LoggerFactory.getLogger(FacebookAuth.class);
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${spring.security.oauth2.client.registration.facebook.client-id}")
@@ -28,10 +30,10 @@ public class FacebookAuth implements IamAuthentication {
     @Value("${spring.security.oauth2.client.registration.facebook.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.registration.google.scope[0]}")
+    @Value("${spring.security.oauth2.client.registration.facebook.scope[0]}")
     private String emailScope;
 
-    @Value("${spring.security.oauth2.client.registration.google.scope[1]}")
+    @Value("${spring.security.oauth2.client.registration.facebook.scope[1]}")
     private String profileScope;
 
     @Value("${auth.authorization-url}")
@@ -74,34 +76,63 @@ public class FacebookAuth implements IamAuthentication {
 
     private Map<String, String> getTokenFromAuthorizationCode(String authorizationCode) {
         // Prepare the request body for exchanging the authorization code
-        Map<String, String> body = new HashMap<>();
-        body.put("client_id", clientId);
-        body.put("client_secret", clientSecret);
-        body.put("code", authorizationCode);
-        body.put("redirect_uri", redirectUri);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
+        body.add("code", authorizationCode);
+        body.add("redirect_uri", redirectUri);
+        body.add("grant_type", "authorization_code");
 
         // Prepare headers for the request
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/x-www-form-urlencoded");
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        // Send POST request to Facebook's token endpoint
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(tokenUri, HttpMethod.POST, request, Map.class);
+        // Send POST request to Google's token endpoint
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<Map> response;
 
-        // Return the token response
-        return response.getBody();
+        try {
+            response = restTemplate.exchange(tokenUri, HttpMethod.POST, request, Map.class);
+
+            // Check if the response status is OK (200)
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RuntimeException("Failed to exchange authorization code: " + response.getStatusCode());
+            }
+
+            // Return the token response
+            return response.getBody();
+
+        } catch (Exception e) {
+            log.error("Unexpected error while exchanging authorization code", e);
+            // Handle other exceptions
+            throw new RuntimeException("Unexpected error while exchanging authorization code", e);
+        }
     }
 
     private Map<String, Object> getUserInfo(String accessToken) {
         // Prepare the headers with the access token
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Accept", "application/json");  // Set the Accept header to expect JSON
 
-        // Make a GET request to Facebook's user info endpoint
+        // Make a GET request to Google's user info endpoint
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Map.class);
+        ResponseEntity<Map> response;
 
-        // Return the user info as a map
-        return response.getBody();
+        try {
+            response = restTemplate.exchange(userInfoUri, HttpMethod.GET, entity, Map.class);
+
+            // Check if the response is OK (200)
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();  // Return the user info as a map
+            } else {
+                log.error("Failed to retrieve user info");
+                throw new RuntimeException("Failed to retrieve user info: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error while exchanging authorization code", e);
+            // Handle other exceptions
+            throw new RuntimeException("Unexpected error while retrieving user info", e);
+        }
     }
 }

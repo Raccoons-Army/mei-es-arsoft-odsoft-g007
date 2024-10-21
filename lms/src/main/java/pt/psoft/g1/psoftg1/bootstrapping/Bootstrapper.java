@@ -614,8 +614,8 @@ public class Bootstrapper implements CommandLineRunner {
         if (book11.isPresent() && book12.isPresent() && book13.isPresent()) {
             newBooks = List.of(book11.get(), book12.get(), book13.get());
         }
-        if (readerDetails7.isPresent() && readerDetails8.isPresent() && readerDetails9.isPresent()) {
-            newReaders = List.of(readerDetails7.get(), readerDetails8.get(), readerDetails9.get());
+        if (readerDetails7.isPresent() && readerDetails8.isPresent() && readerDetails6.isPresent()) {
+            newReaders = List.of(readerDetails7.get(), readerDetails8.get(), readerDetails6.get());
         }
 
         for (i = 0; i < 3; i++) {
