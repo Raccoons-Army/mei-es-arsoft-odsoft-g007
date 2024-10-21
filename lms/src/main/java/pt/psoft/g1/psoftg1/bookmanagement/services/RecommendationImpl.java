@@ -43,7 +43,7 @@ public class RecommendationImpl implements RecommendationService {
 
         return switch (strategy) {
             case AGE_BASED -> getRecommendationsAgeBased(readerDetails);
-            case GENRE_BASED -> getRecommendationsGenreBased(readerDetails);
+            case GENRE_BASED -> getRecommendationsGenreBased();
         };
     }
 
@@ -56,20 +56,15 @@ public class RecommendationImpl implements RecommendationService {
     }
 
     // method that returns a list of recommended books based on the genres most requested by the reader
-    private List<Book> getRecommendationsGenreBased(ReaderDetails readerDetails) {
+    private List<Book> getRecommendationsGenreBased() {
         // return top genres by lendings
-        List<Genre> genres = genreRepository.getTopYGenresByLendings(nGenres);
+        List<Genre> genres = genreRepository.getTopYGenresMostLent(nGenres);
 
         // return x books from each genre
         List<Book> recommendedBooks = new ArrayList<>();
 
         for (Genre genre : genres) {
-            List<Book> booksInGenre = bookRepository.findByGenre(genre.getGenre());
-            // randomize the list of books
-            Collections.shuffle(booksInGenre);
-            // get the first nBooks books from the list
-            booksInGenre = booksInGenre.subList(0, Math.min(nBooks, booksInGenre.size()));
-            // add the books to the list of recommended books
+            List<Book> booksInGenre = bookRepository.findTopXBooksFromGenre(nBooks, genre.getGenre());
             recommendedBooks.addAll(booksInGenre);
         }
         // Return the list of recommended books (ensure distinct books if needed)

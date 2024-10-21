@@ -21,4 +21,5 @@ public interface BookRepository extends CRUDRepository<Book, Isbn> {
     Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable);
     List<Book> findBooksByAuthorNumber(String authorNumber);
     List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query);
+    List<Book> findTopXBooksFromGenre(int x, String genre);
 }

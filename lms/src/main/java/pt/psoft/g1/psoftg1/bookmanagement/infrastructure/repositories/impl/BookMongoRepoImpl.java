@@ -58,6 +58,11 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
+    public List<Book> findTopXBooksFromGenre(int x, String genre) {
+        return List.of();
+    }
+
+    @Override
     public Book save(Book entity) {
         return null;
     }

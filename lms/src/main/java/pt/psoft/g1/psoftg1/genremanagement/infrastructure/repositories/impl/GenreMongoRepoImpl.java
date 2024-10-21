@@ -55,7 +55,7 @@ public class GenreMongoRepoImpl implements GenreRepository {
     }
 
     @Override
-    public List<Genre> getTopYGenresByLendings(int y) {
+    public List<Genre> getTopYGenresMostLent(int y) {
         return List.of();
     }
 

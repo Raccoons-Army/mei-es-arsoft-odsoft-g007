@@ -15,6 +15,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
@@ -116,6 +117,28 @@ public class BookJpaRepoImpl implements BookRepository {
         q.setMaxResults(page.getLimit());
 
         return q.getResultList();
+    }
+
+    @Override
+    public List<Book> findTopXBooksFromGenre(int x, String genre) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Book> query = cb.createQuery(Book.class);
+        Root<Lending> lending = query.from(Lending.class);
+        Join<Lending, Book> bookJoin = lending.join("book");
+        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        query.groupBy(bookJoin.get("pk"));
+        query.where(cb.equal(genreJoin.get("genre"), genre));
+
+        // Order by the number of lendings
+        Expression<Long> lendingCount = cb.count(lending.get("pk"));
+        query.orderBy(cb.desc(lendingCount));
+
+        // Select the book
+        query.select(bookJoin);
+
+        return em.createQuery(query)
+                .setMaxResults(x)
+                .getResultList();
     }
 
     @Override

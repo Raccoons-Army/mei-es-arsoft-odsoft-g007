@@ -223,7 +223,7 @@ public class GenreJpaRepoImpl implements GenreRepository {
     }
 
     @Override
-    public List<Genre> getTopYGenresByLendings(int y) {
+    public List<Genre> getTopYGenresMostLent(int y) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<Lending> lendingRoot = cq.from(Lending.class);

@@ -23,5 +23,5 @@ public interface GenreRepository extends CRUDRepository<Genre, String> {
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
     List<Genre> findAllGenres();
     Optional<Genre> findReaderMostRequestedGenre(String readerNumber);
-    List<Genre> getTopYGenresByLendings(int y);
+    List<Genre> getTopYGenresMostLent(int y);
 }
