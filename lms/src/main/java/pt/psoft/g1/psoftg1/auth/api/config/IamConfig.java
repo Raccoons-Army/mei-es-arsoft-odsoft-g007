@@ -6,17 +6,23 @@ import org.springframework.context.annotation.Configuration;
 import pt.psoft.g1.psoftg1.auth.api.infrastructure.FacebookAuth;
 import pt.psoft.g1.psoftg1.auth.api.infrastructure.GoogleAuth;
 import pt.psoft.g1.psoftg1.auth.api.infrastructure.IamAuthentication;
+import pt.psoft.g1.psoftg1.auth.api.infrastructure.OAuthHelper;
 
 @Configuration
 public class IamConfig {
 
     @Bean
+    public OAuthHelper oAuthHelper() {
+        return new OAuthHelper();
+    }
+
+    @Bean
     @Profile("google")
-    public IamAuthentication googleAuth() {return new GoogleAuth();}
+    public IamAuthentication googleAuth(OAuthHelper oAuthHelper) {return new GoogleAuth(oAuthHelper);}
 
     @Bean
     @Profile("facebook")
-    public IamAuthentication facebookAuth() {
-        return new FacebookAuth();
+    public IamAuthentication facebookAuth(OAuthHelper oAuthHelper) {
+        return new FacebookAuth(oAuthHelper);
     }
 }
