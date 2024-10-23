@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "Photo")
-public class JpaPhotoDTO {
+public class JpaPhotoModel {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -17,10 +17,10 @@ public class JpaPhotoDTO {
     @NotNull
     private String photoFile;
 
-    public JpaPhotoDTO(long id, String photoFile) {
+    public JpaPhotoModel(long id, String photoFile) {
         this.id = id;
         this.photoFile = photoFile;
     }
 
-    public JpaPhotoDTO() {}
+    public JpaPhotoModel() {}
 }
