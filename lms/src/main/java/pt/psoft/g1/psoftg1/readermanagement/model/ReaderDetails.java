@@ -1,7 +1,5 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
-import jakarta.annotation.Nullable;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
@@ -13,50 +11,39 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import java.nio.file.InvalidPathException;
 import java.util.List;
 
-@Entity
-@Table(name = "READER_DETAILS")
 public class ReaderDetails extends EntityWithPhoto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     @Getter
     private Long pk;
 
     @Getter
     @Setter
-    @OneToOne
     private Reader reader;
 
     private ReaderNumber readerNumber;
 
-    @Embedded
     @Getter
     private BirthDate birthDate;
 
-    @Embedded
     private PhoneNumber phoneNumber;
 
     @Setter
     @Getter
-    @Basic
     private boolean gdprConsent;
 
     @Setter
-    @Basic
     @Getter
     private boolean marketingConsent;
 
     @Setter
-    @Basic
     @Getter
     private boolean thirdPartySharingConsent;
 
-    @Version
     @Getter
     private Long version;
 
     @Getter
     @Setter
-    @ManyToMany
     private List<Genre> interestList;
 
     public ReaderDetails(int readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {

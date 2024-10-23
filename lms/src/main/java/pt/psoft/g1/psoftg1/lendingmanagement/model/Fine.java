@@ -1,7 +1,5 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,24 +10,15 @@ import java.util.Objects;
  * <p>It stores its current value, and the associated {@code Lending}.
  * @author  rmfranca*/
 @Getter
-@Entity
 public class Fine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
+
     private Long pk;
 
-    @PositiveOrZero
-    @Column(updatable = false)
     private int fineValuePerDayInCents;
 
-    /**Fine value in Euro cents*/
-    @PositiveOrZero
     int centsValue;
 
     @Setter
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "lending_pk", nullable = false, unique = true)
     private Lending lending;
 
     /**

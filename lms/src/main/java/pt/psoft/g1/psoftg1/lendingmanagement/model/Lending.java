@@ -23,9 +23,7 @@ import java.util.Optional;
  * <p>It is identified in the system by an auto-generated {@code id}, and has a unique-constrained
  * natural key ({@code LendingNumber}) with its own business rules.
  * @author  rmfranca*/
-@Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames={"LENDING_NUMBER"})})
+
 public class Lending {
 
     /**
@@ -37,7 +35,6 @@ public class Lending {
      * exposed.
      * @author pgsousa
      */
-    @Id
     @Getter
     private String pk;
 
@@ -52,34 +49,24 @@ public class Lending {
     /**
      * {@code Book} associated with this {@code Lending}.
      * */
-    @NotNull
     @Getter
-    @ManyToOne(fetch=FetchType.EAGER, optional = false)
     private Book book;
 
     /**
      * {@code Reader} associated with this {@code Lending}.
      **/
-    @NotNull
     @Getter
-    @ManyToOne(fetch=FetchType.EAGER, optional = false)
     private ReaderDetails readerDetails;
 
     /**
      * Date of this {@code Lending}'s creation.
      * */
-    @NotNull
-    @Column(nullable = false, updatable = false)
-    @Temporal(TemporalType.DATE)
     @Getter
     private LocalDate startDate;
 
     /**
      * Date this {@code Lending} is to be returned.
      * */
-    @NotNull
-    @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
     @Getter
     private LocalDate limitDate;
 
@@ -88,7 +75,6 @@ public class Lending {
      * as the lending can never begin with the book already returned. The {@code null} value is used to
      * check if a book has been returned.
      * */
-    @Temporal(TemporalType.DATE)
     @Getter
     private LocalDate returnedDate;
 
@@ -96,7 +82,6 @@ public class Lending {
     /**
      * Version of the object, to handle concurrency of accesses.
      * */
-    @Version
     @Getter
     private long version;
 
@@ -104,14 +89,10 @@ public class Lending {
      * Optional commentary written by a reader when the book is returned.
      * This field is initialized as null as the lending can never begin with the book already returned
      * */
-    @Size(min = 0, max = 1024)
-    @Column(length = 1024)
     private String commentary = null;
 
-    @Transient
     private Integer daysUntilReturn;
 
-    @Transient
     private Integer daysOverdue;
 
     @Getter
@@ -122,7 +103,7 @@ public class Lending {
      * Constructs a new {@code Lending} object to be persisted in the database.
      * <p>
      * Sets {@code startDate} as the current date, and {@code limitDate} as the current date plus the
-     * business specified number of days a reader can take to return the book ({@link Lending#MAX_DAYS_PER_LENDING}).
+     * business specified number of days a reader can take to return the book.
      *
      * @param       book {@code Book} object, which should be retrieved from the database.
      * @param       readerDetails {@code Reader} object, which should be retrieved from the database.

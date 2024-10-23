@@ -178,7 +178,7 @@
 					</includes>
 				</configuration>
 			</plugin>
-			
+
 			<!-- Failsafe Plugin for Integration Tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

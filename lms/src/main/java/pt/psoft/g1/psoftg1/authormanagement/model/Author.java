@@ -8,21 +8,15 @@ import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 
-@Entity
 public class Author extends EntityWithPhoto {
 
-    @Id
     @Getter
-    @Column(name = "AUTHOR_NUMBER")
     private String authorNumber;
 
-    @Version
     private long version;
 
-    @Embedded
     private Name name;
 
-    @Embedded
     private Bio bio;
 
     public void setName(String name) {
