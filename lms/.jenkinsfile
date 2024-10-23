@@ -1,9 +1,13 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()    // Trigger pipeline on GitHub push events
+    }
+
     tools {
-        maven 'Maven 3.8.1'  // Ensure Maven is installed
-        jdk 'JDK 11'         // Use the appropriate JDK version
+        maven 'Maven 3.9.9'  
+        jdk 'JDK 17'         
     }
 
     environment {

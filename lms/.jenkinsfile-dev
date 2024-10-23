@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.9.9'  
+        jdk 'JDK 17'         
+    }
+
+    environment {
+        REPO_DIR = 'mei-es-arsoft-odsoft-g007' // global var
+    }
+
+    stages {
+        stage('okay i PULL up!') {
+            steps {
+                dir(REPO_DIR) { 
+                    sh 'git pull'
+                }
+            }
+        }
+
+        stage('Maven Clear Project') {
+            steps {
+                dir("${REPO_DIR}/lms") { 
+                    sh 'mvn clean'
+                }
+            }
+        }
+    }
+}
