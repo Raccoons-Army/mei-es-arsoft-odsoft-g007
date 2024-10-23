@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.BookId;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
@@ -162,7 +163,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findById(Isbn isbn) {
-        return Optional.ofNullable(em.find(Book.class, isbn));
+    public Optional<Book> findById(BookId bookId) {
+        return Optional.ofNullable(em.find(Book.class, bookId));
     }
 }

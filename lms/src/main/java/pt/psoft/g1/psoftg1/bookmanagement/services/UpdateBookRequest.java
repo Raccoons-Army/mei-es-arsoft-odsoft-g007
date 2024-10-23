@@ -34,11 +34,14 @@ public class UpdateBookRequest {
     @Setter
     private long genreId;
 
+    @Setter
+    private Genre genreObj;
+
     private String genre;
 
     private List<String> authors;
 
-    private List<Long> authorObjList;
+    private List<Author> authorObjList;
 
     public UpdateBookRequest(String isbn, String title, String genre, @NonNull List<String> authors, String description) {
         this.isbn = isbn;

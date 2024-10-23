@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public class BookMapper {
 
-    
+    /*
     public static Book fromJpaToDomain(JpaBookModel jpaBookModel) {
         if (jpaBookModel == null) {
             return null;
@@ -71,4 +71,6 @@ public class BookMapper {
                 .map(authorExtractor)
                 .toList();
     }
+
+     */
 }

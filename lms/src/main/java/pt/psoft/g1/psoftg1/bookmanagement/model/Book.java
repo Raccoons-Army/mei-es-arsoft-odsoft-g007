@@ -1,6 +1,5 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
-
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;

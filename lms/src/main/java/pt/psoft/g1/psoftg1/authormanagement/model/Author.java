@@ -1,6 +1,5 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;

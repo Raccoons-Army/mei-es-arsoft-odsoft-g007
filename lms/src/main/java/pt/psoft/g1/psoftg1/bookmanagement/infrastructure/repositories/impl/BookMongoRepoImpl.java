@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.BookId;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
@@ -133,7 +134,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findById(Isbn isbn) {
-        return Optional.ofNullable(mt.findById(isbn, Book.class));
+    public Optional<Book> findById(BookId bookId) {
+        return Optional.ofNullable(mt.findById(bookId, Book.class));
     }
 }
