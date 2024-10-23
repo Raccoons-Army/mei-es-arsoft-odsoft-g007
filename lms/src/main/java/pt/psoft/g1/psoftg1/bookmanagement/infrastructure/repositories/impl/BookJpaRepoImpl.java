@@ -3,36 +3,34 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
-import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.model.BookId;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Isbn;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class BookJpaRepoImpl implements BookRepository {
 
     private final EntityManager em;
 
-    public BookJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
-
     @Override
     public List<Book> findByGenre(String genre) {
-        String query = "SELECT b FROM Book b WHERE b.genre = :genre";
+        String query = "SELECT b FROM Book b WHERE b.genre.genre = :genre";
         return em.createQuery(query, Book.class)
                 .setParameter("genre", genre)
                 .getResultList();
@@ -57,11 +55,11 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         try {
-            String query = "SELECT b FROM JpaBookModel b WHERE b.isbn = :isbn";
-            JpaBookModel jpaBook = em.createQuery(query, JpaBookModel.class)
+            String query = "SELECT b FROM Book b WHERE b.isbn.isbn = :isbn";
+            Book book = em.createQuery(query, Book.class)
                     .setParameter("isbn", isbn)
                     .getSingleResult();
-            return Optional.of(BookMapper.fromJpaToDomain( jpaBook));
+            return Optional.of(book);
         } catch (jakarta.persistence.NoResultException e) {
             return Optional.empty();
         }
@@ -80,7 +78,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(Long authorNumber) {
+    public List<Book> findBooksByAuthorNumber(String authorNumber) {
         String query = "SELECT b FROM Book b JOIN b.authors a WHERE a.authorNumber = :authorNumber";
         return em.createQuery(query, Book.class)
                 .setParameter("authorNumber", authorNumber)
@@ -122,13 +120,33 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
+    public List<Book> findTopXBooksFromGenre(int x, String genre) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Book> query = cb.createQuery(Book.class);
+        Root<Lending> lending = query.from(Lending.class);
+        Join<Lending, Book> bookJoin = lending.join("book");
+        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        query.groupBy(bookJoin.get("pk"));
+        query.where(cb.equal(genreJoin.get("genre"), genre));
+
+        // Order by the number of lendings
+        Expression<Long> lendingCount = cb.count(lending.get("pk"));
+        query.orderBy(cb.desc(lendingCount));
+
+        // Select the book
+        query.select(bookJoin);
+
+        return em.createQuery(query)
+                .setMaxResults(x)
+                .getResultList();
+    }
+
+    @Override
     public Book save(Book entity) {
-        if (entity.getId() == null || entity.getId().toString() == "") {
+        if (entity.getPk() == 0) {
             em.persist(entity);
             return entity;
         } else {
-            // check version
-            JpaBookModel book = em.find(JpaBookModel.class, entity.getId());
             return em.merge(entity);
         }
     }
@@ -144,8 +162,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findById(BookId id) {
-        JpaBookModel jpaBook = em.find(JpaBookModel.class, id);
-       return Optional.ofNullable(BookMapper.fromJpaToDomain(jpaBook));
+    public Optional<Book> findById(Isbn isbn) {
+        return Optional.ofNullable(em.find(Book.class, isbn));
     }
 }

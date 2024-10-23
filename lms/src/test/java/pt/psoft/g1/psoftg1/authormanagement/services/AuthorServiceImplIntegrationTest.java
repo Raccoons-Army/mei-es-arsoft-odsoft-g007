@@ -31,7 +31,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Author alex = new Author("Alex", "O Alex escreveu livros", null);
+        Author alex = new Author("aa1","Alex", "O Alex escreveu livros", null);
         List<Author> list = new ArrayList<>();
         list.add(alex);
 
@@ -41,7 +41,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void whenValidId_thenAuthorShouldBeFound() {
-        Long id = 1L;
+        String id = "aa1";
         Optional<Author> found = authorService.findByAuthorNumber(id);
         found.ifPresent(author -> assertThat(author.getId())
                 .isEqualTo(id));

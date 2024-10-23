@@ -41,7 +41,7 @@ package "Author Aggregate" {
     }
 }
 
-' Agregado: Book Aggregate (agrupa Book, Genre)
+' Agregado: Book Aggregate (agrupa Book)
 package "Book Aggregate" {
     class Book {
         - isbn
@@ -50,11 +50,17 @@ package "Book Aggregate" {
         - photo
     }
 
+}
+
+' Agregado: Genre Aggregate
+package "Genre Aggregate" {
+
+
     class Genre {
         - genre: string
     }
 
-    Book "1..*" -- "1" Genre
+
 }
 
 ' Agregado: Lending Aggregate (agrupa Lending, Fine)
@@ -75,6 +81,7 @@ package "Lending Aggregate" {
 }
 
 ' Relacionamentos entre agregados
+Book "1" -- "1" Genre : > has
 Librarian "1" -- "0..*" Author : registers/updates >
 Librarian "1" -- "0..*" Book : registers/updates >
 Reader "1" -up- "1" User : > is

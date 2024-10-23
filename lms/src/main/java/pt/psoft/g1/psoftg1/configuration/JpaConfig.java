@@ -2,9 +2,9 @@ package pt.psoft.g1.psoftg1.configuration;
 
 import java.util.Optional;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  */
 @Configuration
-@ConditionalOnProperty(name = "app.persistence.strategy", havingValue = "jpa")
+@Profile("jpa")
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @EnableTransactionManagement
 public class JpaConfig {

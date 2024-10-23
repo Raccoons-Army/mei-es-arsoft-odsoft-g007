@@ -1,7 +1,5 @@
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
-import java.beans.Transient;
-
 public class Password {
     private String password;
 

@@ -2,104 +2,144 @@ package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
-import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 public class AuthorJpaRepoImpl implements AuthorRepository {
 
     private final EntityManager em;
-
-    public AuthorJpaRepoImpl(EntityManager em) {
-        this.em = em;
-    }
-
-
-    @Override
-    public Optional<Author> findByAuthorNumber(Long authorNumber) {
-        return Optional.empty();
-    }
-
+    
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
-        return null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Author> query = cb.createQuery(Author.class);
+        Root<Author> root = query.from(Author.class);
+
+        query.select(root)
+                .where(cb.like(root.get("name"), name + "%"));  // Uses SQL LIKE for prefix matching
+
+        return em.createQuery(query).getResultList();
     }
 
     @Override
     public List<Author> searchByNameName(String name) {
-        return null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Author> query = cb.createQuery(Author.class);
+        Root<Author> root = query.from(Author.class);
+
+        Predicate namePredicate = cb.equal(root.get("name").get("name"), name); // Accessing the 'name' property of the embedded 'Name' object
+
+        query.select(root).where(namePredicate);
+        return em.createQuery(query).getResultList();
     }
 
     @Override
-    public Page<AuthorLendingView> findTopAuthorByLendings(Pageable pageableRules) {
-        String jpql = "SELECT new pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView(a.name.name, COUNT(l.id)) " +
-                "FROM Author a " +
-                "JOIN Lending l ON l.bookId IN (SELECT b.id FROM Book b WHERE :authorId MEMBER OF b.authorIds) " +
-                "GROUP BY a.name " +
-                "ORDER BY COUNT(l) DESC";
+    public Page<AuthorLendingView> findTopAuthorByLendings(Pageable pageable) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<AuthorLendingView> query = cb.createQuery(AuthorLendingView.class);
+        Root<Book> bookRoot = query.from(Book.class);
+        Join<Book, Author> authorJoin = bookRoot.join("authors");
+        Join<Book, Lending> lendingJoin = bookRoot.join("lendings");
 
-        // Create the query with the JPQL statement
-        TypedQuery<AuthorLendingView> query = em.createQuery(jpql, AuthorLendingView.class);
+        // Create selection for AuthorLendingView
+        query.select(cb.construct(AuthorLendingView.class, authorJoin.get("name").get("name"),
+                        cb.count(lendingJoin.get("pk"))))
+                .groupBy(authorJoin.get("name"))
+                .orderBy(cb.desc(cb.count(lendingJoin)));
 
-        // Get the total count of results (for pagination)
-        long totalResults = query.getResultList().size();
+        TypedQuery<AuthorLendingView> typedQuery = em.createQuery(query);
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
 
-        // Apply pagination rules
-        query.setFirstResult((int) pageableRules.getOffset());
-        query.setMaxResults(pageableRules.getPageSize());
+        List<AuthorLendingView> results = typedQuery.getResultList();
+        long total = results.size();
 
-        // Get the paginated list of results
-        List<AuthorLendingView> results = query.getResultList();
-
-        return new PageImpl<>(results, pageableRules, totalResults);
+        return new PageImpl<>(results, pageable, total);
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(Long authorNumber) {
-        String jpql = "SELECT DISTINCT a " +
-                "FROM Author a " +
-                "WHERE a.id IN (SELECT coAuthorId FROM Book b JOIN b.authorIds coAuthorId " +
-                "WHERE :authorNumber MEMBER OF b.authorIds AND coAuthorId <> :authorNumber)";
+    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Author> query = cb.createQuery(Author.class);
+        Root<Book> bookRoot = query.from(Book.class);
+        Join<Book, Author> coAuthorJoin = bookRoot.join("authors");
 
-        // Create the query with the JPQL statement
-        TypedQuery<Author> query = em.createQuery(jpql, Author.class);
-        query.setParameter("authorNumber", authorNumber);
+        Subquery<Book> subquery = query.subquery(Book.class);
+        Root<Book> subqueryRoot = subquery.from(Book.class);
+        Join<Book, Author> authorJoin = subqueryRoot.join("authors");
 
-        // Execute and return the results
-        return query.getResultList();
+        // Subquery to get books for the specific author
+        subquery.select(subqueryRoot)
+                .where(cb.equal(authorJoin.get("authorNumber"), authorNumber));
+
+        query.select(coAuthorJoin)
+                .where(cb.and(
+                        cb.in(bookRoot).value(subquery),  // Books from the main query that are in the subquery
+                        cb.notEqual(coAuthorJoin.get("authorNumber"), authorNumber) // Co-authors must not have the same authorNumber
+                ));
+
+        return em.createQuery(query).getResultList();
+    }
+
+    @Override
+    public Optional<Author> findByAuthorNumber(String authorNumber) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Author> query = cb.createQuery(Author.class);
+        Root<Author> root = query.from(Author.class);
+
+        query.select(root)
+                .where(cb.equal(root.get("authorNumber"), authorNumber));
+
+        return em.createQuery(query)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
     public Author save(Author entity) {
-        if (entity.getAuthorNumber() == 0) {
+        if (entity.getId() != null) {
+            // Update existing entity
+            return em.merge(entity);
+        } else {
+            // Save new entity
             em.persist(entity);
             return entity;
-        } else {
-            // check version
-            JpaAuthorModel author = em.find(JpaAuthorModel.class, entity.getAuthorNumber());
-            return em.merge(entity);
         }
     }
 
     @Override
     public void delete(Author entity) {
-        em.remove(entity);
+        if (em.contains(entity)) {
+            em.remove(entity);  // If managed, remove directly
+        } else {
+            Author managedAuthor = em.merge(entity);  // If detached, merge to manage
+            em.remove(managedAuthor);  // Then remove
+        }
     }
 
     @Override
     public List<Author> findAll() {
-        return em.createQuery("SELECT b FROM Author b", Author.class).getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Author> query = cb.createQuery(Author.class);
+        query.from(Author.class);  // Create query for Author class
+
+        return em.createQuery(query).getResultList();  // Execute and return result
     }
 
     @Override
     public Optional<Author> findById(Long aLong) {
-        return Optional.ofNullable(em.find(Author.class, aLong));
+        return Optional.ofNullable(em.find(Author.class, aLong));  // Use find method to get Author by ID
     }
 }

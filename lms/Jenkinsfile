@@ -1,0 +1,161 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.8.1'  // Ensure Maven is installed
+        jdk 'JDK 11'         // Use the appropriate JDK version
+    }
+
+    environment {
+        SONARQUBE_URL = 'http://sonarqube-server-url'  // SonarQube URL
+        SONARQUBE_TOKEN = credentials('sonar-token')   // Store SonarQube token in Jenkins credentials
+        DEPLOY_SERVER_URL = 'https://vs-ctl.dei.isep.ipp.pt'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    echo 'Compiling and packaging project...'
+                    sh 'mvn clean compile package'
+                }
+            }
+        }
+
+        stage('Static Code Analysis') {
+            steps {
+                script {
+                    echo 'Running static code analysis with SonarQube...'
+                    sh "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            parallel {
+                stage('Run Unit Tests') {
+                    steps {
+                        script {
+                            echo 'Running unit tests...'
+                            sh 'mvn test'
+                        }
+                    }
+                }
+                stage('Test Coverage') {
+                    steps {
+                        script {
+                            echo 'Generating test coverage report...'
+                            sh 'mvn jacoco:report'
+                        }
+                    }
+                }
+                stage('Mutation Tests') {
+                    steps {
+                        script {
+                            echo 'Running mutation tests...'
+                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                    publishHTML([reportDir: 'target/site/jacoco', reportFiles: 'index.html', reportName: 'Code Coverage Report'])
+                    publishHTML([reportDir: 'target/pit-reports', reportFiles: 'index.html', reportName: 'Mutation Test Report'])
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            parallel {
+                stage('Service Integration Tests') {
+                    steps {
+                        script {
+                            echo 'Running service-level integration tests...'
+                            sh 'mvn failsafe:integration-test'
+                        }
+                    }
+                }
+                stage('Database Integration Tests') {
+                    steps {
+                        script {
+                            echo 'Running database tests...'
+                            // Assumes a profile for DB tests is set up
+                            sh 'mvn failsafe:integration-test -Pdb-tests'
+                        }
+                    }
+                }
+            }
+            post {
+                always {
+                    junit '**/target/failsafe-reports/*.xml'
+                    echo 'Integration test results published'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            parallel {
+                stage('Deploy to Local') {
+                    steps {
+                        script {
+                            echo 'Deploying to local server...'
+                            // Local deployment command (can be docker run or local service start)
+                            sh './deploy-local.sh'
+                        }
+                    }
+                }
+                stage('Deploy to Remote Server') {
+                    steps {
+                        script {
+                            echo "Deploying to remote server: ${DEPLOY_SERVER_URL}..."
+                            // Deploy to remote server command, e.g., SCP, SSH script, etc.
+                            sh 'scp target/app.war user@remote-server:/path/to/deploy'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Functional and Acceptance Tests') {
+            parallel {
+                stage('Unit Opaque-box Tests') {
+                    steps {
+                        echo 'Running unit opaque-box tests...'
+                        sh 'mvn test -Popaque-box-tests'
+                    }
+                }
+                stage('Unit Transparent-box Tests') {
+                    steps {
+                        echo 'Running unit transparent-box tests...'
+                        sh 'mvn test -Ptransparent-box-tests'
+                    }
+                }
+                stage('Mutation Tests for Domain Classes') {
+                    steps {
+                        echo 'Running mutation tests for domain classes...'
+                        sh 'mvn org.pitest:pitest-maven:mutationCoverage -Pdomain-tests'
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running full integration tests (controller to gateway)...'
+                        sh 'mvn failsafe:integration-test -Pfull-integration'
+                    }
+                }
+            }
+            post {
+                always {
+                    echo 'Publishing functional and acceptance test results...'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

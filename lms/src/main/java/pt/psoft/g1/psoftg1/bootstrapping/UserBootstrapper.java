@@ -38,7 +38,7 @@ public class UserBootstrapper implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(final String... args)  {
+    public void run(final String... args) {
         createReaders();
         createLibrarian();
         executeQueries();
@@ -51,20 +51,20 @@ public class UserBootstrapper implements CommandLineRunner {
             userRepository.save(manuel);
 
             //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String dateFormat = LocalDateTime.of(2024,1,20,0,0,0,0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String dateFormat = LocalDateTime.of(2024, 1, 20, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
             String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, manuel.getUsername());
             //jdbcTemplate.update(query);
             queriesToExecute.add(query);
 
-            Optional<ReaderDetails> readerDetails1= readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
+            Optional<ReaderDetails> readerDetails1 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
             Optional<Genre> g1 = genreRepository.findByString("Fantasia");
             Optional<Genre> g2 = genreRepository.findByString("Infantil");
             List<Genre> interestList = new ArrayList<>();
-            if(g1.isPresent()) {
+            if (g1.isPresent()) {
                 interestList.add(g1.get());
             }
 
-            if(g2.isPresent()) {
+            if (g2.isPresent()) {
                 interestList.add(g2.get());
             }
 
@@ -253,9 +253,155 @@ public class UserBootstrapper implements CommandLineRunner {
                 readerRepository.save(r5);
             }
         }
+
+        // Reader9 - Maria
+        if (userRepository.findByUsername("maria@gmail.com").isEmpty()) {
+            final Reader maria = Reader.newReader("mariapg@gmail.com", "Mariazinhawww123!", "Maria Pereira Gonçalves");
+            userRepository.save(maria);
+
+            String dateFormat = LocalDateTime.of(2024, 1, 23, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, maria.getUsername());
+            queriesToExecute.add(query);
+
+            Optional<ReaderDetails> readerDetails3 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/9");
+            Optional<Genre> g1 = genreRepository.findByString("Romance");
+            Optional<Genre> g2 = genreRepository.findByString("Thriller");
+            List<Genre> interestList = new ArrayList<>();
+            if (g1.isPresent()) {
+                interestList.add(g1.get());
+            }
+
+            if (g2.isPresent()) {
+                interestList.add(g2.get());
+            }
+
+            if (readerDetails3.isEmpty()) {
+                ReaderDetails r3 = new ReaderDetails(
+                        9,
+                        maria,
+                        "1998-11-22",
+                        "919393939",
+                        true,
+                        true,
+                        true,
+                        null,
+                        interestList);
+                readerRepository.save(r3);
+            }
+        }
+
+        // Reader10 - Ana
+        if (userRepository.findByUsername("ana@gmail.com").isEmpty()) {
+            final Reader ana = Reader.newReader("ana@gmail.com", "Ana1233445643!", "Ana Costa");
+            userRepository.save(ana);
+
+            String dateFormat = LocalDateTime.of(2024, 1, 24, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ana.getUsername());
+            queriesToExecute.add(query);
+
+            Optional<ReaderDetails> readerDetails4 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/10");
+            Optional<Genre> g1 = genreRepository.findByString("Thriller");
+            Optional<Genre> g2 = genreRepository.findByString("Fantasia");
+            List<Genre> interestList = new ArrayList<>();
+            if (g1.isPresent()) {
+                interestList.add(g1.get());
+            }
+
+            if (g2.isPresent()) {
+                interestList.add(g2.get());
+            }
+
+            if (readerDetails4.isEmpty()) {
+                ReaderDetails r4 = new ReaderDetails(
+                        10,
+                        ana,
+                        "2001-04-05",
+                        "919494949",
+                        true,
+                        true,
+                        true,
+                        null,
+                        interestList);
+                readerRepository.save(r4);
+            }
+        }
+
+        // Reade11 - Francisco
+        if (userRepository.findByUsername("francisco@gmail.com").isEmpty()) {
+            final Reader francisco = Reader.newReader("francisco@gmail.com", "Franciswwco123!", "Francisco Almeida dos Santos");
+            userRepository.save(francisco);
+
+            String dateFormat = LocalDateTime.of(2024, 1, 25, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, francisco.getUsername());
+            queriesToExecute.add(query);
+
+            Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/11");
+            Optional<Genre> g1 = genreRepository.findByString("Informação");
+            Optional<Genre> g2 = genreRepository.findByString("Juvenil");
+            List<Genre> interestList = new ArrayList<>();
+            if (g1.isPresent()) {
+                interestList.add(g1.get());
+            }
+
+            if (g2.isPresent()) {
+                interestList.add(g2.get());
+            }
+
+            if (readerDetails5.isEmpty()) {
+                ReaderDetails r5 = new ReaderDetails(
+                        11,
+                        francisco,
+                        "2015-08-10",
+                        "919595959",
+                        true,
+                        true,
+                        true,
+                        null,
+                        interestList);
+                readerRepository.save(r5);
+            }
+        }
+
+        // Reader12 - Ricardo
+        if (userRepository.findByUsername("ricardo@gmail.com").isEmpty()) {
+            final Reader ricardo = Reader.newReader("ricardo@gmail.com", "Ricardodsadsa8123!", "Ricardo Reis");
+            userRepository.save(ricardo);
+
+            String dateFormat = LocalDateTime.of(2024, 1, 26, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ricardo.getUsername());
+            queriesToExecute.add(query);
+
+            Optional<ReaderDetails> readerDetails6 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/12");
+            Optional<Genre> g1 = genreRepository.findByString("Informação");
+            Optional<Genre> g2 = genreRepository.findByString("Juvenil");
+            List<Genre> interestList = new ArrayList<>();
+            if (g1.isPresent()) {
+                interestList.add(g1.get());
+            }
+
+            if (g2.isPresent()) {
+                interestList.add(g2.get());
+            }
+
+            if (readerDetails6.isEmpty()) {
+                ReaderDetails r6 = new ReaderDetails(
+                        12,
+                        ricardo,
+                        "2013-03-12",
+                        "919696969",
+                        true,
+                        true,
+                        true,
+                        null,
+                        interestList);
+                readerRepository.save(r6);
+            }
+        }
+
+
     }
 
-    private void createLibrarian(){
+    private void createLibrarian() {
         // Maria
         if (userRepository.findByUsername("maria@gmail.com").isEmpty()) {
             final User maria = Librarian.newLibrarian("maria@gmail.com", "Mariaroberta!123", "Maria Roberta");

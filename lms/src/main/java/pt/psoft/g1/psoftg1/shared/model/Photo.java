@@ -7,11 +7,10 @@ import java.nio.file.Path;
 
 public class Photo {
 
-    @Getter
-    private long id;
+    private long pk;
 
-    @Getter
     @Setter
+    @Getter
     private String photoFile;
 
     protected Photo (){}

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.repositories.CRUDRepository;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;

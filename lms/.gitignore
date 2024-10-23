@@ -83,6 +83,10 @@ ehthumbs.db
 
 # Application.properties for Spring Boot
 application.properties
+application.yml
+# Ignore all profile-specific application.properties and application.yml files
+application-*.properties
+application-*.yml
 
 # JetBrains Rider
 .idea/

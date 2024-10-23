@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
@@ -10,20 +11,41 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 public class Author extends EntityWithPhoto {
 
     @Getter
-    private Long authorNumber;
+    private String authorNumber;
 
-    @Getter
     private long version;
 
     private Name name;
 
     private Bio bio;
 
-    public Author(String name, String bio, String photoURI) {
+    public void setName(String name) {
+        this.name = new Name(name);
+    }
+
+    public void setBio(String bio) {
+        this.bio = new Bio(bio);
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public String getId() {
+        return authorNumber;
+    }
+
+    public Author(String authorNumber, String name, String bio, String photoURI) {
+        this.authorNumber = authorNumber;
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
     }
+
+    protected Author() {
+        // got ORM only
+    }
+
 
     public void applyPatch(final long desiredVersion, final UpdateAuthorRequest request) {
         if (this.version != desiredVersion)
@@ -34,18 +56,6 @@ public class Author extends EntityWithPhoto {
             setBio(request.getBio());
         if(request.getPhotoURI() != null)
             setPhotoInternal(request.getPhotoURI());
-    }
-
-    public void setName(String name) {
-        this.name = new Name(name);
-    }
-
-    public void setBio(String bio) {
-        this.bio = new Bio(bio);
-    }
-
-    public Long getId() {
-        return authorNumber;
     }
 
     public void removePhoto(long desiredVersion) {
@@ -62,5 +72,6 @@ public class Author extends EntityWithPhoto {
     public String getBio() {
         return this.bio.toString();
     }
+
 }
 

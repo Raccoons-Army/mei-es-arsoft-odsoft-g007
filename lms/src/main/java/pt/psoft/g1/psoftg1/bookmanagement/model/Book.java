@@ -1,9 +1,12 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
+
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ import java.util.Objects;
 public class Book extends EntityWithPhoto {
 
     @Getter
-    BookId id;
+    long pk;
 
     @Getter
     private Long version;
@@ -24,10 +27,10 @@ public class Book extends EntityWithPhoto {
     Title title;
 
     @Getter
-    long genre;
+    Genre genre;
 
     @Getter
-    private List<Long> authors = new ArrayList<>();
+    private List<Author> authors = new ArrayList<>();
 
     Description description;
 
@@ -39,20 +42,19 @@ public class Book extends EntityWithPhoto {
 
     private void setDescription(String description) {this.description = new Description(description); }
 
-    private void setGenre(long genre) {this.genre = genre; }
+    private void setGenre(Genre genre) {this.genre = genre; }
 
-    private void setAuthors(List<Long> authors) {this.authors = authors; }
+    private void setAuthors(List<Author> authors) {this.authors = authors; }
 
     public String getDescription(){ return this.description.toString(); }
 
-    public Book(BookId id, String isbn, String title, String description, long genre, List<Long> authors, String photoURI) {
-        this.id = (id != null) ? id : new BookId();
+    public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
         setTitle(title);
         setIsbn(isbn);
         if(description != null)
             setDescription(description);
-//        if(genre==null) // TODO: quando definirmos os ids como value objs, este if ja será valido!
-//            throw new IllegalArgumentException("Genre cannot be null");
+        if(genre==null)
+            throw new IllegalArgumentException("Genre cannot be null");
         setGenre(genre);
         if(authors == null)
             throw new IllegalArgumentException("Author list is null");
@@ -75,14 +77,14 @@ public class Book extends EntityWithPhoto {
         setPhotoInternal(null);
     }
 
-    public void applyPatch(Long desiredVersion, UpdateBookRequest request) {
+    public void applyPatch(final Long desiredVersion, UpdateBookRequest request) {
         if (!Objects.equals(this.version, desiredVersion))
-            throw new StaleObjectStateException("Object was already modified by another user", this.id);
+            throw new StaleObjectStateException("Object was already modified by another user", this.pk);
 
         String title = request.getTitle();
         String description = request.getDescription();
-        long genre = request.getGenreId();
-        List<Long> authors = request.getAuthorObjList();
+        Genre genre = request.getGenreObj();
+        List<Author> authors = request.getAuthorObjList();
         String photoURI = request.getPhotoURI();
         if(title != null) {
             setTitle(title);
@@ -92,9 +94,9 @@ public class Book extends EntityWithPhoto {
             setDescription(description);
         }
 
-//        if(genre != null) { // TODO: quando definirmos os ids como value objs, este if ja será valido!
+        if(genre != null) {
             setGenre(genre);
-//        }
+        }
 
         if(authors != null) {
             setAuthors(authors);

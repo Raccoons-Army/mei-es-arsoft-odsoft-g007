@@ -11,10 +11,11 @@ import java.util.Optional;
 
 public interface AuthorRepository extends CRUDRepository<Author, Long> {
 
-    Optional<Author> findByAuthorNumber(Long authorNumber);
     List<Author> searchByNameNameStartsWith(String name);
     List<Author> searchByNameName(String name);
     Page<AuthorLendingView> findTopAuthorByLendings (Pageable pageableRules);
-    List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+    List<Author> findCoAuthorsByAuthorNumber(String authorNumber);
+    Optional<Author> findByAuthorNumber(String authorNumber);
+
 
 }
