@@ -62,6 +62,7 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
+
         final Author author = mapper.create(idGenerationStrategy.generateId(), resource);
         return authorRepository.save(author);
     }
@@ -92,6 +93,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
         // since we got the object from the database we can check the version in memory
         // and apply the patch
+
         author.applyPatch(desiredVersion, request);
 
         // in the meantime some other user might have changed this object on the

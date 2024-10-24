@@ -39,6 +39,7 @@ public class Author extends EntityWithPhoto {
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
+
     }
 
     protected Author() {

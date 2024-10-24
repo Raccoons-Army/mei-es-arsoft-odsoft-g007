@@ -9,9 +9,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -48,9 +50,12 @@ public class Bootstrapper implements CommandLineRunner {
     private final ForbiddenNameService forbiddenNameService;
     private final IdGenerationStrategy<String> idGenerationStrategy;
 
+    private final FactoryGenre factoryGenre;
+    private final FactoryAuthor factoryAuthor;
+
     @Override
     @Transactional
-    public void run(final String... args) {
+    public void run(final String... args) throws InstantiationException {
         createAuthors();
         createGenres();
         createBooks();
@@ -187,8 +192,9 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9789720706386",
                         "O País das Pessoas de Pernas Para o Ar ",
                         "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. ",
-                        genre.get(),
-                        authors, null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -202,8 +208,9 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9789723716160",
                         "Como se Desenha Uma Casa",
                         "Como quem, vindo de países distantes fora de / si, chega finalmente aonde sempre esteve / e encontra tudo no seu lugar, / o passado no passado, o presente no presente, / assim chega o viajante à tardia idade / em que se confundem ele e o caminho. [...]",
-                        genre.get(),
-                        authors, null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -222,9 +229,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "O C é uma linguagem de programação incontornável no estudo e aprendizagem das linguagens de programação. É um precursor das linguagens de programação estruturadas e a sua sintaxe foi reutilizada em muitas linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o C++.\n" +
                                 "\n" +
                                 "Este livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -265,9 +272,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "· Secção de boas práticas no final de cada capítulo;\n" +
                                 "· Resumo dos principais conceitos;\n" +
                                 "· Linguagem simples e acessível. ",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -283,9 +290,9 @@ public class Bootstrapper implements CommandLineRunner {
                 authors.add(author.get(0));
                 Book book = new Book("9789722328296",
                         "O Principezinho", "Depois de deixar o seu asteroide e embarcar numa viagem pelo espaço, o principezinho chega, finalmente, à Terra. No deserto, o menino de cabelos da cor do ouro conhece um aviador, a quem conta todas as aventuras que viveu e tudo o que viu ao longo da sua jornada.",
-                        genre.get(),
-                        authors,
-                        "bookPhotoTest.jpg");
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -301,9 +308,9 @@ public class Bootstrapper implements CommandLineRunner {
                 authors.add(author.get(0));
                 Book book = new Book("9789895702756",
                         "A Criada Está a Ver", "A Sra. Lowell transborda simpatia ao acenar-me através da cerca que separa as nossas casas. “Devem ser os nossos novos vizinhos!” Agarro na mão da minha filha e sorrio de volta. No entanto, assim que vê o meu marido, uma expressão estranha atravessa-lhe o rosto. MILLIE, A MEMORÁVEL PROTAGONISTA DOS BESTSELLERS A CRIADA E O SEGREDO DA CRIADA, ESTÁ DE VOLTA!Eu costumava limpar a casa de outras pessoas. Nem posso acreditar que esta casa é realmente minha...",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -324,9 +331,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Eles têm um plano: saquear o tesouro guardado por Smaug, O Magnífico, um dragão enorme e muito perigoso... Bilbo, embora relutante, junta-se a esta missão, desconhecendo que nesta viagem até à Montanha Solitária vai encontrar um anel mágico e uma estranha criatura conhecida como Gollum. Livro com nova tradução e edição.\n" +
                         "Inclui mapas e ilustrações originais do autor. Situado no mundo imaginário da Terra Média,\n" +
                         "O Hobbit, o prelúdio de O Senhor dos Anéis, vendeu milhões de exemplares em todo o mundo desde a sua publicação em 1937, impondo-se como um clássico intemporal e um dos livros mais adorados e influentes do século xx.\" ",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -347,9 +354,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Recomendamos cautela ao ler estes contos: há muitos vigaristas e canalhas à solta.\n" +
                                 "Se gostou de ler \"Histórias de Aventureiros e Patifes\", então não vai querer perder novas histórias com alguns dos maiores vigaristas e canalhas. São personagens infames que se recusam a agir preto no branco, e escolhem trilhar os seus próprios caminhos, à margem das leis dos homens. Personagens carismáticas, eloquentes, sem escrúpulos, que chegam até nós através de um formidável elenco de autores.\n" +
                                 "Com organização de George R. R. Martin, um nome que já dispensa apresentações, e Gardner Dozois, tem nas mãos uma antologia de géneros multifacetados e que reúne algumas das mentes mais perversas da literatura fantástica.",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -371,9 +378,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "\n" +
                                 "Há personagens malandras e sem escrúpulos cujo carisma e presença de espírito nos faz estimá-las mais do que devíamos. São patifes, mercenários e vigaristas com códigos de honra duvidosos mas que fazem de qualquer aventura uma delícia de ler.\n" +
                                 "George R. R. Martin é um grande admirador desse tipo de personagens – ou não fosse ele o autor de \"A Guerra dos Tronos\". Nesta monumental antologia, não só participa com um prefácio e um conto introduzindo uma das personagens mais canalhas da história de Westeros, como também a organiza com Gardner Dozois. Se é fã de literatura fantástica, vai deliciar-se!",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -397,9 +404,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "A sua ambição é tão forte que a jovem desafia a tradição para se juntar à elite. Mas cedo irá descobrir que" +
                                 " nem todos os voadores estão dispostos a aceitá-la e terá de lutar e arriscar a vida pelo seu sonho. " +
                                 "Conseguirá Maris vencer ou tornar-se-á uma testemunha do fim de Windhaven?",
-                        genre.get(),
-                        authors,
-                        null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -415,8 +422,9 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9781101934180",
                         "A Menina que Roubava Livros",
                         "Durante a Segunda Guerra Mundial, a jovem Liesel encontra conforto nos livros que rouba e compartilha com os outros. Em meio ao caos da guerra, sua relação com as palavras torna-se sua salvação.",
-                        genre.get(),
-                        authors, null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -431,8 +439,9 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9788869183157",
                         "Harry Potter e a Pedra Filosofal",
                         "O primeiro livro da série Harry Potter, onde o jovem Harry descobre que é um bruxo e começa sua jornada na escola de magia de Hogwarts, enfrentando desafios e fazendo amizades inesquecíveis.",
-                        genre.get(),
-                        authors, null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -447,8 +456,9 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9788580575392",
                         "Percy Jackson e o Ladrão de Raios",
                         "Percy Jackson descobre que é um semideus, filho de Poseidon, e parte em uma jornada épica para recuperar o raio de Zeus, que foi roubado. Ele enfrenta monstros mitológicos e descobre mais sobre seu verdadeiro destino.",
-                        genre.get(),
-                        authors, null);
+                        null, factoryGenre, factoryAuthor);
+
+                defineGenreAndAddAuthors(book, genre.get(), authors);
 
                 bookRepository.save(book);
             }
@@ -644,6 +654,18 @@ public class Bootstrapper implements CommandLineRunner {
         if(photoJoao.isEmpty()) {
             Photo photo = new Photo(Paths.get(""))
         }*/
+    }
+
+    private void defineGenreAndAddAuthors(Book book, Genre genre, List<Author> authors) {
+        try {
+            book.defineGenre(genre.getGenre());
+
+            for (Author bAuthor : authors) {
+                book.addAuthor(bAuthor.getAuthorNumber(), bAuthor.getName(), bAuthor.getBio(), bAuthor.getPhoto().getPhotoFile());
+            }
+        }catch (InstantiationException e) {
+            System.err.println("Failed to instantiate: " + e.getMessage());
+        }
     }
 }
 

@@ -3,8 +3,10 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 
@@ -33,6 +35,9 @@ public class Book extends EntityWithPhoto {
 
     Description description;
 
+    FactoryGenre _factoryGenre;
+    FactoryAuthor _factoryAuthor;
+
     private void setTitle(String title) {this.title = new Title(title);}
 
     private void setIsbn(String isbn) {
@@ -47,25 +52,29 @@ public class Book extends EntityWithPhoto {
 
     public String getDescription(){ return this.description.toString(); }
 
-    public Book(String isbn, String title, String description, Genre genre, List<Author> authors, String photoURI) {
+    public Book(String isbn, String title, String description, String photoURI, FactoryGenre factoryGenre, FactoryAuthor factoryAuthor) {
         setTitle(title);
         setIsbn(isbn);
         if(description != null)
             setDescription(description);
-        if(genre==null)
-            throw new IllegalArgumentException("Genre cannot be null");
-        setGenre(genre);
-        if(authors == null)
-            throw new IllegalArgumentException("Author list is null");
-        if(authors.isEmpty())
-            throw new IllegalArgumentException("Author list is empty");
-
-        setAuthors(authors);
         setPhotoInternal(photoURI);
+        _factoryGenre = factoryGenre;
+        _factoryAuthor = factoryAuthor;
     }
 
     protected Book() {
         // got ORM only
+    }
+
+    public Genre defineGenre(String name) throws InstantiationException {
+        this.genre = _factoryGenre.newGenre(name);
+        return  this.genre;
+    }
+
+    public Author addAuthor(String authorNumber, String name, String bio, String photoURI) throws InstantiationException {
+        Author author = _factoryAuthor.newAuthor(authorNumber, name, bio, photoURI);
+        this.authors.add(author);
+        return author;
     }
 
     public void removePhoto(long desiredVersion) {

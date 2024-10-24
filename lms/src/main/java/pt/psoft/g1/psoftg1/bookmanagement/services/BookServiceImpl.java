@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.bookmanagement.model.*;
 import lombok.RequiredArgsConstructor;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
@@ -37,6 +39,9 @@ public class BookServiceImpl implements BookService {
 	private final PhotoRepository photoRepository;
 	private final ReaderRepository readerRepository;
 
+	private final FactoryGenre factoryGenre;
+	private final FactoryAuthor factoryAuthor;
+
 	@Value("${suggestionsLimitPerGenre}")
 	private long suggestionsLimitPerGenre;
 
@@ -48,17 +53,6 @@ public class BookServiceImpl implements BookService {
 		}
 
 		List<String> authorNumbers = request.getAuthors();
-		List<Author> authors = new ArrayList<>();
-		for (String authorNumber : authorNumbers) {
-
-			Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
-			if(temp.isEmpty()) {
-				continue;
-			}
-
-			Author author = temp.get();
-			authors.add(author);
-		}
 
 		MultipartFile photo = request.getPhoto();
 		String photoURI = request.getPhotoURI();
@@ -70,7 +64,24 @@ public class BookServiceImpl implements BookService {
 		final var genre = genreRepository.findByString(request.getGenre())
 				.orElseThrow(() -> new NotFoundException("Genre not found"));
 
-		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), genre, authors, photoURI);
+		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), photoURI, factoryGenre, factoryAuthor);
+
+		try {
+			newBook.defineGenre(genre.getGenre());
+
+			for (String authorNumber : authorNumbers) {
+
+				Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
+				if(temp.isEmpty()) {
+					continue;
+				}
+
+				Author author = temp.get();
+				newBook.addAuthor(author.getAuthorNumber(), author.getName(), author.getBio(), author.getPhoto().getPhotoFile());
+			}
+		}catch (InstantiationException e) {
+			System.err.println("Failed to instantiate: " + e.getMessage());
+		}
 
         return bookRepository.save(newBook);
 	}
