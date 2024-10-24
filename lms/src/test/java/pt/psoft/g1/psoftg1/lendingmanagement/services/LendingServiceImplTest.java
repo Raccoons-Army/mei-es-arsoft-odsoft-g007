@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 
 @Transactional
@@ -54,7 +57,10 @@ class LendingServiceImplTest {
     private Genre genre;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InstantiationException {
+        FactoryGenre doubleFactoryGenre = mock(FactoryGenre.class);
+        FactoryAuthor doubleFactoryAuthor = mock(FactoryAuthor.class);
+
         author = new Author("aa1","Manuel Antonio Pina",
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
@@ -67,9 +73,13 @@ class LendingServiceImplTest {
         book = new Book("9782826012092",
                 "O Inspetor Max",
                 "conhecido pastor-alemão que trabalha para a Judiciária, vai ser fundamental para resolver um importante caso de uma rede de malfeitores que quer colocar uma bomba num megaconcerto de uma ilustre cantora",
-                genre,
-                authors,
+                null, doubleFactoryGenre, doubleFactoryAuthor);
+
+        book.defineGenre(genre.getGenre());
+        book.addAuthor("aa1", "Manuel Antonio Pina",
+                "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
+
         bookRepository.save(book);
 
         reader = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
