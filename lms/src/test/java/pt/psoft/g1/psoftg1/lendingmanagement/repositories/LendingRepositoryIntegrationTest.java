@@ -18,6 +18,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
@@ -58,6 +59,7 @@ public class LendingRepositoryIntegrationTest {
     public void setUp() throws InstantiationException {
         FactoryGenre doubleFactoryGenre = mock(FactoryGenre.class);
         FactoryAuthor doubleFactoryAuthor = mock(FactoryAuthor.class);
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
 
         author = new Author("aa1", "Manuel Antonio Pina",
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
@@ -83,14 +85,16 @@ public class LendingRepositoryIntegrationTest {
         userRepository.save(reader);
 
         readerDetails = new ReaderDetails(1,
-                reader,
                 "2000-01-01",
                 "919191919",
                 true,
                 true,
                 true,
                 null,
-                null);
+                factoryUserDouble, doubleFactoryGenre);
+
+        readerDetails.defineReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
+
         readerRepository.save(readerDetails);
 
         // Create and save the lending

@@ -1,8 +1,10 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.util.ArrayList;
@@ -14,45 +16,52 @@ import static org.mockito.Mockito.mock;
 public class ReaderTest {
     @Test
     void ensureValidReaderDetailsAreCreated() {
-        Reader mockReader = mock(Reader.class);
-        assertDoesNotThrow(() -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null, null));
-    }
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-    @Test
-    void ensureExceptionIsThrownForNullReader() {
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, null, "2010-01-01", "912345678", true, false, false,null,null));
+        assertDoesNotThrow(() -> new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null, factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
     void ensureExceptionIsThrownForNullPhoneNumber() {
-        Reader mockReader = mock(Reader.class);
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", null, true, false, false,null,null));
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, "2010-01-01", null, true, false, false,null,factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
     void ensureExceptionIsThrownForNoGdprConsent() {
-        Reader mockReader = mock(Reader.class);
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", false, false, false,null,null));
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, "2010-01-01", "912345678", false, false, false,null,factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
     void ensureGdprConsentIsTrue() {
-        Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null,null);
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+
+        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
         assertTrue(readerDetails.isGdprConsent());
     }
 
     @Test
     void ensurePhotoCanBeNull_AkaOptional() {
-        Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null,null);
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+
+        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
         assertNull(readerDetails.getPhoto());
     }
 
     @Test
     void ensureValidPhoto() {
-        Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",null);
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+
+        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
         Photo photo = readerDetails.getPhoto();
 
         //This is here to force the test to fail if the photo is null
@@ -63,25 +72,23 @@ public class ReaderTest {
     }
 
     @Test
-    void ensureInterestListCanBeNullOrEmptyList_AkaOptional() {
-        Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetailsNullInterestList = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",null);
-        assertNull(readerDetailsNullInterestList.getInterestList());
+    void ensureInterestListCanBeEmptyList_AkaOptional() {
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",new ArrayList<>());
+        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
         assertEquals(0, readerDetailsInterestListEmpty.getInterestList().size());
     }
 
     @Test
-    void ensureInterestListCanTakeAnyValidGenre() {
-        Reader mockReader = mock(Reader.class);
-        Genre g1 = new Genre("genre1");
-        Genre g2 = new Genre("genre2");
-        List<Genre> genreList = new ArrayList<>();
-        genreList.add(g1);
-        genreList.add(g2);
+    void ensureInterestListCanTakeAnyValidGenre() throws InstantiationException {
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",genreList);
+        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
+        readerDetails.addGenre("genre1");
+        readerDetails.addGenre("genre2");
+
         assertEquals(2, readerDetails.getInterestList().size());
     }
 }

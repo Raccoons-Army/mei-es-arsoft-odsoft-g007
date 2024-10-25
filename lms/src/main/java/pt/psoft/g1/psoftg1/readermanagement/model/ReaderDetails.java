@@ -11,6 +11,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderDetails extends EntityWithPhoto {
@@ -46,13 +47,13 @@ public class ReaderDetails extends EntityWithPhoto {
 
     @Getter
     @Setter
-    private List<Genre> interestList;
+    private List<Genre> interestList = new ArrayList<>();
 
     FactoryUser _factoryUser;
     FactoryGenre _factoryGenre;
 
     public ReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, FactoryUser factoryUser, FactoryGenre factoryGenre) {
-        if(reader == null || phoneNumber == null) {
+        if(phoneNumber == null) {
             throw new IllegalArgumentException("Provided argument resolves to null object");
         }
 

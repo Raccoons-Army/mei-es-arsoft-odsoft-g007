@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
@@ -33,6 +34,7 @@ class LendingTest {
     public static void setup() throws InstantiationException {
         FactoryGenre doubleFactoryGenre = mock(FactoryGenre.class);
         FactoryAuthor doubleFactoryAuthor = mock(FactoryAuthor.class);
+        FactoryUser factoryUserDouble = mock(FactoryUser.class);
 
         book = new Book("9782826012092",
                 "O Inspetor Max",
@@ -44,15 +46,17 @@ class LendingTest {
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
 
-        readerDetails = new ReaderDetails(1,
-                Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives"),
+        readerDetails = new ReaderDetails(
+                1,
                 "2000-01-01",
                 "919191919",
                 true,
                 true,
                 true,
                 null,
-                null);
+                factoryUserDouble, doubleFactoryGenre);
+
+        readerDetails.defineReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
     }
 
     @Test
