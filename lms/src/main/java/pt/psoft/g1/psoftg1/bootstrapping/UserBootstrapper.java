@@ -7,10 +7,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Librarian;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
@@ -36,15 +38,18 @@ public class UserBootstrapper implements CommandLineRunner {
     private final JdbcTemplate jdbcTemplate;
     private List<String> queriesToExecute = new ArrayList<>();
 
+    private final FactoryUser _factoryUser;
+    private final FactoryGenre _factoryGenre;
+
     @Override
     @Transactional
-    public void run(final String... args) {
+    public void run(final String... args) throws InstantiationException {
         createReaders();
         createLibrarian();
         executeQueries();
     }
 
-    private void createReaders() {
+    private void createReaders() throws InstantiationException {
         //Reader1 - Manuel
         if (userRepository.findByUsername("manuel@gmail.com").isEmpty()) {
             final Reader manuel = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
@@ -59,26 +64,29 @@ public class UserBootstrapper implements CommandLineRunner {
             Optional<ReaderDetails> readerDetails1 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
             Optional<Genre> g1 = genreRepository.findByString("Fantasia");
             Optional<Genre> g2 = genreRepository.findByString("Infantil");
-            List<Genre> interestList = new ArrayList<>();
-            if (g1.isPresent()) {
-                interestList.add(g1.get());
-            }
-
-            if (g2.isPresent()) {
-                interestList.add(g2.get());
-            }
 
             if (readerDetails1.isEmpty()) {
                 ReaderDetails r1 = new ReaderDetails(
                         1,
-                        manuel,
                         "2000-01-01",
                         "919191919",
                         true,
                         true,
                         true,
                         "readerPhotoTest.jpg",
-                        interestList);
+                        _factoryUser, _factoryGenre);
+
+                r1.defineReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
+
+                if (g1.isPresent()) {
+                    r1.addGenre(g1.get().getGenre());
+                }
+
+                if (g2.isPresent()) {
+                    r1.addGenre(g2.get().getGenre());
+                }
+
+
                 readerRepository.save(r1);
             }
         }
@@ -98,14 +106,15 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails2.isEmpty()) {
                 ReaderDetails r2 = new ReaderDetails(
                         2,
-                        joao,
                         "1995-06-02",
                         "929292929",
                         true,
                         false,
                         false,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+
+                r2.defineReader("joao@gmail.com", "Joaoratao!123", "João Ratao");
                 readerRepository.save(r2);
             }
         }
@@ -122,14 +131,15 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails3.isEmpty()) {
                 ReaderDetails r3 = new ReaderDetails(
                         3,
-                        pedro,
                         "2001-12-03",
                         "939393939",
                         true,
                         false,
                         true,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+
+                r3.defineReader("pedro@gmail.com", "Pedrodascenas!123", "Pedro Das Cenas");
                 readerRepository.save(r3);
             }
         }
@@ -146,14 +156,14 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails4.isEmpty()) {
                 ReaderDetails r4 = new ReaderDetails(
                         4,
-                        catarina,
                         "2002-03-20",
                         "912345678",
                         true,
                         false,
                         true,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+                r4.defineReader("catarina@gmail.com", "Catarinamartins!123", "Catarina Martins");
                 readerRepository.save(r4);
             }
         }
@@ -170,14 +180,14 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r5 = new ReaderDetails(
                         5,
-                        marcelo,
                         "2000-06-03",
                         "912355678",
                         true,
                         false,
                         true,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+                r5.defineReader("marcelo@gmail.com", "Marcelosousa!123", "Marcelo Rebelo de Sousa");
                 readerRepository.save(r5);
             }
         }
@@ -194,14 +204,14 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r6 = new ReaderDetails(
                         6,
-                        luis,
                         "1999-03-03",
                         "912355678",
                         true,
                         false,
                         true,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+                r6.defineReader("luis@gmail.com", "Luismontenegro!123", "Luís Montenegro");
                 readerRepository.save(r6);
             }
         }
@@ -218,14 +228,14 @@ public class UserBootstrapper implements CommandLineRunner {
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r7 = new ReaderDetails(
                         7,
-                        antonio,
                         "2001-03-03",
                         "912355778",
                         true,
                         false,
                         true,
                         null,
-                        null);
+                        _factoryUser, _factoryGenre);
+                r7.defineReader("antonio@gmail.com", "Antoniocosta!123", "António Costa");
                 readerRepository.save(r7);
             }
         }
@@ -240,17 +250,17 @@ public class UserBootstrapper implements CommandLineRunner {
             queriesToExecute.add(query);
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/8");
             if (readerDetails5.isEmpty()) {
-                ReaderDetails r5 = new ReaderDetails(
+                ReaderDetails r8 = new ReaderDetails(
                         8,
-                        andre,
                         "2001-03-03",
                         "912355888",
                         true,
                         false,
                         true,
                         null,
-                        null);
-                readerRepository.save(r5);
+                        _factoryUser, _factoryGenre);
+                r8.defineReader("andre@gmail.com", "Andreventura!123", "André Ventura");
+                readerRepository.save(r8);
             }
         }
 
@@ -266,27 +276,29 @@ public class UserBootstrapper implements CommandLineRunner {
             Optional<ReaderDetails> readerDetails3 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/9");
             Optional<Genre> g1 = genreRepository.findByString("Romance");
             Optional<Genre> g2 = genreRepository.findByString("Thriller");
-            List<Genre> interestList = new ArrayList<>();
-            if (g1.isPresent()) {
-                interestList.add(g1.get());
-            }
-
-            if (g2.isPresent()) {
-                interestList.add(g2.get());
-            }
 
             if (readerDetails3.isEmpty()) {
-                ReaderDetails r3 = new ReaderDetails(
+                ReaderDetails r9 = new ReaderDetails(
                         9,
-                        maria,
                         "1998-11-22",
                         "919393939",
                         true,
                         true,
                         true,
                         null,
-                        interestList);
-                readerRepository.save(r3);
+                        _factoryUser, _factoryGenre);
+
+                if (g1.isPresent()) {
+                    r9.addGenre(g1.get().getGenre());
+                }
+
+                if (g2.isPresent()) {
+                    r9.addGenre(g2.get().getGenre());
+                }
+
+                r9.defineReader("mariapg@gmail.com", "Mariazinhawww123!", "Maria Pereira Gonçalves");
+
+                readerRepository.save(r9);
             }
         }
 
@@ -302,27 +314,29 @@ public class UserBootstrapper implements CommandLineRunner {
             Optional<ReaderDetails> readerDetails4 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/10");
             Optional<Genre> g1 = genreRepository.findByString("Thriller");
             Optional<Genre> g2 = genreRepository.findByString("Fantasia");
-            List<Genre> interestList = new ArrayList<>();
-            if (g1.isPresent()) {
-                interestList.add(g1.get());
-            }
-
-            if (g2.isPresent()) {
-                interestList.add(g2.get());
-            }
 
             if (readerDetails4.isEmpty()) {
-                ReaderDetails r4 = new ReaderDetails(
+                ReaderDetails r10 = new ReaderDetails(
                         10,
-                        ana,
                         "2001-04-05",
                         "919494949",
                         true,
                         true,
                         true,
                         null,
-                        interestList);
-                readerRepository.save(r4);
+                        _factoryUser, _factoryGenre);
+
+                if (g1.isPresent()) {
+                    r10.addGenre(g1.get().getGenre());
+                }
+
+                if (g2.isPresent()) {
+                    r10.addGenre(g2.get().getGenre());
+                }
+
+                r10.defineReader("ana@gmail.com", "Ana1233445643!", "Ana Costa");
+
+                readerRepository.save(r10);
             }
         }
 
@@ -338,27 +352,29 @@ public class UserBootstrapper implements CommandLineRunner {
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/11");
             Optional<Genre> g1 = genreRepository.findByString("Informação");
             Optional<Genre> g2 = genreRepository.findByString("Juvenil");
-            List<Genre> interestList = new ArrayList<>();
-            if (g1.isPresent()) {
-                interestList.add(g1.get());
-            }
-
-            if (g2.isPresent()) {
-                interestList.add(g2.get());
-            }
 
             if (readerDetails5.isEmpty()) {
-                ReaderDetails r5 = new ReaderDetails(
+                ReaderDetails r11 = new ReaderDetails(
                         11,
-                        francisco,
                         "2015-08-10",
                         "919595959",
                         true,
                         true,
                         true,
                         null,
-                        interestList);
-                readerRepository.save(r5);
+                        _factoryUser, _factoryGenre);
+
+                if (g1.isPresent()) {
+                    r11.addGenre(g1.get().getGenre());
+                }
+
+                if (g2.isPresent()) {
+                    r11.addGenre(g2.get().getGenre());
+                }
+
+                r11.defineReader("francisco@gmail.com", "Franciswwco123!", "Francisco Almeida dos Santos");
+
+                readerRepository.save(r11);
             }
         }
 
@@ -374,27 +390,29 @@ public class UserBootstrapper implements CommandLineRunner {
             Optional<ReaderDetails> readerDetails6 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/12");
             Optional<Genre> g1 = genreRepository.findByString("Informação");
             Optional<Genre> g2 = genreRepository.findByString("Juvenil");
-            List<Genre> interestList = new ArrayList<>();
-            if (g1.isPresent()) {
-                interestList.add(g1.get());
-            }
-
-            if (g2.isPresent()) {
-                interestList.add(g2.get());
-            }
 
             if (readerDetails6.isEmpty()) {
-                ReaderDetails r6 = new ReaderDetails(
+                ReaderDetails r12 = new ReaderDetails(
                         12,
-                        ricardo,
                         "2013-03-12",
                         "919696969",
                         true,
                         true,
                         true,
                         null,
-                        interestList);
-                readerRepository.save(r6);
+                        _factoryUser, _factoryGenre);
+
+                if (g1.isPresent()) {
+                    r12.addGenre(g1.get().getGenre());
+                }
+
+                if (g2.isPresent()) {
+                    r12.addGenre(g2.get().getGenre());
+                }
+
+                r12.defineReader("ricardo@gmail.com", "Ricardodsadsa8123!", "Ricardo Reis");
+
+                readerRepository.save(r12);
             }
         }
 

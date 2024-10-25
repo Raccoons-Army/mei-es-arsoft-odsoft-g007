@@ -3,9 +3,11 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.nio.file.InvalidPathException;
@@ -46,7 +48,10 @@ public class ReaderDetails extends EntityWithPhoto {
     @Setter
     private List<Genre> interestList;
 
-    public ReaderDetails(int readerNumber, Reader reader, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<Genre> interestList) {
+    FactoryUser _factoryUser;
+    FactoryGenre _factoryGenre;
+
+    public ReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, FactoryUser factoryUser, FactoryGenre factoryGenre) {
         if(reader == null || phoneNumber == null) {
             throw new IllegalArgumentException("Provided argument resolves to null object");
         }
@@ -55,7 +60,6 @@ public class ReaderDetails extends EntityWithPhoto {
             throw new IllegalArgumentException("Readers must agree with the GDPR rules");
         }
 
-        setReader(reader);
         setReaderNumber(new ReaderNumber(readerNumber));
         setPhoneNumber(new PhoneNumber(phoneNumber));
         setBirthDate(new BirthDate(birthDate));
@@ -65,7 +69,25 @@ public class ReaderDetails extends EntityWithPhoto {
         setPhotoInternal(photoURI);
         setMarketingConsent(marketing);
         setThirdPartySharingConsent(thirdParty);
-        setInterestList(interestList);
+
+        _factoryUser = factoryUser;
+        _factoryGenre = factoryGenre;
+    }
+
+    public Reader defineReader(String username, String password, String name) {
+        this.reader = _factoryUser.newReader(username, password, name);
+        return this.reader;
+    }
+
+    public Reader defineReader(String username, String name) {
+        this.reader = _factoryUser.newReader(username, name);
+        return this.reader;
+    }
+
+    public Genre addGenre(String name) throws InstantiationException {
+        Genre genre = _factoryGenre.newGenre(name);
+        this.interestList.add(genre);
+        return genre;
     }
 
     private void setPhoneNumber(PhoneNumber number) {

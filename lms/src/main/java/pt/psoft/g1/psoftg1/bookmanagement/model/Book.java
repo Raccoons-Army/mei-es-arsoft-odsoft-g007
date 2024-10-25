@@ -68,7 +68,7 @@ public class Book extends EntityWithPhoto {
 
     public Genre defineGenre(String name) throws InstantiationException {
         this.genre = _factoryGenre.newGenre(name);
-        return  this.genre;
+        return this.genre;
     }
 
     public Author addAuthor(String authorNumber, String name, String bio, String photoURI) throws InstantiationException {

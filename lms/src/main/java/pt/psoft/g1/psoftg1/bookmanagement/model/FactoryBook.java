@@ -14,4 +14,8 @@ public class FactoryBook {
         _factoryGenre = factoryGenre;
         _factoryAuthor = factoryAuthor;
     }
+
+    public Book newBook(String isbn, String title, String description, String photoURI) {
+        return new Book(isbn, title, description, photoURI, _factoryGenre, _factoryAuthor);
+    }
 }
