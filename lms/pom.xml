@@ -205,11 +205,13 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.8.6.4</version>
                 <configuration>
-                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>
+                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs/reports/</spotbugsXmlOutputDirectory>
+                    <htmlOutput>true</htmlOutput>
+                    <outputDirectory>${project.build.directory}/spotbugs/html</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
-                        <!--                        <phase>verify</phase>-->
+                        <!-- <phase>verify</phase>-->
                         <goals>
                             <goal>spotbugs</goal>
                         </goals>
@@ -221,20 +223,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.24.0</version>
+                <version>3.25.0</version>
                 <configuration>
+                    <includeTests>false</includeTests>
+                    <outputDirectory>${project.build.directory}/pmd/html</outputDirectory>
+                    <targetDirectory>${project.build.directory}/pmd/reports/</targetDirectory>
                     <rulesets>
-                        <ruleset>rulesets/java/basic.xml</ruleset>
-                        <ruleset>rulesets/java/braces.xml</ruleset>
-                        <ruleset>rulesets/java/unused.xml</ruleset>
-                        <ruleset>rulesets/java/codesize.xml</ruleset>
-                        <ruleset>rulesets/java/security.xml</ruleset>
+                        <ruleset>category/java/bestpractices.xml</ruleset>
+                        <ruleset>category/java/design.xml</ruleset>
+                        <ruleset>category/java/bestpractices.xml</ruleset>
+                        <ruleset>category/java/errorprone.xml</ruleset>
+                        <ruleset>category/java/performance.xml</ruleset>
                         <!-- Add more rulesets as needed -->
                     </rulesets>
                 </configuration>
                 <executions>
                     <execution>
-<!--                        <phase>verify</phase>-->
+                        <!-- <phase>verify</phase>-->
                         <goals>
                             <goal>pmd</goal>
                         </goals>
