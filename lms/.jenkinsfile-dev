@@ -2,29 +2,92 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.9.9'  
-        jdk 'JDK 17'         
+        maven 'Maven 3.9.9'
+        jdk 'JDK 17'
     }
 
     environment {
         REPO_DIR = 'mei-es-arsoft-odsoft-g007' // global var
+        PROJECT_DIR = "${REPO_DIR}/lms"
     }
 
     stages {
         stage('okay i PULL up!') {
             steps {
-                dir(REPO_DIR) { 
+                dir(REPO_DIR) {
                     sh 'git pull'
                 }
             }
         }
 
-        stage('Maven Clear Project') {
+        stage('Build') {
             steps {
-                dir("${REPO_DIR}/lms") { 
-                    sh 'mvn clean'
+                dir(PROJECT_DIR) {
+                    // Clean and package without running tests
+                    sh 'mvn clean package -DskipTests'
                 }
             }
+        }
+
+        stage('Check if Artifact created') {
+            steps {
+                dir(PROJECT_DIR) {
+                    // Verify the artifact creation
+                    sh 'ls target/*.jar || echo "No artifact found"'
+                }
+            }
+        }
+
+        stage('Static Code Analysis') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pmd:pmd'
+                    sh 'mvn spotbugs:spotbugs'
+                }
+            }
+        }
+       
+        stage('Run Unit Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    // Run unit tests
+                    sh 'mvn test'
+                }
+            }
+        }
+
+         stage('Generate Coverage Report') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn jacoco:report'
+                }
+            }
+        }
+
+        stage('Mutation Testing') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pitest:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Run Integration Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    // Run integration tests
+                    sh 'mvn failsafe:integration-test'
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/failsafe-reports/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
         }
     }
 }
