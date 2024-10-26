@@ -283,14 +283,15 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-
+                    <targetTests>
+                        <param>**/*Test</param> <!-- Only include unit tests -->
+                    </targetTests>
                     <outputFormats>
                         <outputFormat>XML</outputFormat>
                         <outputFormat>HTML</outputFormat>
                     </outputFormats>
                     <!--<verbose>true</verbose>-->
                 </configuration>
-
             </plugin>
 
         </plugins>
