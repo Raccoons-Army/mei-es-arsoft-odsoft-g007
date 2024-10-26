@@ -33,7 +33,7 @@ import static org.mockito.Mockito.mock;
 
 @Transactional
 @SpringBootTest
-public class LendingRepositoryIntegrationTest {
+public class LendingRepositoryIT {
 
     @Autowired
     private LendingRepository lendingRepository;

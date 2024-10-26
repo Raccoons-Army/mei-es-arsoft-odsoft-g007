@@ -34,7 +34,7 @@ import static org.mockito.Mockito.mock;
 
 @Transactional
 @SpringBootTest
-class LendingServiceImplTest {
+class LendingServiceImplIT {
     @Autowired
     private LendingService lendingService;
     @Autowired
