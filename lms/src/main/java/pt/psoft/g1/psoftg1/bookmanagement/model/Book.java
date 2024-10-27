@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
@@ -16,15 +17,16 @@ import java.util.Objects;
 
 public class Book extends EntityWithPhoto {
 
+    @Setter
     @Getter
     long pk;
 
+    @Setter
     @Getter
     private Long version;
 
     Isbn isbn;
 
-    @Getter
     Title title;
 
     @Getter
@@ -46,7 +48,7 @@ public class Book extends EntityWithPhoto {
 
     private void setDescription(String description) {this.description = new Description(description); }
 
-    private void setGenre(Genre genre) {this.genre = genre; }
+    public void setGenre(Genre genre) {this.genre = genre; }
 
     private void setAuthors(List<Author> authors) {this.authors = authors; }
 
@@ -66,9 +68,8 @@ public class Book extends EntityWithPhoto {
         // got ORM only
     }
 
-    public Genre defineGenre(String name) throws InstantiationException {
+    public void defineGenre(String name) throws InstantiationException {
         this.genre = _factoryGenre.newGenre(name);
-        return this.genre;
     }
 
     public Author addAuthor(String authorNumber, String name, String bio, String photoURI) throws InstantiationException {
@@ -119,4 +120,7 @@ public class Book extends EntityWithPhoto {
         return this.isbn.toString();
     }
 
+    public String getTitle(){
+        return this.title.title;
+    }
 }
