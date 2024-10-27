@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.FactoryBook;
@@ -29,32 +30,38 @@ import java.util.Optional;
 public class Lending {
 
     @Getter
+    @Setter
     private String pk;
 
+    @Setter
     private LendingNumber lendingNumber;
 
     /**
      * {@code Book} associated with this {@code Lending}.
      * */
     @Getter
+    @Setter
     private Book book;
 
     /**
      * {@code Reader} associated with this {@code Lending}.
      **/
     @Getter
+    @Setter
     private ReaderDetails readerDetails;
 
     /**
      * Date of this {@code Lending}'s creation.
      * */
     @Getter
+    @Setter
     private LocalDate startDate;
 
     /**
      * Date this {@code Lending} is to be returned.
      * */
     @Getter
+    @Setter
     private LocalDate limitDate;
 
     /**
@@ -63,6 +70,7 @@ public class Lending {
      * check if a book has been returned.
      * */
     @Getter
+    @Setter
     private LocalDate returnedDate;
 
     // optimistic-lock
@@ -70,36 +78,31 @@ public class Lending {
      * Version of the object, to handle concurrency of accesses.
      * */
     @Getter
+    @Setter
     private long version;
 
     /**
      * Optional commentary written by a reader when the book is returned.
      * This field is initialized as null as the lending can never begin with the book already returned
      * */
+    @Getter
+    @Setter
     private String commentary = null;
 
+    @Setter
     private Integer daysUntilReturn;
 
+    @Setter
     private Integer daysOverdue;
 
     @Getter
+    @Setter
     private int fineValuePerDayInCents;
 
     private FactoryBook _factoryBook;
     private FactoryReaderDetails _factoryReaderDetails;
 
 
-    /**
-     * Constructs a new {@code Lending} object to be persisted in the database.
-     * <p>
-     * Sets {@code startDate} as the current date, and {@code limitDate} as the current date plus the
-     * business specified number of days a reader can take to return the book.
-     *
-     * @param       book {@code Book} object, which should be retrieved from the database.
-     * @param       readerDetails {@code Reader} object, which should be retrieved from the database.
-     * @param       seq sequential number, which should be obtained from the year's count on the database.
-     * @throws      NullPointerException if any of the arguments is {@code null}
-     * */
     public Lending(String id, Book book, ReaderDetails readerDetails, int seq, int lendingDuration, int fineValuePerDayInCents){
         try {
             this.book = Objects.requireNonNull(book);
