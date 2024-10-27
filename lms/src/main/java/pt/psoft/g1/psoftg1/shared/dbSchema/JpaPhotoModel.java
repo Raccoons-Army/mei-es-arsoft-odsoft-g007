@@ -5,22 +5,23 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
+import java.nio.file.Path;
+
 @Entity
-@Table(name = "Photo")
 public class JpaPhotoModel {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private long id;
+    private long pk;
 
+    @Getter
+    @Setter
     @NotNull
     private String photoFile;
 
-    public JpaPhotoModel(long id, String photoFile) {
-        this.id = id;
-        this.photoFile = photoFile;
+    public JpaPhotoModel(Path photoPath) {
+        setPhotoFile(photoPath.toString());
     }
 
-    public JpaPhotoModel() {}
+    protected JpaPhotoModel() {}
 }
