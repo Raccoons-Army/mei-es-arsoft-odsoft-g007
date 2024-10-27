@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.FactoryBook;
+import pt.psoft.g1.psoftg1.readermanagement.model.FactoryReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.time.LocalDate;
@@ -83,6 +85,9 @@ public class Lending {
     @Getter
     private int fineValuePerDayInCents;
 
+    private FactoryBook _factoryBook;
+    private FactoryReaderDetails _factoryReaderDetails;
+
 
     /**
      * Constructs a new {@code Lending} object to be persisted in the database.
@@ -110,6 +115,29 @@ public class Lending {
         this.fineValuePerDayInCents = fineValuePerDayInCents;
         setDaysUntilReturn();
         setDaysOverdue();
+    }
+
+    public Lending(String id, int seq, int lendingDuration, int fineValuePerDayInCents, FactoryBook factoryBook, FactoryReaderDetails factoryReaderDetails){
+        this.pk = id;
+        this.lendingNumber = new LendingNumber(seq);
+        this.startDate = LocalDate.now();
+        this.limitDate = LocalDate.now().plusDays(lendingDuration);
+        this.returnedDate = null;
+        this.fineValuePerDayInCents = fineValuePerDayInCents;
+        setDaysUntilReturn();
+        setDaysOverdue();
+        _factoryBook = factoryBook;
+        _factoryReaderDetails = factoryReaderDetails;
+    }
+
+    public Book defineBook(String isbn, String title, String description, String photoURI) {
+        this.book = _factoryBook.newBook(isbn, title, description, photoURI);
+        return this.book;
+    }
+
+    public ReaderDetails defineReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI) {
+        this.readerDetails = _factoryReaderDetails.newReaderDetails(readerNumber, birthDate, phoneNumber, gdpr, marketing, thirdParty, photoURI);
+        return this.readerDetails;
     }
 
     /**

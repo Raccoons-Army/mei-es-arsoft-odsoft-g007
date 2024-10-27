@@ -2,6 +2,8 @@ package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.util.Objects;
 
@@ -21,6 +23,8 @@ public class Fine {
     @Setter
     private Lending lending;
 
+    private FactoryLending _factoryLending;
+
     /**
      * Constructs a new {@code Fine} object. Sets the current value of the fine,
      * as well as the fine value per day at the time of creation.
@@ -32,6 +36,15 @@ public class Fine {
         fineValuePerDayInCents = lending.getFineValuePerDayInCents();
         centsValue = fineValuePerDayInCents * lending.getDaysDelayed();
         this.lending = Objects.requireNonNull(lending);
+    }
+
+    public Fine(FactoryLending factoryLending) {
+        this._factoryLending = factoryLending;
+    }
+
+    public Lending defineLending(String id, int seq, int lendingDuration, int fineValuePerDayInCents) {
+        this.lending = _factoryLending.newLending(id, seq, lendingDuration, fineValuePerDayInCents);
+        return this.lending;
     }
 
     /**Protected empty constructor for ORM only.*/
