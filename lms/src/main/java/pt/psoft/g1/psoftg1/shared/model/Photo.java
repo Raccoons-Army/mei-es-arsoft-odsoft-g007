@@ -5,12 +5,12 @@ import lombok.Setter;
 
 import java.nio.file.Path;
 
+@Setter
+@Getter
 public class Photo {
 
     private long pk;
 
-    @Setter
-    @Getter
     private String photoFile;
 
     protected Photo (){}
