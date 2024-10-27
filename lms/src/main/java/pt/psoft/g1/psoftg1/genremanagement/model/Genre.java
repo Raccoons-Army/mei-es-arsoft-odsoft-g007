@@ -1,10 +1,12 @@
 package pt.psoft.g1.psoftg1.genremanagement.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class Genre {
 
+    @Setter
     Long pk;
 
     String genre;

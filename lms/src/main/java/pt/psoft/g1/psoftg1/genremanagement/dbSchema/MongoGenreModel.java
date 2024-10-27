@@ -1,23 +1,22 @@
 package pt.psoft.g1.psoftg1.genremanagement.dbSchema;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
+@Setter
 @Document(collection = "genres")
 public class MongoGenreModel {
+
     @Id
-    private Long id;
+    private Long pk;
 
     String genre;
 
-    public MongoGenreModel(Long id, String genre) {
-        this.id = id;
+    public MongoGenreModel(Long pk, String genre) {
+        this.pk = pk;
         this.genre = genre;
-    }
-
-    public MongoGenreModel(Long id) {
-        this.id = id;
     }
 }
