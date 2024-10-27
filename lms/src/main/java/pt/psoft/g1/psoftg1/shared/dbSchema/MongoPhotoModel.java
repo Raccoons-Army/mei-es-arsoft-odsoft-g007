@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.nio.file.Path;
 
 @Getter
+@Setter
 @Document(collection = "photos")
 public class MongoPhotoModel {
 
@@ -16,12 +17,11 @@ public class MongoPhotoModel {
     private Long pk;
 
     @Getter
-    @Setter
     @NotNull
     private String photoFile;
 
-    public MongoPhotoModel(Path photoPath) {
-        setPhotoFile(photoPath.toString());
+    public MongoPhotoModel(String photoPath) {
+        this.photoFile = photoPath;
     }
 
     protected MongoPhotoModel() {

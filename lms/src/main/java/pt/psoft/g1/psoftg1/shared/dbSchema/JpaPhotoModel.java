@@ -7,21 +7,22 @@ import lombok.Setter;
 
 import java.nio.file.Path;
 
+@Getter
+@Setter
 @Entity
 public class JpaPhotoModel {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long pk;
 
-    @Getter
-    @Setter
     @NotNull
     private String photoFile;
 
-    public JpaPhotoModel(Path photoPath) {
-        setPhotoFile(photoPath.toString());
+    public JpaPhotoModel(String photoPath) {
+        this.photoFile = photoPath;
     }
 
-    protected JpaPhotoModel() {}
+    protected JpaPhotoModel() {
+    }
 }
