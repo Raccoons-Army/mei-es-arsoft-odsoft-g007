@@ -19,4 +19,7 @@ public class MongoGenreModel {
         this.pk = pk;
         this.genre = genre;
     }
+
+    protected MongoGenreModel() {
+    }
 }

@@ -41,4 +41,7 @@ public class MongoBookModel extends MongoEntityWithPhotoModel {
         this.description = description;
         this.setPhotoInternal(photoURI);
     }
+
+    protected MongoBookModel() {
+    }
 }

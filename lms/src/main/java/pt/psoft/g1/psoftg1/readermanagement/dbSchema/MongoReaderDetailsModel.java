@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.lendingmanagement.dbSchema;
+package pt.psoft.g1.psoftg1.readermanagement.dbSchema;
 
 import jakarta.persistence.Id;
 import lombok.Getter;
@@ -6,15 +6,14 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
-import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoEntityWithPhotoModel;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
-@Document(collection = "lendings")
-public class MongoLendingModel {
-
+@Document(collection = "READER_DETAILS")
+public class MongoReaderDetailsModel extends MongoEntityWithPhotoModel {
     @Id
     private String pk;
 
@@ -32,7 +31,7 @@ public class MongoLendingModel {
     private String commentary;
     private Long version;
 
-    public MongoLendingModel(String pk, MongoBookModel book, MongoReaderDetailsModel readerDetails,
+    public MongoReaderDetailsModel(String pk, MongoBookModel book, MongoReaderDetailsModel readerDetails,
                              String lendingNumber, LocalDate startDate, LocalDate limitDate, LocalDate returnedDate,
                              Integer fineValuePerDayInCents, String commentary) {
         this.pk = pk;
@@ -46,6 +45,6 @@ public class MongoLendingModel {
         this.commentary = commentary;
     }
 
-    protected MongoLendingModel() {
+    protected MongoReaderDetailsModel() {
     }
 }

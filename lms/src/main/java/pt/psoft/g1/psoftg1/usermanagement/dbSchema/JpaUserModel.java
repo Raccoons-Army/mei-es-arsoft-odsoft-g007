@@ -13,6 +13,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +24,9 @@ import java.util.Set;
 @Entity
 @Table(name = "T_USER")
 @EntityListeners(AuditingEntityListener.class)
-public class JpaUserModel {
+public class JpaUserModel implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     // database primary key
@@ -116,8 +119,7 @@ public class JpaUserModel {
      * @return
      */
     public static JpaUserModel newUser(final String username, final String password, final String name, final String role) {
-        final var u = new JpaUserModel(username, password);
-        u.setName(name);
+        var u = newUser(username, password, name);
         u.addAuthority(new Role(role));
         return u;
     }

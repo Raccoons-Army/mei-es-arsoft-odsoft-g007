@@ -3,7 +3,6 @@ package pt.psoft.g1.psoftg1.shared.dbSchema;
 
 import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
 
 import java.nio.file.Path;

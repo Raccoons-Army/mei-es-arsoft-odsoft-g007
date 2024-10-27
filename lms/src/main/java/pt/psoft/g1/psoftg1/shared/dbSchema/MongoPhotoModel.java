@@ -24,7 +24,7 @@ public class MongoPhotoModel {
         setPhotoFile(photoPath.toString());
     }
 
-    public MongoPhotoModel() {
+    protected MongoPhotoModel() {
     }
 
 

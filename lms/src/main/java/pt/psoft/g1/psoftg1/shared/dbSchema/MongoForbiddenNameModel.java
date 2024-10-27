@@ -18,5 +18,7 @@ public class MongoForbiddenNameModel {
         this.photoFile = photoFile;
     }
 
+    protected MongoForbiddenNameModel() {
+    }
 
 }
