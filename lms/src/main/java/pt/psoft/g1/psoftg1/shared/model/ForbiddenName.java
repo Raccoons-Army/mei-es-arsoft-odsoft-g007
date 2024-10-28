@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Setter
+@Getter
 @NoArgsConstructor
 public class ForbiddenName{
 
     private Long pk;
 
-    @Getter
-    @Setter
     private String forbiddenName;
 
-    public ForbiddenName(String name) {
-        this.forbiddenName = name;
+    public ForbiddenName(String forbiddenName) {
+        this.forbiddenName = forbiddenName;
     }
 }
