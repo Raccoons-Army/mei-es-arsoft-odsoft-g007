@@ -45,12 +45,12 @@ public class User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
-	// database primary key
-
+	@Setter
 	@Getter
-	private Long id;
+	private Long pk;
 
-	// optimistic lock concurrency control
+	@Setter
+	@Getter
 	private Long version;
 
 	// auditing info

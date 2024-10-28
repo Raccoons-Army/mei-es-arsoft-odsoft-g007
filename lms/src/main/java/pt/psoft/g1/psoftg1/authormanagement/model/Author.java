@@ -32,7 +32,7 @@ public class Author extends EntityWithPhoto {
         return version;
     }
 
-    public String getId() {
+    public String getPk() {
         return authorNumber;
     }
 

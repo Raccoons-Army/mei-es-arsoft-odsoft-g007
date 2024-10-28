@@ -43,7 +43,7 @@ public class AuthorServiceImplIT {
     public void whenValidId_thenAuthorShouldBeFound() {
         String id = "aa1";
         Optional<Author> found = authorService.findByAuthorNumber(id);
-        found.ifPresent(author -> assertThat(author.getId())
+        found.ifPresent(author -> assertThat(author.getPk())
                 .isEqualTo(id));
     }
 }

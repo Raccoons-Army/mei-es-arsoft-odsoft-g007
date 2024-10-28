@@ -59,7 +59,7 @@ class TestAuthApi {
 
         final UserView authUserView = JsonHelper.fromJson(objectMapper, createResult.getResponse().getContentAsString(),
                 UserView.class);
-        assertEquals(userView.getId(), authUserView.getId(), "User ids must match!");
+        assertEquals(userView.getPk(), authUserView.getPk(), "User ids must match!");
     }
 
     @Test
@@ -87,7 +87,7 @@ class TestAuthApi {
 
         final UserView userView = JsonHelper.fromJson(objectMapper, createResult.getResponse().getContentAsString(),
                 UserView.class);
-        assertNotNull(userView.getId(), "User id must not be null!");
+        assertNotNull(userView.getPk(), "User id must not be null!");
         assertEquals(goodRequest.getName(), userView.getFullName(), "User fullname  update isn't applied!");
     }
 

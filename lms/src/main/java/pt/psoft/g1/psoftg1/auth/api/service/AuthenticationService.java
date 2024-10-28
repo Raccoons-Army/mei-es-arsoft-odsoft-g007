@@ -69,7 +69,7 @@ public class AuthenticationService {
                 .issuer("example.io")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiry))
-                .subject(String.format("%s,%s", user.getId(), user.getUsername()))
+                .subject(String.format("%s,%s", user.getPk(), user.getUsername()))
                 .claim("roles", "USER")
                 .build();
 

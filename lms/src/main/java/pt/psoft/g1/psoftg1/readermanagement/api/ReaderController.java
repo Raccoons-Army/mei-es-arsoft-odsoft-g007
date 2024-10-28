@@ -275,7 +275,7 @@ class ReaderController {
 
         User loggedUser = userService.getAuthenticatedUser(authentication);
         ReaderDetails readerDetails = readerService
-                .update(loggedUser.getId(), readerRequest, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue), fileName);
+                .update(loggedUser.getPk(), readerRequest, concurrencyService.getVersionFromIfMatchHeader(ifMatchValue), fileName);
 
         return ResponseEntity.ok()
                 .eTag(Long.toString(readerDetails.getVersion()))

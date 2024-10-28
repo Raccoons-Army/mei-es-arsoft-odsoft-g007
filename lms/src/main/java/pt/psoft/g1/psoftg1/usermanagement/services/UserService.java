@@ -122,7 +122,7 @@ public class UserService implements UserDetailsService {
 		final User user = userRepo.getById(id);
 
 		// user.setUsername(user.getUsername().replace("@", String.format("_%s@",
-		// user.getId().toString())));
+		// user.getPk().toString())));
 		user.setEnabled(false);
 		return userRepo.save(user);
 	}

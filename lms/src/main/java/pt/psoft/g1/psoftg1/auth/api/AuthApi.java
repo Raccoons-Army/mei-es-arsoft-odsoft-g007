@@ -86,7 +86,7 @@ public class AuthApi {
 					.collect(joining(" "));
 
 			final JwtClaimsSet claims = JwtClaimsSet.builder().issuer("example.io").issuedAt(now)
-					.expiresAt(now.plusSeconds(expiry)).subject(format("%s,%s", user.getId(), user.getUsername()))
+					.expiresAt(now.plusSeconds(expiry)).subject(format("%s,%s", user.getPk(), user.getUsername()))
 					.claim("roles", scope).build();
 
 			final String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

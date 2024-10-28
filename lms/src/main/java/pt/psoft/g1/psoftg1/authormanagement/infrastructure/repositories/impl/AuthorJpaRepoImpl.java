@@ -109,7 +109,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
 
     @Override
     public Author save(Author entity) {
-        if (entity.getId() != null) {
+        if (entity.getPk() != null) {
             // Update existing entity
             return em.merge(entity);
         } else {

@@ -43,7 +43,7 @@ public class UserJpaRepoImpl implements UserRepository {
             @CacheEvict(value = "users", key = "#p0.username", condition = "#p0.username != null")
     })
     public <S extends User> S save(S entity) {
-        if (entity.getId() != null) {
+        if (entity.getPk() != null) {
             // if ID is not null, update (merge)
             return em.merge(entity);
         } else {
