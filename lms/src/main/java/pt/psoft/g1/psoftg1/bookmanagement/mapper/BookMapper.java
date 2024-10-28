@@ -18,7 +18,8 @@ public abstract class BookMapper {
     @Mapping(target = "genre", source = "genre")
     @Mapping(target = "authors", source = "authors") 
     @Mapping(target = "description", source = "description")
-    @Mapping(target = "photoURI", source = "photo") 
+    @Mapping(target = "photoURI", source = "photo")
+    @Mapping(target = "version", source = "version")
     public abstract MongoBookModel toMongoBookModel(Book book);
 
     @Mapping(target = "pk", source = "pk")
@@ -32,6 +33,7 @@ public abstract class BookMapper {
     public abstract JpaBookModel toJpaBookModel(Book book);
 
     @Mapping(target = "pk", source = "pk")
+    @Mapping(target = "version", source = "version")
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "title", source = "title")
     @Mapping(target = "genre", source = "genre")

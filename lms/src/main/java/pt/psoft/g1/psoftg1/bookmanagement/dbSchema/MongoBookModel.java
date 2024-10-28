@@ -30,6 +30,7 @@ public class MongoBookModel extends MongoEntityWithPhotoModel {
     private List<MongoAuthorModel> authors;
 
     private String description;
+    private Long version;
 
     public MongoBookModel(String pk, String isbn, String title, MongoGenreModel genre, List<MongoAuthorModel> authors,
                           String description, String photoURI) {
