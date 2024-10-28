@@ -28,7 +28,7 @@ public abstract class JpaEntityWithPhotoModel {
         if (photoURI == null) {
             this.photo = null;
         } else {
-            this.photo = new JpaPhotoModel(Path.of(photoURI));
+            this.photo = new JpaPhotoModel(photoURI);
         }
     }
 }

@@ -5,8 +5,6 @@ import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.lang.Nullable;
 
-import java.nio.file.Path;
-
 @Getter
 public abstract class MongoEntityWithPhotoModel {
 
@@ -24,7 +22,7 @@ public abstract class MongoEntityWithPhotoModel {
         if (photoURI == null) {
             this.photo = null;
         } else {
-            this.photo = new MongoPhotoModel(Path.of(photoURI));
+            this.photo = new MongoPhotoModel(photoURI);
         }
     }
 }
