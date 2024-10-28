@@ -1,8 +1,8 @@
 package pt.psoft.g1.psoftg1.auth.api;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,16 +12,12 @@ import pt.psoft.g1.psoftg1.auth.api.service.AuthenticationService;
 import java.net.URI;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/oauth2")
 public class AuthController {
 
     private final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthenticationService authenticationService;
-
-    @Autowired
-    public AuthController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
 
     @GetMapping("/login")
     public ResponseEntity<Void> redirectToProvider() {
