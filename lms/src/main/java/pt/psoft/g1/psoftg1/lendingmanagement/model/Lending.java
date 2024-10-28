@@ -89,10 +89,8 @@ public class Lending {
     @Setter
     private String commentary = null;
 
-    @Setter
     private Integer daysUntilReturn;
 
-    @Setter
     private Integer daysOverdue;
 
     @Getter
