@@ -136,7 +136,7 @@ public class Lending {
         return this.book;
     }
 
-    public ReaderDetails defineReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI) {
+    public ReaderDetails defineReaderDetails(String readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI) {
         this.readerDetails = _factoryReaderDetails.newReaderDetails(readerNumber, birthDate, phoneNumber, gdpr, marketing, thirdParty, photoURI);
         return this.readerDetails;
     }

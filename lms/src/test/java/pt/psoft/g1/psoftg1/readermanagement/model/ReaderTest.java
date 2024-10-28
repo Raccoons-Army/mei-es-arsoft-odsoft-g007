@@ -19,7 +19,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        assertDoesNotThrow(() -> new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null, factoryUserDouble, factoryGenreDouble));
+        assertDoesNotThrow(() -> new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,null, factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, "2010-01-01", null, true, false, false,null,factoryUserDouble, factoryGenreDouble));
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails("123", "2010-01-01", null, true, false, false,null,factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, "2010-01-01", "912345678", false, false, false,null,factoryUserDouble, factoryGenreDouble));
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails("123", "2010-01-01", "912345678", false, false, false,null,factoryUserDouble, factoryGenreDouble));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
+        ReaderDetails readerDetails = new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
         assertTrue(readerDetails.isGdprConsent());
     }
 
@@ -52,7 +52,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
+        ReaderDetails readerDetails = new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,null,factoryUserDouble, factoryGenreDouble);
         assertNull(readerDetails.getPhoto());
     }
 
@@ -61,7 +61,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
+        ReaderDetails readerDetails = new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
         Photo photo = readerDetails.getPhoto();
 
         //This is here to force the test to fail if the photo is null
@@ -76,7 +76,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
+        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
         assertEquals(0, readerDetailsInterestListEmpty.getInterestList().size());
     }
 
@@ -85,7 +85,7 @@ public class ReaderTest {
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
+        ReaderDetails readerDetails = new ReaderDetails("123", "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",factoryUserDouble, factoryGenreDouble);
         readerDetails.addGenre("genre1");
         readerDetails.addGenre("genre2");
 

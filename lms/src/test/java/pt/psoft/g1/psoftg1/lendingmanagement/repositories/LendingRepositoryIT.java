@@ -84,7 +84,7 @@ public class LendingRepositoryIT {
         reader = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
         userRepository.save(reader);
 
-        readerDetails = new ReaderDetails(1,
+        readerDetails = new ReaderDetails("1",
                 "2000-01-01",
                 "919191919",
                 true,

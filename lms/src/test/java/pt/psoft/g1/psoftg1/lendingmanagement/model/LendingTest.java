@@ -47,7 +47,7 @@ class LendingTest {
                 null);
 
         readerDetails = new ReaderDetails(
-                1,
+                "1",
                 "2000-01-01",
                 "919191919",
                 true,

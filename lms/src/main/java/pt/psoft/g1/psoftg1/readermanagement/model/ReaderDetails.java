@@ -54,7 +54,7 @@ public class ReaderDetails extends EntityWithPhoto {
     FactoryUser _factoryUser;
     FactoryGenre _factoryGenre;
 
-    public ReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdprConsent, boolean marketingConsent,
+    public ReaderDetails(String readerNumber, String birthDate, String phoneNumber, boolean gdprConsent, boolean marketingConsent,
                          boolean thirdPartySharingConsent, String photoURI, FactoryUser factoryUser, FactoryGenre factoryGenre) {
         if(phoneNumber == null) {
             throw new IllegalArgumentException("Provided argument resolves to null object");
@@ -78,6 +78,12 @@ public class ReaderDetails extends EntityWithPhoto {
         _factoryGenre = factoryGenre;
     }
 
+    public Reader defineReader(long pk, String username, String password, String name, long version) {
+        this.reader = _factoryUser.newReader(pk, username, password, name, version);
+        return this.reader;
+    }
+
+
     public Reader defineReader(String username, String password, String name) {
         this.reader = _factoryUser.newReader(username, password, name);
         return this.reader;
@@ -88,10 +94,9 @@ public class ReaderDetails extends EntityWithPhoto {
         return this.reader;
     }
 
-    public Genre addGenre(String name) throws InstantiationException {
+    public void addGenre(String name) throws InstantiationException {
         Genre genre = _factoryGenre.newGenre(name);
         this.interestList.add(genre);
-        return genre;
     }
 
     private void setPhoneNumber(PhoneNumber number) {
