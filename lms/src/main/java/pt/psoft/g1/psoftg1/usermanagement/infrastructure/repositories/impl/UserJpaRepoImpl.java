@@ -11,7 +11,10 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.util.StringUtils;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
+import pt.psoft.g1.psoftg1.usermanagement.mapper.UserMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
@@ -24,6 +27,7 @@ import java.util.Optional;
 public class UserJpaRepoImpl implements UserRepository {
 
     private final EntityManager em;
+    private final UserMapper userMapper;
 
 
     @Override
@@ -42,37 +46,38 @@ public class UserJpaRepoImpl implements UserRepository {
             @CacheEvict(value = "users", key = "#p0.id", condition = "#p0.id != null"),
             @CacheEvict(value = "users", key = "#p0.username", condition = "#p0.username != null")
     })
-    public <S extends User> S save(S entity) {
-        if (entity.getPk() != null) {
-            // if ID is not null, update (merge)
-            return em.merge(entity);
+    public <S extends User> S save(S user) {
+        JpaUserModel jpaUser = userMapper.toJpaUserModel(user);
+        if (user.getPk() == null) {
+            em.persist(jpaUser);
         } else {
-            // otherwise, persist new entity
-            em.persist(entity);
-            return entity;
+            em.merge(jpaUser);
         }
+        return (S) userMapper.fromJpaUserModel(jpaUser);
     }
 
     @Override
     @Cacheable(value = "users")
-    public Optional<User> findById(Long objectId) {
-        User user = em.find(User.class, objectId);
-        return Optional.ofNullable(user);
+    public Optional<User> findById(Long userId) {
+        Optional<JpaUserModel> jpaUser = Optional.ofNullable(em.find(JpaUserModel.class, userId));
+        return jpaUser.map(userMapper::fromJpaUserModel);
     }
 
     @Override
     @Cacheable(value = "users")
     public Optional<User> findByUsername(String username) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> query = cb.createQuery(User.class);
-        Root<User> root = query.from(User.class);
+        CriteriaQuery<JpaUserModel> query = cb.createQuery(JpaUserModel.class);
+        Root<JpaUserModel> root = query.from(JpaUserModel.class);
 
         query.select(root)
                 .where(cb.equal(root.get("username"), username));
 
-        return em.createQuery(query)
+        Optional<JpaUserModel> jpaUser = em.createQuery(query)
                 .getResultStream()
                 .findFirst();
+
+        return jpaUser.map(userMapper::fromJpaUserModel);
     }
 
     @Override

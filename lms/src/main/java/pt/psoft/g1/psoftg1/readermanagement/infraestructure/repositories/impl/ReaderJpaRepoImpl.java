@@ -34,14 +34,16 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     private final ReaderDetailsMapper readerDetailsMapper;
 
     @Override
-    public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {
-        return em.createQuery(
-                        "SELECT r FROM ReaderDetails r WHERE r.readerNumber.readerNumber = :readerNumber",
-                        ReaderDetails.class)
-                .setParameter("readerNumber", readerNumber)
-                .getResultList()
-                .stream()
-                .findFirst();
+    public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {// Create CriteriaBuilder
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaReaderDetailsModel> cq = cb.createQuery(JpaReaderDetailsModel.class);
+        Root<JpaReaderDetailsModel> root = cq.from(JpaReaderDetailsModel.class);
+        cq.where(cb.equal(root.get("readerNumber"), readerNumber));
+
+        // Execute query
+        Optional<JpaReaderDetailsModel> readerDetails = em.createQuery(cq).getResultList().stream().findFirst();
+
+        return readerDetails.map(readerDetailsMapper::fromJpaReaderDetailsModel);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public ReaderDetails save(ReaderDetails readerDetails) {
         JpaReaderDetailsModel jpaReaderDetails = readerDetailsMapper.toJpaReaderDetailsModel(readerDetails);
-        if (readerDetails.getPk() == 0) {
+        if (readerDetails.getPk() == null) {
             em.persist(jpaReaderDetails);
         } else {
             em.merge(jpaReaderDetails);

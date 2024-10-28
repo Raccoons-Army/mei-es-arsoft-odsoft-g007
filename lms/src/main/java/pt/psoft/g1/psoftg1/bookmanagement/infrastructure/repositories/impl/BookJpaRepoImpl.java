@@ -182,7 +182,7 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public Optional<Book> findById(Long bookId) {
-        Optional<JpaBookModel> jpaBook = Optional.ofNullable(em.find(JpaBookModel.class, bookId));  // Use find method to get Author by ID
+        Optional<JpaBookModel> jpaBook = Optional.ofNullable(em.find(JpaBookModel.class, bookId));
         return jpaBook.map(bookMapper::fromJpaBookModel);
     }
 }

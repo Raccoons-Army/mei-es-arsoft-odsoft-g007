@@ -36,12 +36,14 @@ public class GenreJpaRepoImpl implements GenreRepository {
     @Override
     public Optional<Genre> findByString(String genre) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Genre> query = cb.createQuery(Genre.class);
-        Root<Genre> root = query.from(Genre.class);
+        CriteriaQuery<JpaGenreModel> query = cb.createQuery(JpaGenreModel.class);
+        Root<JpaGenreModel> root = query.from(JpaGenreModel.class);
 
-        query.select(root).where(cb.equal(root.get("genre"), genre));  // Match the genre name
+        query.select(root).where(cb.equal(root.get("genre"), genre));
 
-        return em.createQuery(query).getResultStream().findFirst();  // Return as Optional
+        Optional<JpaGenreModel> jpaGenre = em.createQuery(query).getResultStream().findFirst();
+
+        return jpaGenre.map(genreMapper::fromJpaGenre);
     }
 
     @Override
