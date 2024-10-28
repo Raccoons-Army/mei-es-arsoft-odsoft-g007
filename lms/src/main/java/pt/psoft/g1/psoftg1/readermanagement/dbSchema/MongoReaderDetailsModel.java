@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.MongoEntityWithPhotoModel;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoReaderModel;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,31 +20,37 @@ public class MongoReaderDetailsModel extends MongoEntityWithPhotoModel {
     private String pk;
 
     @DBRef
-    private MongoBookModel book;
+    private MongoReaderModel reader;
 
-    @DBRef
-    private MongoReaderDetailsModel readerDetails;
+    private String readerNumber;
 
-    private String lendingNumber;
-    private LocalDate startDate;
-    private LocalDate limitDate;
-    private LocalDate returnedDate;
-    private Integer fineValuePerDayInCents;
-    private String commentary;
+    private LocalDate birthDate;
+
+    private String phoneNumber;
+
+    private boolean gdprConsent;
+
+    private boolean marketingConsent;
+
+    private boolean thirdPartySharingConsent;
+
     private Long version;
 
-    public MongoReaderDetailsModel(String pk, MongoBookModel book, MongoReaderDetailsModel readerDetails,
-                             String lendingNumber, LocalDate startDate, LocalDate limitDate, LocalDate returnedDate,
-                             Integer fineValuePerDayInCents, String commentary) {
-        this.pk = pk;
-        this.book = book;
-        this.readerDetails = readerDetails;
-        this.lendingNumber = lendingNumber;
-        this.startDate = startDate;
-        this.limitDate = limitDate;
-        this.returnedDate = returnedDate;
-        this.fineValuePerDayInCents = fineValuePerDayInCents;
-        this.commentary = commentary;
+    @DBRef
+    private List<MongoGenreModel> interestList;
+
+    public MongoReaderDetailsModel(String readerNumber, MongoReaderModel reader, LocalDate birthDate, String phoneNumber,
+                                   boolean gdprConsent, boolean marketingConsent, boolean thirdPartySharingConsent, String photoURI,
+                                   List<MongoGenreModel> interestList) {
+        this.reader = reader;
+        this.readerNumber = readerNumber;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
+        this.gdprConsent = gdprConsent;
+        setPhotoInternal(photoURI);
+        this.marketingConsent = marketingConsent;
+        this.thirdPartySharingConsent = thirdPartySharingConsent;
+        this.interestList = interestList;
     }
 
     protected MongoReaderDetailsModel() {

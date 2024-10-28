@@ -47,16 +47,16 @@ public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
     private List<JpaGenreModel> interestList;
 
     public JpaReaderDetailsModel(String readerNumber, JpaReaderModel reader, LocalDate birthDate, String phoneNumber,
-                                 boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, List<JpaGenreModel> interestList) {
+                                 boolean gdprConsent, boolean marketingConsent, boolean thirdPartySharingConsent,
+                                 String photoURI, List<JpaGenreModel> interestList) {
         setReader(reader);
         setReaderNumber(readerNumber);
         setPhoneNumber(phoneNumber);
         setBirthDate(birthDate);
-        setGdprConsent(true);
-
+        setGdprConsent(gdprConsent);
         setPhotoInternal(photoURI);
-        setMarketingConsent(marketing);
-        setThirdPartySharingConsent(thirdParty);
+        setMarketingConsent(marketingConsent);
+        setThirdPartySharingConsent(thirdPartySharingConsent);
         setInterestList(interestList);
     }
 

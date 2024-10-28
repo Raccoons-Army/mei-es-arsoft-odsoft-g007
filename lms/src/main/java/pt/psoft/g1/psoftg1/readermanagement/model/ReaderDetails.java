@@ -16,6 +16,7 @@ import java.util.List;
 
 public class ReaderDetails extends EntityWithPhoto {
 
+    @Setter
     @Getter
     private Long pk;
 
@@ -43,6 +44,7 @@ public class ReaderDetails extends EntityWithPhoto {
     private boolean thirdPartySharingConsent;
 
     @Getter
+    @Setter
     private Long version;
 
     @Getter
@@ -52,12 +54,13 @@ public class ReaderDetails extends EntityWithPhoto {
     FactoryUser _factoryUser;
     FactoryGenre _factoryGenre;
 
-    public ReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI, FactoryUser factoryUser, FactoryGenre factoryGenre) {
+    public ReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdprConsent, boolean marketingConsent,
+                         boolean thirdPartySharingConsent, String photoURI, FactoryUser factoryUser, FactoryGenre factoryGenre) {
         if(phoneNumber == null) {
             throw new IllegalArgumentException("Provided argument resolves to null object");
         }
 
-        if(!gdpr) {
+        if(!gdprConsent) {
             throw new IllegalArgumentException("Readers must agree with the GDPR rules");
         }
 
@@ -68,8 +71,8 @@ public class ReaderDetails extends EntityWithPhoto {
         setGdprConsent(true);
 
         setPhotoInternal(photoURI);
-        setMarketingConsent(marketing);
-        setThirdPartySharingConsent(thirdParty);
+        setMarketingConsent(marketingConsent);
+        setThirdPartySharingConsent(thirdPartySharingConsent);
 
         _factoryUser = factoryUser;
         _factoryGenre = factoryGenre;
