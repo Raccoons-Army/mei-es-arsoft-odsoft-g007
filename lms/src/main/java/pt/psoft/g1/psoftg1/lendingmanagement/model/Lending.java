@@ -228,8 +228,8 @@ public class Lending {
     }
 
 
-    /**Protected empty constructor for ORM only.*/
-    protected Lending() {}
+    // for mapper
+    public Lending() {}
 
     /**Factory method meant to be only used in bootstrapping.*/
     public static Lending newBootstrappingLending(String id, Book book,
@@ -257,4 +257,5 @@ public class Lending {
         return lending;
 
     }
+
 }
