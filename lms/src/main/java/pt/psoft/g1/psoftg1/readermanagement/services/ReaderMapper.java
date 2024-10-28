@@ -17,7 +17,7 @@ import java.util.List;
  * Brief guide:
  * <a href="https://www.baeldung.com/mapstruct">https://www.baeldung.com/mapstruct</a>
  * */
-@Mapper(componentModel = "spring", uses = {ReaderService.class, UserService.class})
+@Mapper(componentModel = "spring", uses = {ReaderService.class, UserService.class}, implementationName = "CustomReaderMapperImpl")
 public abstract class ReaderMapper {
 
     @Mapping(target = "username", source = "username")

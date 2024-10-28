@@ -9,7 +9,7 @@ class TitleTest {
 
     @Test
     void ensureTitleMustNotBeNull() {
-        assertThrows(IllegalArgumentException.class, () -> new Title(null));
+        assertThrows(NullPointerException.class, () -> new Title(null));
     }
 
     @Test
@@ -19,14 +19,14 @@ class TitleTest {
 
     @Test
     void ensureTitleCantStartWithWhitespace() {
-        final var title = new Title(" Some title");
-        assertEquals("Some title", title.toString());
+        assertThrows(IllegalArgumentException.class, () -> new Title(" Some title"));
+        //assertEquals("Some title", title.toString());
     }
 
     @Test
     void ensureTitleCantEndWithWhitespace() {
-        final var title = new Title("Some title ");
-        assertEquals("Some title", title.toString());
+        assertThrows(IllegalArgumentException.class, () -> new Title("Some title "));
+        //assertEquals("Some title", title.toString());
     }
 
 

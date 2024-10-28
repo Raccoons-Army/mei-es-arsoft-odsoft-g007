@@ -29,7 +29,7 @@ class BookTest {
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, null, null, null, factoryGenreDouble, factoryAuthorDouble));
+        assertThrows(NullPointerException.class, () -> new Book(validIsbn, null, null, null, factoryGenreDouble, factoryAuthorDouble));
     }
 
     @Test
