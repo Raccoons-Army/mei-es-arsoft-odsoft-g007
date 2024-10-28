@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table
+@Table(name = "Genre")
 public class JpaGenreModel {
     @Transient
     private final int GENRE_MAX_LENGTH = 100;

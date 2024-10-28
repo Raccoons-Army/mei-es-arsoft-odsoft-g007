@@ -11,6 +11,7 @@ import pt.psoft.g1.psoftg1.shared.dbSchema.JpaEntityWithPhotoModel;
 @Getter
 @Setter
 @Entity
+@Table(name = "Author")
 public class JpaAuthorModel extends JpaEntityWithPhotoModel {
 
     @Id

@@ -10,6 +10,7 @@ import java.nio.file.Path;
 @Getter
 @Setter
 @Entity
+@Table(name = "PHOTO")
 public class JpaPhotoModel {
 
     @Id

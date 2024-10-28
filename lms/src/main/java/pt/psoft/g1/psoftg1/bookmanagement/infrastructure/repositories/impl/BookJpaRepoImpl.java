@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
+import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
@@ -25,6 +28,7 @@ import java.util.Optional;
 public class BookJpaRepoImpl implements BookRepository {
 
     private final EntityManager em;
+    private final BookMapper bookMapper;
 
     @Override
     public List<Book> findByGenre(String genre) {
@@ -140,27 +144,45 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Book save(Book entity) {
-        if (entity.getPk() == 0) {
-            em.persist(entity);
-            return entity;
+    public Book save(Book book) {
+        JpaBookModel jpaBook = bookMapper.toJpaBookModel(book);
+        if (book.getPk() == 0) {
+            em.persist(jpaBook);
         } else {
-            return em.merge(entity);
+            em.merge(jpaBook);
         }
+        return bookMapper.fromJpaBookModel(jpaBook);
     }
 
     @Override
     public void delete(Book book) {
-        em.remove(book);
+        JpaBookModel jpaBook = bookMapper.toJpaBookModel(book);
+
+        if (em.contains(jpaBook)) {
+            em.remove(jpaBook);  // If managed, remove directly
+        } else {
+            JpaBookModel managedBook = em.merge(jpaBook);  // If detached, merge to manage
+            em.remove(managedBook);  // Then remove
+        }
     }
 
     @Override
     public List<Book> findAll() {
-        return em.createQuery("SELECT b FROM Book b", Book.class).getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaBookModel> query = cb.createQuery(JpaBookModel.class);
+        query.from(JpaBookModel.class);
+
+        List<JpaBookModel> jpaBooks = em.createQuery(query).getResultList();
+        List<Book> books = new ArrayList<>();
+        for (JpaBookModel i : jpaBooks) {
+            books.add(bookMapper.fromJpaBookModel(i));
+        }
+        return books;
     }
 
     @Override
     public Optional<Book> findById(Long bookId) {
-        return Optional.ofNullable(em.find(Book.class, bookId));
+        Optional<JpaBookModel> jpaBook = Optional.ofNullable(em.find(JpaBookModel.class, bookId));  // Use find method to get Author by ID
+        return jpaBook.map(bookMapper::fromJpaBookModel);
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "Forbidden_Name")
 public class JpaForbiddenNameModel {
 
     @Id

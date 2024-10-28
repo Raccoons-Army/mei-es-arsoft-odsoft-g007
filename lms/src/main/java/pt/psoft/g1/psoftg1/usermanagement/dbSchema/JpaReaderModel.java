@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -8,6 +9,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 @Getter
 @Setter
 @Entity
+@Table(name = "Reader")
 public class JpaReaderModel extends JpaUserModel{
 
     protected JpaReaderModel() {

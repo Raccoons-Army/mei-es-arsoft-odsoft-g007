@@ -1,8 +1,10 @@
 package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "Librarian")
 public class JpaLibrarianModel extends JpaUserModel {
 
     protected JpaLibrarianModel() {

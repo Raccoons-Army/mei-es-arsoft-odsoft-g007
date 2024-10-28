@@ -8,11 +8,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
+import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class AuthorJpaRepoImpl implements AuthorRepository {
 
     private final EntityManager em;
+    private final AuthorMapper authorMapper;
     
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
@@ -108,23 +112,27 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Author save(Author entity) {
-        if (entity.getPk() != null) {
+    public Author save(Author author) {
+        JpaAuthorModel jpaAuthor = authorMapper.toJpaAuthor(author);
+
+        if (author.getPk() != null) {
             // Update existing entity
-            return em.merge(entity);
+            em.merge(jpaAuthor);
         } else {
             // Save new entity
-            em.persist(entity);
-            return entity;
+            em.persist(jpaAuthor);
         }
+        return author;
     }
 
     @Override
-    public void delete(Author entity) {
-        if (em.contains(entity)) {
-            em.remove(entity);  // If managed, remove directly
+    public void delete(Author author) {
+        JpaAuthorModel jpaAuthor = authorMapper.toJpaAuthor(author);
+
+        if (em.contains(jpaAuthor)) {
+            em.remove(jpaAuthor);  // If managed, remove directly
         } else {
-            Author managedAuthor = em.merge(entity);  // If detached, merge to manage
+            JpaAuthorModel managedAuthor = em.merge(jpaAuthor);  // If detached, merge to manage
             em.remove(managedAuthor);  // Then remove
         }
     }
@@ -132,14 +140,20 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     @Override
     public List<Author> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Author> query = cb.createQuery(Author.class);
-        query.from(Author.class);  // Create query for Author class
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        query.from(JpaAuthorModel.class);  // Create query for Author class
 
-        return em.createQuery(query).getResultList();  // Execute and return result
+        List<JpaAuthorModel> jpaAuthors = em.createQuery(query).getResultList();
+        List<Author> authors = new ArrayList<>();
+        for (JpaAuthorModel i : jpaAuthors) {
+            authors.add(authorMapper.fromJpaAuthor(i));
+        }
+        return authors;
     }
 
     @Override
     public Optional<Author> findById(Long aLong) {
-        return Optional.ofNullable(em.find(Author.class, aLong));  // Use find method to get Author by ID
+        Optional<JpaAuthorModel> jpaAuthor = Optional.ofNullable(em.find(JpaAuthorModel.class, aLong));  // Use find method to get Author by ID
+        return jpaAuthor.map(authorMapper::fromJpaAuthor);
     }
 }

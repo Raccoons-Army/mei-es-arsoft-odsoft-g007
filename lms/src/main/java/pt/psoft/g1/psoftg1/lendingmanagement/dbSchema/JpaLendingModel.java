@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {
+@Table(name = "Lending", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"LENDING_NUMBER"})})
 public class JpaLendingModel {
 

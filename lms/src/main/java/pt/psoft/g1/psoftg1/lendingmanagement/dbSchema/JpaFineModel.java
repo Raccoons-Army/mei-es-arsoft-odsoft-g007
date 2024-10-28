@@ -10,6 +10,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@Table(name = "Fine")
 public class JpaFineModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
