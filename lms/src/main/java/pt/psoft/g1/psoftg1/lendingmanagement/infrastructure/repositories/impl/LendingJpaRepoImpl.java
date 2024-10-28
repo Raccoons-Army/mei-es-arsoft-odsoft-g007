@@ -5,7 +5,10 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.mapper.LendingMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class LendingJpaRepoImpl implements LendingRepository {
 
     private final EntityManager em;
+    private final LendingMapper lendingMapper;
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
@@ -165,31 +169,46 @@ public class LendingJpaRepoImpl implements LendingRepository {
 
 
     @Override
-    public Lending save(Lending entity) {
-        if (entity.getPk() == null) {
-            em.persist(entity); // If it's a new entity, persist it
-            return entity; // Return the persisted entity
+    public Lending save(Lending lending) {
+        JpaLendingModel jpaLending = lendingMapper.toJpaLendingModel(lending);
+        if (lending.getPk() == null) {
+            em.persist(jpaLending);
         } else {
-            return em.merge(entity); // If it's an existing entity, merge it
+            em.merge(jpaLending);
         }
+        return lendingMapper.fromJpaLendingModel(jpaLending);
     }
 
     @Override
-    public void delete(Lending entity) {
-        em.remove(em.contains(entity) ? entity : em.merge(entity));
+    public void delete(Lending lending) {
+        JpaLendingModel jpaLending = lendingMapper.toJpaLendingModel(lending);
+
+        if (em.contains(jpaLending)) {
+            em.remove(jpaLending);  // If managed, remove directly
+        } else {
+            JpaLendingModel managedLending = em.merge(jpaLending);  // If detached, merge to manage
+            em.remove(managedLending);  // Then remove
+        }
     }
 
     @Override
     public List<Lending> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Lending> query = cb.createQuery(Lending.class);
-        query.from(Lending.class);
-        return em.createQuery(query).getResultList(); // Return the list of all Lending entities
+        CriteriaQuery<JpaLendingModel> query = cb.createQuery(JpaLendingModel.class);
+        query.from(JpaLendingModel.class);
+
+        List<JpaLendingModel> jpaLendings = em.createQuery(query).getResultList();
+        List<Lending> lendings = new ArrayList<>();
+        for (JpaLendingModel i : jpaLendings) {
+            lendings.add(lendingMapper.fromJpaLendingModel(i));
+        }
+        return lendings;
     }
 
     @Override
-    public Optional<Lending> findById(Long id) {
-        return Optional.ofNullable(em.find(Lending.class, id)); // Use find to retrieve the entity by ID
+    public Optional<Lending> findById(Long lendingId) {
+        Optional<JpaLendingModel> jpaLending = Optional.ofNullable(em.find(JpaLendingModel.class, lendingId));  // Use find method to get Author by ID
+        return jpaLending.map(lendingMapper::fromJpaLendingModel);
     }
 
 }

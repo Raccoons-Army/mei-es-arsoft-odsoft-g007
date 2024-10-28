@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import pt.psoft.g1.psoftg1.lendingmanagement.mapper.FineMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class FineJpaRepoImpl implements FineRepository {
 
     private final EntityManager em;
+    private final FineMapper fineMapper;
 
     @Override
     public Optional<Fine> findByLendingNumber(String lendingNumber) {

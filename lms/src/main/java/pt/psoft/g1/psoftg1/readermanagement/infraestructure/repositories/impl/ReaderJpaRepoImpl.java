@@ -9,11 +9,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
+import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaReaderModel;
+import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
@@ -26,6 +31,7 @@ import java.util.Optional;
 public class ReaderJpaRepoImpl implements ReaderRepository {
 
     private final EntityManager em;
+    private final ReaderDetailsMapper readerDetailsMapper;
 
     @Override
     public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {
@@ -152,21 +158,24 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public ReaderDetails save(ReaderDetails entity) {
-        if (entity.getPk() == null) {
-            em.persist(entity); // If it's a new entity, persist it
-            return entity; // Return the persisted entity
+    public ReaderDetails save(ReaderDetails readerDetails) {
+        JpaReaderDetailsModel jpaReaderDetails = readerDetailsMapper.toJpaReaderDetailsModel(readerDetails);
+        if (readerDetails.getPk() == 0) {
+            em.persist(jpaReaderDetails);
         } else {
-            return em.merge(entity); // If it's an existing entity, merge it
+            em.merge(jpaReaderDetails);
         }
+        return readerDetailsMapper.fromJpaReaderDetailsModel(jpaReaderDetails);
     }
 
     @Override
-    public void delete(ReaderDetails entity) {
-        if (em.contains(entity)) {
-            em.remove(entity);  // If managed, remove directly
+    public void delete(ReaderDetails readerDetails) {
+        JpaReaderDetailsModel jpaReaderDetails = readerDetailsMapper.toJpaReaderDetailsModel(readerDetails);
+
+        if (em.contains(jpaReaderDetails)) {
+            em.remove(jpaReaderDetails);  // If managed, remove directly
         } else {
-            ReaderDetails managedReaderDetails = em.merge(entity);  // If detached, merge to manage
+            JpaReaderDetailsModel managedReaderDetails = em.merge(jpaReaderDetails);  // If detached, merge to manage
             em.remove(managedReaderDetails);  // Then remove
         }
     }
@@ -174,14 +183,20 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public List<ReaderDetails> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ReaderDetails> query = cb.createQuery(ReaderDetails.class);
-        query.from(ReaderDetails.class);  // Create query for Author class
+        CriteriaQuery<JpaReaderDetailsModel> query = cb.createQuery(JpaReaderDetailsModel.class);
+        query.from(JpaReaderDetailsModel.class);
 
-        return em.createQuery(query).getResultList();  // Execute and return result
+        List<JpaReaderDetailsModel> jpaReadersDetails = em.createQuery(query).getResultList();
+        List<ReaderDetails> readerDetails = new ArrayList<>();
+        for (JpaReaderDetailsModel i : jpaReadersDetails) {
+            readerDetails.add(readerDetailsMapper.fromJpaReaderDetailsModel(i));
+        }
+        return readerDetails;
     }
 
     @Override
-    public Optional<ReaderDetails> findById(Long aLong) {
-        return Optional.ofNullable(em.find(ReaderDetails.class, aLong));
+    public Optional<ReaderDetails> findById(Long readerDetailsId) {
+        Optional<JpaReaderDetailsModel> jpaReaderDetails = Optional.ofNullable(em.find(JpaReaderDetailsModel.class, readerDetailsId));  // Use find method to get Author by ID
+        return jpaReaderDetails.map(readerDetailsMapper::fromJpaReaderDetailsModel);
     }
 }

@@ -11,8 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
+import pt.psoft.g1.psoftg1.genremanagement.mapper.GenreMapper;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
@@ -28,6 +31,7 @@ import org.springframework.data.domain.PageImpl;
 public class GenreJpaRepoImpl implements GenreRepository {
 
     private final EntityManager em;
+    private final GenreMapper genreMapper;
 
     @Override
     public Optional<Genre> findByString(String genre) {
@@ -252,21 +256,24 @@ public class GenreJpaRepoImpl implements GenreRepository {
     }
 
     @Override
-    public Genre save(Genre entity) {
-        if (entity.getPk() == null) {
-            em.persist(entity); // If it's a new entity, persist it
-            return entity; // Return the persisted entity
+    public Genre save(Genre genre) {
+        JpaGenreModel jpaGenre = genreMapper.toJpaGenre(genre);
+        if (genre.getPk() == 0) {
+            em.persist(jpaGenre);
         } else {
-            return em.merge(entity); // If it's an existing entity, merge it
+            em.merge(jpaGenre);
         }
+        return genreMapper.fromJpaGenre(jpaGenre);
     }
 
     @Override
-    public void delete(Genre entity) {
-        if (em.contains(entity)) {
-            em.remove(entity);  // If managed, remove directly
+    public void delete(Genre genre) {
+        JpaGenreModel jpaGenre = genreMapper.toJpaGenre(genre);
+
+        if (em.contains(jpaGenre)) {
+            em.remove(jpaGenre);  // If managed, remove directly
         } else {
-            Genre managedGenre = em.merge(entity);  // If detached, merge to manage
+            JpaGenreModel managedGenre = em.merge(jpaGenre);  // If detached, merge to manage
             em.remove(managedGenre);  // Then remove
         }
     }
@@ -274,15 +281,21 @@ public class GenreJpaRepoImpl implements GenreRepository {
     @Override
     public List<Genre> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Genre> query = cb.createQuery(Genre.class);
-        query.from(Genre.class);  // Create a query for the Genre class
+        CriteriaQuery<JpaGenreModel> query = cb.createQuery(JpaGenreModel.class);
+        query.from(JpaGenreModel.class);
 
-        return em.createQuery(query).getResultList();
+        List<JpaGenreModel> jpaGenres = em.createQuery(query).getResultList();
+        List<Genre> genres = new ArrayList<>();
+        for (JpaGenreModel i : jpaGenres) {
+            genres.add(genreMapper.fromJpaGenre(i));
+        }
+        return genres;
     }
 
     @Override
-    public Optional<Genre> findById(String s) {
-        return Optional.ofNullable(em.find(Genre.class, s));
+    public Optional<Genre> findById(String genreId) {
+        Optional<JpaGenreModel> jpaGenre = Optional.ofNullable(em.find(JpaGenreModel.class, genreId));  // Use find method to get Author by ID
+        return jpaGenre.map(genreMapper::fromJpaGenre);
     }
 
     @NotNull
