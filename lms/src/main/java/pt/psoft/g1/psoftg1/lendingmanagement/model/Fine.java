@@ -14,10 +14,13 @@ import java.util.Objects;
 @Getter
 public class Fine {
 
+    @Setter
     private Long pk;
 
+    @Setter
     private int fineValuePerDayInCents;
 
+    @Setter
     int centsValue;
 
     @Setter
