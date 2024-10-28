@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class FactoryUser {
 
+    public Reader newReader(long pk, String username, String password, String name, long version) {
+        return Reader.newReader(pk, username, password, name, version);
+    }
+
     public Reader newReader(String username, String password, String name) {
         return Reader.newReader(username, password, name);
     }

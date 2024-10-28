@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.util.StringUtils;
-import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.UserMapper;
@@ -43,17 +42,17 @@ public class UserJpaRepoImpl implements UserRepository {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "users", key = "#p0.id", condition = "#p0.id != null"),
+            @CacheEvict(value = "users", key = "#p0.pk", condition = "#p0.pk != null"),
             @CacheEvict(value = "users", key = "#p0.username", condition = "#p0.username != null")
     })
-    public <S extends User> S save(S user) {
+    public <S extends User> User save(S user) {
         JpaUserModel jpaUser = userMapper.toJpaUserModel(user);
         if (user.getPk() == null) {
             em.persist(jpaUser);
         } else {
             em.merge(jpaUser);
         }
-        return (S) userMapper.fromJpaUserModel(jpaUser);
+        return userMapper.fromJpaUserModel(jpaUser);
     }
 
     @Override

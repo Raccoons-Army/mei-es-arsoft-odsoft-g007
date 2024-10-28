@@ -5,8 +5,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -40,7 +38,7 @@ public class UserMongoRepoImpl implements UserRepository {
             @CacheEvict(value = "users", key = "#p0.id", condition = "#p0.id != null"),
             @CacheEvict(value = "users", key = "#p0.username", condition = "#p0.username != null")
     })
-    public <S extends User> S save(S entity) {
+    public <S extends User> User save(S entity) {
         return mt.save(entity);
     }
 

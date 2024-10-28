@@ -20,6 +20,7 @@ public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
     private Long pk;
 
     @OneToOne
+    @JoinColumn(name = "READER_USER_ID")
     private JpaReaderModel reader;
 
     @Column(name = "READER_NUMBER")

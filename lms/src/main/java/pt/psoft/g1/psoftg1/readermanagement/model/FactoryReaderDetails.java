@@ -15,7 +15,7 @@ public class FactoryReaderDetails {
         _factoryGenre = factoryGenre;
     }
 
-    public ReaderDetails newReaderDetails(int readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing,
+    public ReaderDetails newReaderDetails(String readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing,
                                           boolean thirdParty, String photoURI) {
         return new ReaderDetails(readerNumber, birthDate, phoneNumber, gdpr, marketing, thirdParty, photoURI, _factoryUser, _factoryGenre);
     }

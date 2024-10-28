@@ -57,24 +57,28 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
 
     @Override
     public Optional<ReaderDetails> findByUsername(String username) {
-        return em.createQuery(
-                        "SELECT r FROM ReaderDetails r JOIN User u ON r.reader.id = u.id WHERE u.username = :username",
-                        ReaderDetails.class)
+        Optional<JpaReaderDetailsModel> m = em.createQuery(
+                        "SELECT r FROM JpaReaderDetailsModel r JOIN JpaUserModel u ON r.reader.id = u.id WHERE u.username = :username",
+                        JpaReaderDetailsModel.class)
                 .setParameter("username", username)
                 .getResultList()
                 .stream()
                 .findFirst();
+
+        return m.map(readerDetailsMapper::fromJpaReaderDetailsModel);
     }
 
     @Override
     public Optional<ReaderDetails> findByUserId(Long userId) {
-        return em.createQuery(
-                        "SELECT r FROM ReaderDetails r JOIN User u ON r.reader.id = u.id WHERE u.id = :userId",
-                        ReaderDetails.class)
+        Optional<JpaReaderDetailsModel> m = em.createQuery(
+                        "SELECT r FROM JpaReaderDetailsModel r JOIN JpaUserModel u ON r.reader.id = u.id WHERE u.id = :userId",
+                        JpaReaderDetailsModel.class)
                 .setParameter("userId", userId)
                 .getResultList()
                 .stream()
                 .findFirst();
+
+        return m.map(readerDetailsMapper::fromJpaReaderDetailsModel);
     }
 
     @Override
@@ -162,6 +166,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public ReaderDetails save(ReaderDetails readerDetails) {
         JpaReaderDetailsModel jpaReaderDetails = readerDetailsMapper.toJpaReaderDetailsModel(readerDetails);
+
         if (readerDetails.getPk() == null) {
             em.persist(jpaReaderDetails);
         } else {

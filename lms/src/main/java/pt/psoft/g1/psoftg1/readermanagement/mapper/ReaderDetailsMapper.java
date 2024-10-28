@@ -7,6 +7,7 @@ import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.model.BirthDate;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
 import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
 
