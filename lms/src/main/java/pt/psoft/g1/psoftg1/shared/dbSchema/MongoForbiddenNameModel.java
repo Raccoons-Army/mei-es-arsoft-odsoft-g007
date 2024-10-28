@@ -1,24 +1,25 @@
 package pt.psoft.g1.psoftg1.shared.dbSchema;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 @Getter
-@Document(collection = "photos")
+@Setter
+@Document(collection = "forbiddenNames")
 public class MongoForbiddenNameModel {
 
     @Id
-    private Long id;
+    private String pk;
 
-    private String photoFile;
+    private String forbiddenName;
 
-    public MongoForbiddenNameModel(Long id, String photoFile) {
-        this.id = id;
-        this.photoFile = photoFile;
+    public MongoForbiddenNameModel(String forbiddenName) {
+        this.forbiddenName = forbiddenName;
     }
 
     protected MongoForbiddenNameModel() {
     }
-
 }

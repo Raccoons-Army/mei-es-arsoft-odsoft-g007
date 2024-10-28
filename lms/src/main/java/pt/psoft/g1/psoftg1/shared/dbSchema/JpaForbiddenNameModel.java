@@ -2,25 +2,26 @@ package pt.psoft.g1.psoftg1.shared.dbSchema;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 @Entity
-@Table(name = "ForbiddenName")
 public class JpaForbiddenNameModel {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long pk;
 
-    @NotNull
-    private String photoFile;
+    @Column(nullable = false)
+    @Size(min = 1)
+    private String forbiddenName;
 
-    public JpaForbiddenNameModel(long id, String photoFile) {
-        this.id = id;
-        this.photoFile = photoFile;
+    public JpaForbiddenNameModel(String forbiddenName) {
+        this.forbiddenName = forbiddenName;
     }
 
-    public JpaForbiddenNameModel() {}
+    protected JpaForbiddenNameModel() {}
 }
