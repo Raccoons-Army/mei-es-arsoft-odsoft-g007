@@ -12,6 +12,7 @@ import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {ReaderMapper.class, PhotoMapper.class, GenreMapper.class})
 public abstract class ReaderDetailsMapper {
@@ -41,6 +42,7 @@ public abstract class ReaderDetailsMapper {
     @Mapping(target = "interestList", source = "interestList")
     @Mapping(target = "photoURI", source = "photo")
     public abstract ReaderDetails fromJpaReaderDetailsModel(JpaReaderDetailsModel jpaReaderDetailsModel);
+    public abstract List<ReaderDetails> fromJpaReaderDetailsModel(List<JpaReaderDetailsModel> jpaReaderDetailsModel);
 
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "reader", source = "reader")
@@ -67,6 +69,7 @@ public abstract class ReaderDetailsMapper {
     @Mapping(target = "interestList", source = "interestList")
     @Mapping(target = "photoURI", source = "photo")
     public abstract ReaderDetails fromMongoReaderDetailsModel(MongoReaderDetailsModel mongoReaderDetailsModel);
+    public abstract List<ReaderDetails> fromMongoReaderDetailsModel(List<MongoReaderDetailsModel> mongoReaderDetailsModel);
 
     public BirthDate map(String birthDate) {
         return new BirthDate(birthDate);

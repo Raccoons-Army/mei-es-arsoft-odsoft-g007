@@ -24,7 +24,6 @@ public class JpaFineModel {
     @PositiveOrZero
     int centsValue;
 
-    @Setter
     @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "lending_pk", nullable = false, unique = true)
     private JpaLendingModel lending;

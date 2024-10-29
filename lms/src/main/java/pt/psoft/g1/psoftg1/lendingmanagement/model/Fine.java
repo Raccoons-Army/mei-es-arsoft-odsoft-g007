@@ -50,6 +50,6 @@ public class Fine {
         return this.lending;
     }
 
-    /**Protected empty constructor for ORM only.*/
-    protected Fine() {}
+    // for mapper
+    public Fine() {}
 }

@@ -5,12 +5,10 @@ import org.mapstruct.Mapping;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.shared.dbSchema.JpaPhotoModel;
-import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
 import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
-import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 import java.nio.file.Path;
+import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {PhotoMapper.class})
 public abstract class AuthorMapper {
@@ -28,6 +26,8 @@ public abstract class AuthorMapper {
     @Mapping(source = "version", target = "version")
     @Mapping(target = "photo", source = "photo")
     public abstract Author fromMongoAuthor(MongoAuthorModel mongoAuthor);
+    public abstract List<Author> fromMongoAuthor(List<MongoAuthorModel> mongoAuthor);
+
 
     @Mapping(source = "authorNumber", target = "authorNumber")
     @Mapping(source = "name", target = "name")
@@ -42,4 +42,5 @@ public abstract class AuthorMapper {
     @Mapping(source = "version", target = "version")
     @Mapping(target = "photo", source = "photo")
     public abstract Author fromJpaAuthor(JpaAuthorModel jpaAuthor);
+    public abstract List<Author> fromJpaAuthor(List<JpaAuthorModel> jpaAuthor);
 }

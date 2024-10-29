@@ -10,6 +10,8 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
 import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = {BookMapper.class, ReaderDetailsMapper.class})
 public abstract class LendingMapper {
 
@@ -36,6 +38,7 @@ public abstract class LendingMapper {
     @Mapping(target = "commentary", source = "commentary")
     @Mapping(target = "fineValuePerDayInCents", source = "fineValuePerDayInCents")
     public abstract Lending fromJpaLendingModel(JpaLendingModel jpaLendingModel);
+    public abstract List<Lending> fromJpaLendingModel(List<JpaLendingModel> jpaLendingModel);
 
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "lendingNumber", source = "lendingNumber")
@@ -60,6 +63,7 @@ public abstract class LendingMapper {
     @Mapping(target = "commentary", source = "commentary")
     @Mapping(target = "fineValuePerDayInCents", source = "fineValuePerDayInCents")
     public abstract Lending fromMongoLendingModel(MongoLendingModel mongoLendingModel);
+    public abstract List<Lending> fromMongoLendingModel(List<MongoLendingModel> mongoLendingModel);
 
     /**
      * Custom mapping method to convert String to LendingNumber.
