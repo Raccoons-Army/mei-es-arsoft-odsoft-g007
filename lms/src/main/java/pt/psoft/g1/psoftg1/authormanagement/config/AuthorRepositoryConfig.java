@@ -22,8 +22,8 @@ public class AuthorRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public AuthorRepository mongoAuthorRepository(MongoTemplate mt) {
-        return new AuthorMongoRepoImpl(mt);
+    public AuthorRepository mongoAuthorRepository(MongoTemplate mt, AuthorMapper authorMapper) {
+        return new AuthorMongoRepoImpl(mt, authorMapper);
     }
 
 }

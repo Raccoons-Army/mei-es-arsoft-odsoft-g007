@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pt.psoft.g1.psoftg1.lendingmanagement.mapper.FineMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class FineMongoRepoImpl implements FineRepository {
 
     private final MongoTemplate mt;
+    private final FineMapper fineMapper;
 
     @Override
     public Optional<Fine> findByLendingNumber(String lendingNumber) {

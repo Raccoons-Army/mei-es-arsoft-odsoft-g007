@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl.PhotoJpaRepoImpl;
 import pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl.PhotoMongoRepoImpl;
+import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 @Configuration
@@ -20,7 +21,7 @@ public class PhotoRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public PhotoRepository mongoPhotoRepository(MongoTemplate mt) {
-        return new PhotoMongoRepoImpl(mt);
+    public PhotoRepository mongoPhotoRepository(MongoTemplate mt, PhotoMapper photoMapper) {
+        return new PhotoMongoRepoImpl(mt, photoMapper);
     }
 }

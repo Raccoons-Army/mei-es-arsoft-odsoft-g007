@@ -13,6 +13,9 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreModel;
+import pt.psoft.g1.psoftg1.genremanagement.mapper.GenreMapper;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
@@ -29,13 +32,7 @@ import java.util.stream.Collectors;
 public class GenreMongoRepoImpl implements GenreRepository {
 
     private final MongoTemplate mt;
-
-    @Override
-    public Optional<Genre> findByString(String genre) {
-        Query query = new Query(Criteria.where("genre").is(genre));
-        Genre result = mt.findOne(query, Genre.class);
-        return Optional.ofNullable(result);
-    }
+    private final GenreMapper genreMapper;
 
     @Override
     public Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable) {
@@ -159,24 +156,45 @@ public class GenreMongoRepoImpl implements GenreRepository {
     }
 
     @Override
-    public Genre save(Genre entity) {
-        return mt.save(entity);
+    public Genre save(Genre genre) {
+        MongoGenreModel mongoGenre = genreMapper.toMongoGenre(genre);
+        MongoGenreModel savedGenre = mt.save(mongoGenre);
+
+        return genreMapper.fromMongoGenre(savedGenre);
     }
 
     @Override
-    public void delete(Genre entity) {
-        mt.remove(entity);
+    public void delete(Genre genre) {
+        MongoGenreModel mongoGenre = genreMapper.toMongoGenre(genre);
+
+        mt.remove(mongoGenre);
     }
 
     @Override
     public List<Genre> findAll() {
-        return mt.findAll(Genre.class);
+        List<MongoGenreModel> mongoGenres = mt.findAll(MongoGenreModel.class);
+
+        return mongoGenres.stream()
+                .map(genreMapper::fromMongoGenre)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Genre> findById(String id) {
-        Genre genre = mt.findById(id, Genre.class);
-        return Optional.ofNullable(genre);
+        MongoGenreModel mongoGenre = mt.findById(id, MongoGenreModel.class);
+
+        return Optional.ofNullable(mongoGenre)
+                .map(genreMapper::fromMongoGenre);
+    }
+
+    @Override
+    public Optional<Genre> findByString(String genreString) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("genre").is(genreString));
+        MongoGenreModel mongoGenre = mt.findOne(query, MongoGenreModel.class);
+
+        return Optional.ofNullable(mongoGenre)
+                .map(genreMapper::fromMongoGenre);
     }
 
     @NotNull

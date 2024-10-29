@@ -21,7 +21,7 @@ public class FineRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public FineRepository mongoFineRepository(MongoTemplate mt) {
-        return new FineMongoRepoImpl(mt);
+    public FineRepository mongoFineRepository(MongoTemplate mt, FineMapper fineMapper) {
+        return new FineMongoRepoImpl(mt, fineMapper);
     }
 }

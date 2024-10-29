@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoUserModel;
+import pt.psoft.g1.psoftg1.usermanagement.mapper.UserMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
@@ -17,11 +19,13 @@ import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class UserMongoRepoImpl implements UserRepository {
 
     private final MongoTemplate mt;
+    private final UserMapper userMapper;
 
     @Override
     @CacheEvict(value = "users", allEntries = true)
@@ -35,18 +39,23 @@ public class UserMongoRepoImpl implements UserRepository {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "users", key = "#p0.id", condition = "#p0.id != null"),
-            @CacheEvict(value = "users", key = "#p0.username", condition = "#p0.username != null")
+            @CacheEvict(value = "users", key = "#entity.id", condition = "#entity.id != null"),
+            @CacheEvict(value = "users", key = "#entity.username", condition = "#entity.username != null")
     })
     public <S extends User> User save(S entity) {
-        return mt.save(entity);
+        MongoUserModel mongoUserModel = userMapper.toMongoUserModel(entity);
+        MongoUserModel savedUserModel = mt.save(mongoUserModel);
+
+        return userMapper.fromMongoUserModel(savedUserModel);
     }
 
     @Override
     @Cacheable(value = "users")
     public Optional<User> findById(Long objectId) {
-        User user = mt.findById(objectId, User.class);
-        return Optional.ofNullable(user);
+        MongoUserModel mongoUserModel = mt.findById(objectId, MongoUserModel.class);
+
+        return Optional.ofNullable(mongoUserModel)
+                .map(userMapper::fromMongoUserModel);
     }
 
     @Override
@@ -54,7 +63,10 @@ public class UserMongoRepoImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         Query query = new Query();
         query.addCriteria(Criteria.where("username").is(username));
-        return Optional.ofNullable(mt.findOne(query, User.class));
+        MongoUserModel mongoUserModel = mt.findOne(query, MongoUserModel.class);
+
+        return Optional.ofNullable(mongoUserModel)
+                .map(userMapper::fromMongoUserModel);
     }
 
     @Override
@@ -91,7 +103,11 @@ public class UserMongoRepoImpl implements UserRepository {
     public List<User> findByNameName(String name) {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").is(name));
-        return mt.find(query, User.class);
+        List<MongoUserModel> mongoUserModels = mt.find(query, MongoUserModel.class);
+
+        return mongoUserModels.stream()
+                .map(userMapper::fromMongoUserModel)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -99,7 +115,11 @@ public class UserMongoRepoImpl implements UserRepository {
         String pattern = ".*" + name + ".*";
         Query query = new Query();
         query.addCriteria(Criteria.where("name").regex(pattern, "i"));
-        return mt.find(query, User.class);
+        List<MongoUserModel> mongoUserModels = mt.find(query, MongoUserModel.class);
+
+        return mongoUserModels.stream()
+                .map(userMapper::fromMongoUserModel)
+                .collect(Collectors.toList());
     }
 
     @Override

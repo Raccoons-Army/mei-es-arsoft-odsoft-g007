@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 public class PhotoMongoRepoImpl implements PhotoRepository {
 
     private final MongoTemplate mt;
+    private final PhotoMapper photoMapper;
 
     @Override
     public void deleteByPhotoFile(String photoFile) {

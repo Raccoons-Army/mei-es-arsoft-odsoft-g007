@@ -11,6 +11,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.StringUtils;
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.MongoLendingModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.mapper.LendingMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -18,17 +21,13 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class LendingMongoRepoImpl implements LendingRepository {
 
     private final MongoTemplate mt;
-
-    @Override
-    public Optional<Lending> findByLendingNumber(String lendingNumber) {
-        Query query = new Query(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
-        return Optional.ofNullable(mt.findOne(query, Lending.class));
-    }
+    private final LendingMapper lendingMapper;
 
     @Override
     public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn) {
@@ -134,23 +133,45 @@ public class LendingMongoRepoImpl implements LendingRepository {
     }
 
     @Override
-    public Lending save(Lending entity) {
-        return mt.save(entity); // MongoTemplate handles both insert and update
+    public Lending save(Lending lending) {
+        MongoLendingModel mongoLending = lendingMapper.toMongoLendingModel(lending);
+        MongoLendingModel savedLending = mt.save(mongoLending);
+
+        return lendingMapper.fromMongoLendingModel(savedLending);
     }
 
     @Override
-    public void delete(Lending entity) {
-        mt.remove(entity); // Remove the entity
+    public void delete(Lending lending) {
+        MongoLendingModel mongoLending = lendingMapper.toMongoLendingModel(lending);
+
+        mt.remove(mongoLending);
     }
 
     @Override
     public List<Lending> findAll() {
-        return mt.findAll(Lending.class); // Get all lendings
+        List<MongoLendingModel> mongoLendings = mt.findAll(MongoLendingModel.class);
+
+        return mongoLendings.stream()
+                .map(lendingMapper::fromMongoLendingModel)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Lending> findById(Long aLong) {
-        return Optional.ofNullable(mt.findById(aLong, Lending.class));
+    public Optional<Lending> findById(Long id) {
+        MongoLendingModel mongoLending = mt.findById(id, MongoLendingModel.class);
+
+        return Optional.ofNullable(mongoLending)
+                .map(lendingMapper::fromMongoLendingModel);
+    }
+
+    @Override
+    public Optional<Lending> findByLendingNumber(String lendingNumber) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
+        MongoLendingModel mongoLending = mt.findOne(query, MongoLendingModel.class);
+
+        return Optional.ofNullable(mongoLending)
+                .map(lendingMapper::fromMongoLendingModel);
     }
 
     // Inner class to hold average duration results

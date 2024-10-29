@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
+import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
+import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
@@ -16,18 +19,13 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ReaderMongoRepoImpl implements ReaderRepository {
 
     private final MongoTemplate mt;
-
-    @Override
-    public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("readerNumber").is(readerNumber));
-        return Optional.ofNullable(mt.findOne(query, ReaderDetails.class));
-    }
+    private final ReaderDetailsMapper readerDetailsMapper;
 
     @Override
     public List<ReaderDetails> findByPhoneNumber(String phoneNumber) {
@@ -113,22 +111,44 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public ReaderDetails save(ReaderDetails entity) {
-        return mt.save(entity);
+    public ReaderDetails save(ReaderDetails readerDetails) {
+        MongoReaderDetailsModel mongoReaderDetails = readerDetailsMapper.toMongoReaderDetailsModel(readerDetails);
+        MongoReaderDetailsModel savedReaderDetails = mt.save(mongoReaderDetails);
+
+        return readerDetailsMapper.fromMongoReaderDetailsModel(savedReaderDetails);
     }
 
     @Override
-    public void delete(ReaderDetails entity) {
-        mt.remove(entity);
+    public void delete(ReaderDetails readerDetails) {
+        MongoReaderDetailsModel mongoReaderDetails = readerDetailsMapper.toMongoReaderDetailsModel(readerDetails);
+
+        mt.remove(mongoReaderDetails);
     }
 
     @Override
     public List<ReaderDetails> findAll() {
-        return mt.findAll(ReaderDetails.class);
+        List<MongoReaderDetailsModel> mongoReaderDetailsList = mt.findAll(MongoReaderDetailsModel.class);
+
+        return mongoReaderDetailsList.stream()
+                .map(readerDetailsMapper::fromMongoReaderDetailsModel)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ReaderDetails> findById(Long id) {
-        return Optional.ofNullable(mt.findById(id, ReaderDetails.class));
+        MongoReaderDetailsModel mongoReaderDetails = mt.findById(id, MongoReaderDetailsModel.class);
+
+        return Optional.ofNullable(mongoReaderDetails)
+                .map(readerDetailsMapper::fromMongoReaderDetailsModel);
+    }
+
+    @Override
+    public Optional<ReaderDetails> findByReaderNumber(String readerNumber) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("readerNumber").is(readerNumber));
+        MongoReaderDetailsModel mongoReaderDetails = mt.findOne(query, MongoReaderDetailsModel.class);
+
+        return Optional.ofNullable(mongoReaderDetails)
+                .map(readerDetailsMapper::fromMongoReaderDetailsModel);
     }
 }

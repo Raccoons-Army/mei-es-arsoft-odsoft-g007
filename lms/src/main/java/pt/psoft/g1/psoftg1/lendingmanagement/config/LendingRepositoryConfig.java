@@ -21,7 +21,7 @@ public class LendingRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public LendingRepository mongoLendingRepository(MongoTemplate mt) {
-        return new LendingMongoRepoImpl(mt);
+    public LendingRepository mongoLendingRepository(MongoTemplate mt, LendingMapper lendingMapper) {
+        return new LendingMongoRepoImpl(mt, lendingMapper);
     }
 }

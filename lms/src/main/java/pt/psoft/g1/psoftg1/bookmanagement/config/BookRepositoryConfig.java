@@ -21,7 +21,7 @@ public class BookRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public BookRepository mongoBookRepository(MongoTemplate mt) {
-        return new BookMongoRepoImpl(mt);
+    public BookRepository mongoBookRepository(MongoTemplate mt, BookMapper bookMapper) {
+        return new BookMongoRepoImpl(mt, bookMapper);
     }
 }

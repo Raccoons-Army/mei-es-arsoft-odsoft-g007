@@ -21,7 +21,7 @@ public class GenreRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public GenreRepository mongoGenreRepository(MongoTemplate mt) {
-        return new GenreMongoRepoImpl(mt);
+    public GenreRepository mongoGenreRepository(MongoTemplate mt, GenreMapper genreMapper) {
+        return new GenreMongoRepoImpl(mt, genreMapper);
     }
 }

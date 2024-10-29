@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,9 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
+import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
@@ -18,15 +22,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-
+@RequiredArgsConstructor
 public class BookMongoRepoImpl implements BookRepository {
 
-    public MongoTemplate mt;
+    private final MongoTemplate mt;
 
-    public BookMongoRepoImpl(MongoTemplate mt) {
-        this.mt = mt;
-    }
+    private final BookMapper bookMapper;
 
     @Override
     public List<Book> findByGenre(String genre) {
@@ -47,13 +50,6 @@ public class BookMongoRepoImpl implements BookRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("authors.name").is(authorName)); // Query on nested author collection
         return mt.find(query, Book.class);
-    }
-
-    @Override
-    public Optional<Book> findByIsbn(String isbn) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("isbn.isbn").is(isbn)); // Accessing nested ISBN property
-        return Optional.ofNullable(mt.findOne(query, Book.class));
     }
 
     @Override
@@ -113,26 +109,48 @@ public class BookMongoRepoImpl implements BookRepository {
 
     @Override
     public List<Book> findTopXBooksFromGenre(int x, String genre) {
-        return List.of();
+        return null;
     }
 
     @Override
-    public Book save(Book entity) {
-        return mt.save(entity);
+    public Book save(Book book) {
+        MongoBookModel mongoBook = bookMapper.toMongoBookModel(book);
+        MongoBookModel savedBook = mt.save(mongoBook);
+
+        return bookMapper.fromMongoBookModel(savedBook);
     }
 
     @Override
     public void delete(Book book) {
-        mt.remove(book);
+        MongoBookModel mongoBook = bookMapper.toMongoBookModel(book);
+
+        mt.remove(mongoBook);
     }
 
     @Override
     public List<Book> findAll() {
-        return mt.findAll(Book.class);
+        List<MongoBookModel> mongoBooks = mt.findAll(MongoBookModel.class);
+
+        return mongoBooks.stream()
+                .map(bookMapper::fromMongoBookModel)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Book> findById(Long bookId) {
-        return Optional.ofNullable(mt.findById(bookId, Book.class));
+        MongoBookModel mongoBook = mt.findById(bookId, MongoBookModel.class);
+
+        return Optional.ofNullable(mongoBook)
+                .map(bookMapper::fromMongoBookModel);
+    }
+
+    @Override
+    public Optional<Book> findByIsbn(String isbn) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isbn").is(isbn));
+        MongoBookModel mongoBook = mt.findOne(query, MongoBookModel.class);
+
+        return Optional.ofNullable(mongoBook)
+                .map(bookMapper::fromMongoBookModel);
     }
 }

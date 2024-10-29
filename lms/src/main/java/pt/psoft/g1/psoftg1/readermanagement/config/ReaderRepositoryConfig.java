@@ -21,7 +21,7 @@ public class ReaderRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public ReaderRepository mongoReaderRepository(MongoTemplate mt) {
-        return new ReaderMongoRepoImpl(mt);
+    public ReaderRepository mongoReaderRepository(MongoTemplate mt, ReaderDetailsMapper readerDetailsMapper) {
+        return new ReaderMongoRepoImpl(mt, readerDetailsMapper);
     }
 }

@@ -21,7 +21,7 @@ public class UserRepositoryConfig {
 
     @Bean
     @Profile("mongo")
-    public UserRepository mongoUserRepository(MongoTemplate mt) {
-        return new UserMongoRepoImpl(mt);
+    public UserRepository mongoUserRepository(MongoTemplate mt, UserMapper userMapper) {
+        return new UserMongoRepoImpl(mt, userMapper);
     }
 }
