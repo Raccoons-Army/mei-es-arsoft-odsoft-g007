@@ -16,7 +16,9 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import java.time.LocalDate;
@@ -32,10 +34,16 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public List<Book> findByGenre(String genre) {
-        String query = "SELECT b FROM Book b WHERE b.genre.genre = :genre";
-        return em.createQuery(query, Book.class)
+        String query = "SELECT b FROM JpaBookModel b WHERE b.genre.genre = :genre";
+        List<JpaBookModel> list = em.createQuery(query, JpaBookModel.class)
                 .setParameter("genre", genre)
                 .getResultList();
+
+        List<Book> books = new ArrayList<>();
+        for (JpaBookModel i : list) {
+            books.add(bookMapper.fromJpaBookModel(i));
+        }
+        return books;
     }
 
     @Override
@@ -124,10 +132,10 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public List<Book> findTopXBooksFromGenre(int x, String genre) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Book> query = cb.createQuery(Book.class);
-        Root<Lending> lending = query.from(Lending.class);
-        Join<Lending, Book> bookJoin = lending.join("book");
-        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        CriteriaQuery<JpaBookModel> query = cb.createQuery(JpaBookModel.class);
+        Root<JpaLendingModel> lending = query.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lending.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
         query.groupBy(bookJoin.get("pk"));
         query.where(cb.equal(genreJoin.get("genre"), genre));
 
@@ -138,9 +146,15 @@ public class BookJpaRepoImpl implements BookRepository {
         // Select the book
         query.select(bookJoin);
 
-        return em.createQuery(query)
+        List<JpaBookModel> list = em.createQuery(query)
                 .setMaxResults(x)
                 .getResultList();
+
+        List<Book> books = new ArrayList<>();
+        for (JpaBookModel i : list) {
+            books.add(bookMapper.fromJpaBookModel(i));
+        }
+        return books;
     }
 
     @Override

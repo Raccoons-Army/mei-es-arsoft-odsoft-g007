@@ -20,10 +20,12 @@ import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import java.time.LocalDate;
 import java.util.*;
+
 import org.springframework.data.domain.PageImpl;
 
 
@@ -209,16 +211,16 @@ public class GenreJpaRepoImpl implements GenreRepository {
     public Optional<Genre> findReaderMostRequestedGenre(String readerNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        Root<Lending> lendingRoot = cq.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book");
-        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
 
         Expression<Long> lendingCount = cb.count(lendingRoot);
         cq.multiselect(genreJoin, lendingCount);
         cq.groupBy(genreJoin);
         cq.orderBy(cb.desc(lendingCount));
 
-        Predicate readerPredicate = cb.equal(lendingRoot.get("readerDetails").get("readerNumber").get("readerNumber"), readerNumber);
+        Predicate readerPredicate = cb.equal(lendingRoot.get("readerDetails").get("readerNumber"), readerNumber);
         cq.where(readerPredicate);
 
         TypedQuery<Tuple> query = em.createQuery(cq);
@@ -229,16 +231,18 @@ public class GenreJpaRepoImpl implements GenreRepository {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(results.get(0).get(0, Genre.class));
+        Optional<JpaGenreModel> m = Optional.ofNullable(results.get(0).get(0, JpaGenreModel.class));
+
+        return m.map(genreMapper::fromJpaGenre);
     }
 
     @Override
     public List<Genre> getTopYGenresMostLent(int y) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        Root<Lending> lendingRoot = cq.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book");
-        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
 
         Expression<Long> lendingCount = cb.count(lendingRoot);
         cq.multiselect(genreJoin, lendingCount);
@@ -251,7 +255,7 @@ public class GenreJpaRepoImpl implements GenreRepository {
         List<Tuple> results = query.getResultList();
         List<Genre> genres = new ArrayList<>();
         for (Tuple result : results) {
-            genres.add(result.get(0, Genre.class));
+            genres.add(genreMapper.fromJpaGenre(result.get(0, JpaGenreModel.class)));
         }
 
         return genres;
