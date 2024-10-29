@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import pt.psoft.g1.psoftg1.shared.mapper.ForbiddenNameMapper;
 import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 public class ForbiddenNameMongoRepoImpl implements ForbiddenNameRepository {
 
     private final MongoTemplate mt;
+    private final ForbiddenNameMapper forbiddenNameMapper;
 
     @Override
     public Iterable<ForbiddenName> findAll() {

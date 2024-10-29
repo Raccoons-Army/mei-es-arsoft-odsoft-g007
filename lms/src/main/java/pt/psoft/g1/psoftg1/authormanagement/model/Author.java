@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 
 public class Author extends EntityWithPhoto {
 
+    @Setter
     @Getter
     private String authorNumber;
 
@@ -41,11 +42,19 @@ public class Author extends EntityWithPhoto {
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
-
     }
 
-    protected Author() {
-        // got ORM only
+    // for factory
+    public Author(String authorNumber, String name, String bio, String photoURI, long version) {
+        this.authorNumber = authorNumber;
+        setName(name);
+        setBio(bio);
+        setPhotoInternal(photoURI);
+        this.version = version;
+    }
+
+    // for mapper
+    public Author() {
     }
 
 

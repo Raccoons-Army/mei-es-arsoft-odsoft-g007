@@ -21,7 +21,7 @@ public class JpaBookModel extends JpaEntityWithPhotoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String pk;
+    private Long pk;
 
     @Version
     private Long version;
@@ -44,7 +44,7 @@ public class JpaBookModel extends JpaEntityWithPhotoModel {
     @Column(length = 4096)
     private String description;
 
-    public JpaBookModel(String pk, Long version, String isbn, String title, JpaGenreModel genre,
+    public JpaBookModel(Long pk, Long version, String isbn, String title, JpaGenreModel genre,
                         List<JpaAuthorModel> authors, String description, String photoURI) {
         this.pk = pk;
         this.version = version;

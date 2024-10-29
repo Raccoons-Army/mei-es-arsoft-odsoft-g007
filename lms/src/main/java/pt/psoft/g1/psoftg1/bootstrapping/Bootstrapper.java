@@ -194,8 +194,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. ",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -210,8 +211,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Como quem, vindo de países distantes fora de / si, chega finalmente aonde sempre esteve / e encontra tudo no seu lugar, / o passado no passado, o presente no presente, / assim chega o viajante à tardia idade / em que se confundem ele e o caminho. [...]",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -231,8 +233,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "Este livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -274,8 +277,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "· Linguagem simples e acessível. ",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -292,8 +296,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "O Principezinho", "Depois de deixar o seu asteroide e embarcar numa viagem pelo espaço, o principezinho chega, finalmente, à Terra. No deserto, o menino de cabelos da cor do ouro conhece um aviador, a quem conta todas as aventuras que viveu e tudo o que viu ao longo da sua jornada.",
                         "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -310,8 +315,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "A Criada Está a Ver", "A Sra. Lowell transborda simpatia ao acenar-me através da cerca que separa as nossas casas. “Devem ser os nossos novos vizinhos!” Agarro na mão da minha filha e sorrio de volta. No entanto, assim que vê o meu marido, uma expressão estranha atravessa-lhe o rosto. MILLIE, A MEMORÁVEL PROTAGONISTA DOS BESTSELLERS A CRIADA E O SEGREDO DA CRIADA, ESTÁ DE VOLTA!Eu costumava limpar a casa de outras pessoas. Nem posso acreditar que esta casa é realmente minha...",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -333,8 +339,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "O Hobbit, o prelúdio de O Senhor dos Anéis, vendeu milhões de exemplares em todo o mundo desde a sua publicação em 1937, impondo-se como um clássico intemporal e um dos livros mais adorados e influentes do século xx.\" ",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -356,8 +363,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "Com organização de George R. R. Martin, um nome que já dispensa apresentações, e Gardner Dozois, tem nas mãos uma antologia de géneros multifacetados e que reúne algumas das mentes mais perversas da literatura fantástica.",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -380,8 +388,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "George R. R. Martin é um grande admirador desse tipo de personagens – ou não fosse ele o autor de \"A Guerra dos Tronos\". Nesta monumental antologia, não só participa com um prefácio e um conto introduzindo uma das personagens mais canalhas da história de Westeros, como também a organiza com Gardner Dozois. Se é fã de literatura fantástica, vai deliciar-se!",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -406,8 +415,9 @@ public class Bootstrapper implements CommandLineRunner {
                                 "Conseguirá Maris vencer ou tornar-se-á uma testemunha do fim de Windhaven?",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -424,8 +434,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Durante a Segunda Guerra Mundial, a jovem Liesel encontra conforto nos livros que rouba e compartilha com os outros. Em meio ao caos da guerra, sua relação com as palavras torna-se sua salvação.",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -441,8 +452,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "O primeiro livro da série Harry Potter, onde o jovem Harry descobre que é um bruxo e começa sua jornada na escola de magia de Hogwarts, enfrentando desafios e fazendo amizades inesquecíveis.",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -458,8 +470,9 @@ public class Bootstrapper implements CommandLineRunner {
                         "Percy Jackson descobre que é um semideus, filho de Poseidon, e parte em uma jornada épica para recuperar o raio de Zeus, que foi roubado. Ele enfrenta monstros mitológicos e descobre mais sobre seu verdadeiro destino.",
                         null, factoryGenre, factoryAuthor);
 
-                defineGenreAndAddAuthors(book, genre.get(), authors);
-
+//                defineGenreAndAddAuthors(book, genre.get(), authors);
+                book.setGenre(genre.get());
+                book.setAuthors(authors);
                 bookRepository.save(book);
             }
         }
@@ -658,12 +671,13 @@ public class Bootstrapper implements CommandLineRunner {
 
     private void defineGenreAndAddAuthors(Book book, Genre genre, List<Author> authors) {
         try {
-            book.defineGenre(genre.getGenre());
+            book.defineGenre(genre.getPk(), genre.getGenre());
 
             for (Author bAuthor : authors) {
-                book.addAuthor(bAuthor.getAuthorNumber(), bAuthor.getName(), bAuthor.getBio(), bAuthor.getPhoto().getPhotoFile());
+                book.addAuthor(bAuthor.getAuthorNumber(), bAuthor.getName(), bAuthor.getBio(),
+                        bAuthor.getPhoto() != null ? bAuthor.getPhoto().getPhotoFile() : null, bAuthor.getVersion());
             }
-        }catch (InstantiationException e) {
+        } catch (InstantiationException e) {
             System.err.println("Failed to instantiate: " + e.getMessage());
         }
     }

@@ -15,9 +15,8 @@ import pt.psoft.g1.psoftg1.shared.dbSchema.JpaEntityWithPhotoModel;
 public class JpaAuthorModel extends JpaEntityWithPhotoModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUTHOR_NUMBER")
-    private Long authorNumber;
+    private String authorNumber;
 
     @Version
     private long version;
@@ -35,7 +34,7 @@ public class JpaAuthorModel extends JpaEntityWithPhotoModel {
     protected JpaAuthorModel() {
     }
 
-    public JpaAuthorModel(Long authorNumber, long version, String name, String bio, String photoURI) {
+    public JpaAuthorModel(String authorNumber, long version, String name, String bio, String photoURI) {
         this.authorNumber = authorNumber;
         this.version = version;
         this.name = name;

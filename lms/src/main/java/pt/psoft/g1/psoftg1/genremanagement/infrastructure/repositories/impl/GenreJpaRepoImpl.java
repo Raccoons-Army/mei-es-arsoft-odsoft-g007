@@ -260,7 +260,7 @@ public class GenreJpaRepoImpl implements GenreRepository {
     @Override
     public Genre save(Genre genre) {
         JpaGenreModel jpaGenre = genreMapper.toJpaGenre(genre);
-        if (genre.getPk() == 0) {
+        if (genre.getPk() == null) {
             em.persist(jpaGenre);
         } else {
             em.merge(jpaGenre);

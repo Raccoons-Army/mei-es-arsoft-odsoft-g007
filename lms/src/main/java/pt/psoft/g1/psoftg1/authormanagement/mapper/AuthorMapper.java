@@ -26,7 +26,7 @@ public abstract class AuthorMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "bio", target = "bio")
     @Mapping(source = "version", target = "version")
-    @Mapping(target = "photoURI", source = "photo")
+    @Mapping(target = "photo", source = "photo")
     public abstract Author fromMongoAuthor(MongoAuthorModel mongoAuthor);
 
     @Mapping(source = "authorNumber", target = "authorNumber")
@@ -40,6 +40,6 @@ public abstract class AuthorMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "bio", target = "bio")
     @Mapping(source = "version", target = "version")
-    @Mapping(target = "photoURI", source = "photo")
+    @Mapping(target = "photo", source = "photo")
     public abstract Author fromJpaAuthor(JpaAuthorModel jpaAuthor);
 }

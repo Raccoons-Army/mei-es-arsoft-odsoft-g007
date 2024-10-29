@@ -19,7 +19,7 @@ public class Book extends EntityWithPhoto {
 
     @Setter
     @Getter
-    long pk;
+    Long pk;
 
     @Setter
     @Getter
@@ -50,7 +50,7 @@ public class Book extends EntityWithPhoto {
 
     public void setGenre(Genre genre) {this.genre = genre; }
 
-    private void setAuthors(List<Author> authors) {this.authors = authors; }
+    public void setAuthors(List<Author> authors) {this.authors = authors; }
 
     public String getDescription(){ return this.description.toString(); }
 
@@ -68,12 +68,22 @@ public class Book extends EntityWithPhoto {
         // got ORM only
     }
 
+    public void defineGenre(long pk, String name) throws InstantiationException {
+        this.genre = _factoryGenre.newGenre(pk, name);
+    }
+
     public void defineGenre(String name) throws InstantiationException {
         this.genre = _factoryGenre.newGenre(name);
     }
 
     public Author addAuthor(String authorNumber, String name, String bio, String photoURI) throws InstantiationException {
         Author author = _factoryAuthor.newAuthor(authorNumber, name, bio, photoURI);
+        this.authors.add(author);
+        return author;
+    }
+
+    public Author addAuthor(String authorNumber, String name, String bio, String photoURI, long version) throws InstantiationException {
+        Author author = _factoryAuthor.newAuthor(authorNumber, name, bio, photoURI, version);
         this.authors.add(author);
         return author;
     }

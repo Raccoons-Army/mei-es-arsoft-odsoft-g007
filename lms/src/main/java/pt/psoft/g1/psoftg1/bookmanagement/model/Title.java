@@ -15,9 +15,9 @@ public class Title {
     public void setTitle(String title) {
 
 
-        if (!StringUtilsCustom.startsOrEndsInWhiteSpace(title)) {
-            throw new IllegalArgumentException("Invalid title: " + title);
-        }
+//        if (!StringUtilsCustom.startsOrEndsInWhiteSpace(title)) {
+//            throw new IllegalArgumentException("Invalid title: " + title);
+//        }
 
         if(title.isBlank())
             throw new IllegalArgumentException("Title cannot be blank");

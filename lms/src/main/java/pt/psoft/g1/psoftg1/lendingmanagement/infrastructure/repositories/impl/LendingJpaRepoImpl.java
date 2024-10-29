@@ -29,14 +29,16 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Lending> cq = cb.createQuery(Lending.class);
-        Root<Lending> lending = cq.from(Lending.class);
+        CriteriaQuery<JpaLendingModel> cq = cb.createQuery(JpaLendingModel.class);
+        Root<JpaLendingModel> lending = cq.from(JpaLendingModel.class);
 
         // Define the criteria: lendingNumber should match
-        cq.select(lending).where(cb.equal(lending.get("lendingNumber").get("lendingNumber"), lendingNumber));
+        cq.select(lending).where(cb.equal(lending.get("lendingNumber"), lendingNumber));
 
         // Execute the query
-        return em.createQuery(cq).getResultStream().findFirst();
+        Optional<JpaLendingModel> m = em.createQuery(cq).getResultStream().findFirst();
+
+        return m.map(lendingMapper::fromJpaLendingModel);
     }
 
     @Override

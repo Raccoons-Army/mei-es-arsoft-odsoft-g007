@@ -57,11 +57,11 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         try {
-            String query = "SELECT b FROM Book b WHERE b.isbn.isbn = :isbn";
-            Book book = em.createQuery(query, Book.class)
+            String query = "SELECT b FROM JpaBookModel b WHERE b.isbn = :isbn";
+            JpaBookModel book = em.createQuery(query, JpaBookModel.class)
                     .setParameter("isbn", isbn)
                     .getSingleResult();
-            return Optional.of(book);
+            return Optional.of(bookMapper.fromJpaBookModel(book));
         } catch (jakarta.persistence.NoResultException e) {
             return Optional.empty();
         }
@@ -146,7 +146,7 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public Book save(Book book) {
         JpaBookModel jpaBook = bookMapper.toJpaBookModel(book);
-        if (book.getPk() == 0) {
+        if (book.getPk() == null) {
             em.persist(jpaBook);
         } else {
             em.merge(jpaBook);

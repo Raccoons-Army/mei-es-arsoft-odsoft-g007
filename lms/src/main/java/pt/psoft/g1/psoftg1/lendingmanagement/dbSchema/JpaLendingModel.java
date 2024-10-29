@@ -19,8 +19,7 @@ import java.time.LocalDate;
 public class JpaLendingModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private String pk;
 
     @Column(name = "LENDING_NUMBER", length = 32)
     @NotNull

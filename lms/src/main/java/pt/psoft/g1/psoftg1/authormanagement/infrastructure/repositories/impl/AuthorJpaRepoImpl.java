@@ -24,7 +24,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
 
     private final EntityManager em;
     private final AuthorMapper authorMapper;
-    
+
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -40,13 +40,19 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     @Override
     public List<Author> searchByNameName(String name) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Author> query = cb.createQuery(Author.class);
-        Root<Author> root = query.from(Author.class);
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaAuthorModel> root = query.from(JpaAuthorModel.class);
 
-        Predicate namePredicate = cb.equal(root.get("name").get("name"), name); // Accessing the 'name' property of the embedded 'Name' object
+        Predicate namePredicate = cb.equal(root.get("name"), name); // Accessing the 'name' property of the embedded 'Name' object
 
         query.select(root).where(namePredicate);
-        return em.createQuery(query).getResultList();
+
+        List<JpaAuthorModel> jpaAuthors = em.createQuery(query).getResultList();
+        List<Author> authors = new ArrayList<>();
+        for (JpaAuthorModel i : jpaAuthors) {
+            authors.add(authorMapper.fromJpaAuthor(i));
+        }
+        return authors;
     }
 
     @Override
@@ -100,15 +106,15 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     @Override
     public Optional<Author> findByAuthorNumber(String authorNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Author> query = cb.createQuery(Author.class);
-        Root<Author> root = query.from(Author.class);
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaAuthorModel> root = query.from(JpaAuthorModel.class);
 
         query.select(root)
                 .where(cb.equal(root.get("authorNumber"), authorNumber));
 
-        return em.createQuery(query)
-                .getResultStream()
-                .findFirst();
+        Optional<JpaAuthorModel> jpaAuthor = em.createQuery(query).getResultStream().findFirst();
+
+        return jpaAuthor.map(authorMapper::fromJpaAuthor);
     }
 
     @Override
@@ -122,7 +128,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
             // Save new entity
             em.persist(jpaAuthor);
         }
-        return author;
+       return authorMapper.fromJpaAuthor(jpaAuthor);
     }
 
     @Override

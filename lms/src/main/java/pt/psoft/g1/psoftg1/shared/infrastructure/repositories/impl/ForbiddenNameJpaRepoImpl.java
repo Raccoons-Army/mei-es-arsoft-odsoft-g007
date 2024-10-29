@@ -8,9 +8,12 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import pt.psoft.g1.psoftg1.shared.dbSchema.JpaForbiddenNameModel;
+import pt.psoft.g1.psoftg1.shared.mapper.ForbiddenNameMapper;
 import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +21,21 @@ import java.util.Optional;
 public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
 
     private final EntityManager em;
-
+    private final ForbiddenNameMapper forbiddenNameMapper;
     @Override
     public Iterable<ForbiddenName> findAll() {
-        return null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaForbiddenNameModel> query = cb.createQuery(JpaForbiddenNameModel.class);
+        Root<JpaForbiddenNameModel> root = query.from(JpaForbiddenNameModel.class);
+
+        query.select(root);
+
+        List<JpaForbiddenNameModel> list = em.createQuery(query).getResultList();
+        List<ForbiddenName> result = new ArrayList<>();
+        for (JpaForbiddenNameModel m : list) {
+            result.add(forbiddenNameMapper.toForbiddenName(m));
+        }
+        return result;
     }
 
     @Override
@@ -39,21 +53,25 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
 
     @Override
     public ForbiddenName save(ForbiddenName forbiddenName) {
-        return null;
+        JpaForbiddenNameModel m = forbiddenNameMapper.toJpaForbiddenNameModel(forbiddenName);
+        em.persist(m);
+        return forbiddenNameMapper.toForbiddenName(m);
     }
 
     @Override
     public Optional<ForbiddenName> findByForbiddenName(String forbiddenName) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ForbiddenName> query = cb.createQuery(ForbiddenName.class);
-        Root<ForbiddenName> root = query.from(ForbiddenName.class);
+        CriteriaQuery<JpaForbiddenNameModel> query = cb.createQuery(JpaForbiddenNameModel.class);
+        Root<JpaForbiddenNameModel> root = query.from(JpaForbiddenNameModel.class);
 
         query.select(root)
                 .where(cb.equal(root.get("forbiddenName"), forbiddenName));
 
-        return em.createQuery(query)
+        Optional<JpaForbiddenNameModel>  m = em.createQuery(query)
                 .getResultStream()
                 .findFirst();
+
+        return m.map(forbiddenNameMapper::toForbiddenName);
     }
 
     @Override
