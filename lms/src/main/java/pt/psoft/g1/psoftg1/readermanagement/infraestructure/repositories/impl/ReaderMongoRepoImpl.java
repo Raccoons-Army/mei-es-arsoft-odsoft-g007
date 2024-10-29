@@ -14,6 +14,7 @@ import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
@@ -112,11 +113,24 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
 
     @Override
     public ReaderDetails save(ReaderDetails readerDetails) {
+        // Map ReaderDetails to its MongoDB model
         MongoReaderDetailsModel mongoReaderDetails = readerDetailsMapper.toMongoReaderDetailsModel(readerDetails);
-        MongoReaderDetailsModel savedReaderDetails = mt.save(mongoReaderDetails);
 
+        // Save the photo first if it exists
+        if (mongoReaderDetails.getPhoto() != null) {
+            MongoPhotoModel photo = mongoReaderDetails.getPhoto();
+
+            // Save the photo and get the saved instance back
+            photo = mt.save(photo); // Save the photo first
+
+            // Set the saved photo back to the mongoReaderDetails
+            mongoReaderDetails.setPhoto(photo);
+        }
+
+        MongoReaderDetailsModel savedReaderDetails = mt.save(mongoReaderDetails);
         return readerDetailsMapper.fromMongoReaderDetailsModel(savedReaderDetails);
     }
+
 
     @Override
     public void delete(ReaderDetails readerDetails) {

@@ -1,6 +1,5 @@
 package pt.psoft.g1.psoftg1.shared.dbSchema;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -14,10 +13,9 @@ import java.nio.file.Path;
 public class MongoPhotoModel {
 
     @Id
-    private Long pk;
+    private String pk;
 
     @Getter
-    @NotNull
     private String photoFile;
 
     public MongoPhotoModel(String photoPath) {

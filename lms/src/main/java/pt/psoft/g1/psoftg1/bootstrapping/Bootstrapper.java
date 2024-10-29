@@ -69,7 +69,7 @@ public class Bootstrapper implements CommandLineRunner {
         if (authorRepository.searchByNameName("Manuel Antonio Pina").isEmpty()) {
             final Author author = new Author(idGenerationStrategy.generateId(), "Manuel Antonio Pina",
                     "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
-                    null);
+                    "authorPhotoTest.jpg");
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Antoine de Saint Exupéry").isEmpty()) {
@@ -122,7 +122,7 @@ public class Bootstrapper implements CommandLineRunner {
             final Author author = new Author(idGenerationStrategy.generateId(), "Gardner Dozois",
                     "Gardner Raymond Dozois (23 de julho de 1947 – 27 de maio de 2018) foi um autor de ficção científica norte-americano.\n" +
                             "Foi o fundador e editor do Melhores Do Ano de Ficção científica antologias (1984–2018) e foi editor da revista Asimov Ficção científica (1984-2004), ganhando vários prémios.",
-                    null);
+                    "authorPhotoTest.jpg");
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Lisa Tuttle").isEmpty()) {
@@ -147,7 +147,7 @@ public class Bootstrapper implements CommandLineRunner {
         if (authorRepository.searchByNameName("Rick Riordan").isEmpty()) {
             final Author author = new Author(idGenerationStrategy.generateId(), "Rick Riordan",
                     "Rick Riordan é um autor americano, conhecido por suas séries de fantasia mitológica. Ele escreveu a famosa série 'Percy Jackson e os Olimpianos', que mistura mitologia grega e aventuras contemporâneas.",
-                    null);
+                    "authorPhotoTest.jpg");
             authorRepository.save(author);
         }
     }
@@ -192,7 +192,7 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9789720706386",
                         "O País das Pessoas de Pernas Para o Ar ",
                         "Fazendo uso do humor e do nonsense, o livro reúne quatro histórias divertidas e com múltiplos significados: um país onde as pessoas vivem de pernas para o ar, que nos é apresentado por um passarinho chamado Fausto; a vida de um peixinho vermelho que escrevia um livro que a Sara não sabia ler; um Menino Jesus que não queria ser Deus, pois só queria brincar como as outras crianças; um bolo que queria ser comido, mas que não foi, por causa do pecado da gula. ",
-                        null, factoryGenre, factoryAuthor);
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());
@@ -231,7 +231,7 @@ public class Bootstrapper implements CommandLineRunner {
                         "O C é uma linguagem de programação incontornável no estudo e aprendizagem das linguagens de programação. É um precursor das linguagens de programação estruturadas e a sua sintaxe foi reutilizada em muitas linguagens posteriores, mesmo de paradigmas diferentes, entre as quais se contam o Java, o Javascript, o Actionscript, o PHP, o Perl, o C# e o C++.\n" +
                                 "\n" +
                                 "Este livro apresenta a sintaxe da linguagem C tal como especificada pelas normas C89, C99, C11 e C17, da responsabilidade do grupo de trabalho ISO/IEC JTC1/SC22/WG14.",
-                        null, factoryGenre, factoryAuthor);
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());
@@ -313,7 +313,7 @@ public class Bootstrapper implements CommandLineRunner {
                 authors.add(author.get(0));
                 Book book = new Book("9789895702756",
                         "A Criada Está a Ver", "A Sra. Lowell transborda simpatia ao acenar-me através da cerca que separa as nossas casas. “Devem ser os nossos novos vizinhos!” Agarro na mão da minha filha e sorrio de volta. No entanto, assim que vê o meu marido, uma expressão estranha atravessa-lhe o rosto. MILLIE, A MEMORÁVEL PROTAGONISTA DOS BESTSELLERS A CRIADA E O SEGREDO DA CRIADA, ESTÁ DE VOLTA!Eu costumava limpar a casa de outras pessoas. Nem posso acreditar que esta casa é realmente minha...",
-                        null, factoryGenre, factoryAuthor);
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());
@@ -337,7 +337,7 @@ public class Bootstrapper implements CommandLineRunner {
                         "Eles têm um plano: saquear o tesouro guardado por Smaug, O Magnífico, um dragão enorme e muito perigoso... Bilbo, embora relutante, junta-se a esta missão, desconhecendo que nesta viagem até à Montanha Solitária vai encontrar um anel mágico e uma estranha criatura conhecida como Gollum. Livro com nova tradução e edição.\n" +
                         "Inclui mapas e ilustrações originais do autor. Situado no mundo imaginário da Terra Média,\n" +
                         "O Hobbit, o prelúdio de O Senhor dos Anéis, vendeu milhões de exemplares em todo o mundo desde a sua publicação em 1937, impondo-se como um clássico intemporal e um dos livros mais adorados e influentes do século xx.\" ",
-                        null, factoryGenre, factoryAuthor);
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());
@@ -450,7 +450,7 @@ public class Bootstrapper implements CommandLineRunner {
                 Book book = new Book("9788869183157",
                         "Harry Potter e a Pedra Filosofal",
                         "O primeiro livro da série Harry Potter, onde o jovem Harry descobre que é um bruxo e começa sua jornada na escola de magia de Hogwarts, enfrentando desafios e fazendo amizades inesquecíveis.",
-                        null, factoryGenre, factoryAuthor);
+                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());
