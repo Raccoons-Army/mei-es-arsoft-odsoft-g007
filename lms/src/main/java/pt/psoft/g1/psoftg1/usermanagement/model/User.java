@@ -155,6 +155,10 @@ public class User implements UserDetails {
 		this.password = passwordEncoder.encode(password);
 	}
 
+	public void setPasswordWithoutEncoding(final String password) {
+		this.password = password;
+	}
+
     public void addAuthority(final Role r) {
 		authorities.add(r);
 	}

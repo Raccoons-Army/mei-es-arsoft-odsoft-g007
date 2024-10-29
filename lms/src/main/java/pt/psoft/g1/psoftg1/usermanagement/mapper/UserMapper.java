@@ -12,28 +12,24 @@ public abstract class UserMapper {
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "version", target = "version")
     public abstract JpaUserModel toJpaUserModel(User user);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "version", target = "version")
     public abstract User fromJpaUserModel(JpaUserModel jpaUserModel);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "version", target = "version")
     public abstract MongoUserModel toMongoUserModel(User user);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "version", target = "version")
     public abstract User fromMongoUserModel(MongoUserModel mongoUserModel);
