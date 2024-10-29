@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 public class JpaLendingModel {
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @Column(name = "LENDING_NUMBER", length = 32)

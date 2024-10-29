@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.JpaEntityWithPhotoModel;
@@ -20,7 +21,7 @@ import java.util.List;
 public class JpaBookModel extends JpaEntityWithPhotoModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @Version

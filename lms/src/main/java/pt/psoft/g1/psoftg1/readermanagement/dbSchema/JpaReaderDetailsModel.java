@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.readermanagement.dbSchema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.JpaEntityWithPhotoModel;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaReaderModel;
@@ -17,6 +18,7 @@ import java.util.List;
 public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @OneToOne

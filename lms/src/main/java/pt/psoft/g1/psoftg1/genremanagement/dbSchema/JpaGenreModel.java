@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 @Getter
 @Setter
@@ -14,6 +15,7 @@ public class JpaGenreModel {
     private final int GENRE_MAX_LENGTH = 100;
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     String pk;
 
     @Size(min = 1, max = GENRE_MAX_LENGTH, message = "Genre name must be between 1 and 100 characters")

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -31,7 +32,7 @@ public class JpaUserModel implements Serializable {
 
     // database primary key
     @Id
-    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     @Column(name="USER_ID")
     private String pk;
 

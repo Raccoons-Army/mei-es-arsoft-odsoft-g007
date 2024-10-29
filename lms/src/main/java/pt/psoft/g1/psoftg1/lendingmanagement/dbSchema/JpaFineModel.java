@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Objects;
 
@@ -13,8 +14,8 @@ import java.util.Objects;
 @Table(name = "Fine")
 public class JpaFineModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
+    private String pk;
 
     @PositiveOrZero
     @Column(updatable = false)

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 @Getter
 @Setter
@@ -13,8 +14,8 @@ import lombok.Setter;
 public class JpaForbiddenNameModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
+    private String pk;
 
     @Column(nullable = false)
     @Size(min = 1)

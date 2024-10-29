@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.nio.file.Path;
 
@@ -14,8 +15,8 @@ import java.nio.file.Path;
 public class JpaPhotoModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long pk;
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
+    private String pk;
 
     @NotNull
     private String photoFile;
