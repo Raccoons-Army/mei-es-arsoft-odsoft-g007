@@ -88,7 +88,8 @@ public class User implements UserDetails {
 	private Name name;
 
 	@Getter
-	private final Set<Role> authorities = new HashSet<>();
+	@Setter
+	private Set<Role> authorities = new HashSet<>();
 
 	/**
 	 *
@@ -149,13 +150,26 @@ public class User implements UserDetails {
 		return u;
 	}
 
+	// for mapstruct
+	public static User newUser(final Long pk, final String username, final String password, final String name, final Set<Role> roles,
+							   final long version) {
+		final var u = new User(username);
+		u.setPasswordWithoutHashing(password); // skip password hashing
+		u.setName(name);
+		u.setAuthorities(roles);
+		u.setPk(pk);
+		u.setVersion(version);
+
+		return u;
+	}
+
 	public void setPassword(final String password) {
 		Password passwordCheck = new Password(password);
 		final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		this.password = passwordEncoder.encode(password);
 	}
 
-	public void setPasswordWithoutEncoding(final String password) {
+	public void setPasswordWithoutHashing(final String password) {
 		this.password = password;
 	}
 

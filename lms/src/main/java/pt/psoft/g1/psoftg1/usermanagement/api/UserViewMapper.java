@@ -35,6 +35,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.User;
 public abstract class UserViewMapper {
 
 	@Mapping(target = "fullName", source = "name.name")
+	@Mapping(target = "id", source = "pk")
 	public abstract UserView toUserView(User user);
 
 	public abstract List<UserView> toUserView(List<User> users);

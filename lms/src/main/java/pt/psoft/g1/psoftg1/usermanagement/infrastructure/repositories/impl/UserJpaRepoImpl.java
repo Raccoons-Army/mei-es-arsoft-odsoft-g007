@@ -76,10 +76,7 @@ public class UserJpaRepoImpl implements UserRepository {
                 .getResultStream()
                 .findFirst();
 
-        Optional<User> user = jpaUser.map(userMapper::fromJpaUserModel);
-        user.ifPresent(value -> value.setPasswordWithoutEncoding(jpaUser.get().getPassword()));
-
-        return user;
+        return jpaUser.map(userMapper::fromJpaUserModel);
     }
 
     @Override
