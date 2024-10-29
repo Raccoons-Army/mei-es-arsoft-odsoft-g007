@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ForbiddenName{
 
-    private Long pk;
+    private String pk;
 
     private String forbiddenName;
 

@@ -58,10 +58,10 @@ public class UserBootstrapper implements CommandLineRunner {
             manuel.setVersion(m.getVersion());
 
             //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String dateFormat = LocalDateTime.of(2024, 1, 20, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, manuel.getUsername());
+            //String dateFormat = LocalDateTime.of(2024, 1, 20, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, manuel.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
 
             Optional<ReaderDetails> readerDetails1 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/1");
             Optional<Genre> g1 = genreRepository.findByString("Fantasia");
@@ -83,7 +83,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         true,
                         true,
-                        "readerPhotoTest.jpg",
+                        null,
                         _factoryUser, _factoryGenre);
 
                 r1.setReader(manuel);
@@ -101,10 +101,10 @@ public class UserBootstrapper implements CommandLineRunner {
             joao.setPk(m.getPk());
             joao.setVersion(m.getVersion());
 
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, joao.getUsername());
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, joao.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
             //jdbcTemplate.update("UPDATE PUBLIC.T_USER SET CREATED_AT = ? WHERE USERNAME = ?", LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")), joao.getUsername());jdbcTemplate.update("UPDATE PUBLIC.T_USER SET CREATED_AT = ? WHERE USERNAME = ?", LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")), joao.getUsername());
 
 
@@ -131,10 +131,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(pedro);
             pedro.setPk(m.getPk());
             pedro.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, pedro.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, pedro.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails3 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/3");
             if (readerDetails3.isEmpty()) {
                 ReaderDetails r3 = new ReaderDetails(
@@ -147,7 +149,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         null,
                         _factoryUser, _factoryGenre);
 
-                r3.defineReader(pedro.getPk(), pedro.getUsername(), pedro.getPassword(), pedro.getName().getName(), pedro.getVersion());
+                r3.setReader(pedro);
                 readerRepository.save(r3);
             }
         }
@@ -158,10 +160,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(catarina);
             catarina.setPk(m.getPk());
             catarina.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, catarina.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, catarina.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails4 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/4");
             if (readerDetails4.isEmpty()) {
                 ReaderDetails r4 = new ReaderDetails(
@@ -173,7 +177,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         null,
                         _factoryUser, _factoryGenre);
-                r4.defineReader(catarina.getPk(), catarina.getUsername(), catarina.getPassword(), catarina.getName().getName(), catarina.getVersion());
+                r4.setReader(catarina);
                 readerRepository.save(r4);
             }
         }
@@ -184,10 +188,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(marcelo);
             marcelo.setPk(m.getPk());
             marcelo.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, marcelo.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 1, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, marcelo.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/5");
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r5 = new ReaderDetails(
@@ -199,7 +205,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         null,
                         _factoryUser, _factoryGenre);
-                r5.defineReader(marcelo.getPk(), marcelo.getUsername(), marcelo.getPassword(), marcelo.getName().getName(), marcelo.getVersion());
+                r5.setReader(marcelo);
                 readerRepository.save(r5);
             }
         }
@@ -210,10 +216,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(luis);
             luis.setPk(m.getPk());
             luis.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, luis.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 3, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, luis.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/6");
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r6 = new ReaderDetails(
@@ -225,7 +233,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         null,
                         _factoryUser, _factoryGenre);
-                r6.defineReader(luis.getPk(), luis.getUsername(), luis.getPassword(), luis.getName().getName(), luis.getVersion());
+                r6.setReader(luis);
                 readerRepository.save(r6);
             }
         }
@@ -236,10 +244,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(antonio);
             antonio.setPk(m.getPk());
             antonio.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 6, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, antonio.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 6, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, antonio.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/7");
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r7 = new ReaderDetails(
@@ -251,7 +261,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         null,
                         _factoryUser, _factoryGenre);
-                r7.defineReader(antonio.getPk(), antonio.getUsername(), antonio.getPassword(), antonio.getName().getName(), antonio.getVersion());
+                r7.setReader(antonio);
                 readerRepository.save(r7);
             }
         }
@@ -262,10 +272,12 @@ public class UserBootstrapper implements CommandLineRunner {
             User m = userRepository.save(andre);
             andre.setPk(m.getPk());
             andre.setVersion(m.getVersion());
-            String dateFormat = LocalDateTime.of(LocalDate.of(2024, 5, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, andre.getUsername());
+
+            //String dateFormat = LocalDateTime.of(LocalDate.of(2024, 5, 20), LocalTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, andre.getUsername());
             //jdbcTemplate.update(query);
-            queriesToExecute.add(query);
+            //queriesToExecute.add(query);
+
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/8");
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r8 = new ReaderDetails(
@@ -277,7 +289,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         null,
                         _factoryUser, _factoryGenre);
-                r8.defineReader(andre.getPk(), andre.getUsername(), andre.getPassword(), andre.getName().getName(), andre.getVersion());
+                r8.setReader(andre);
                 readerRepository.save(r8);
             }
         }
@@ -289,13 +301,14 @@ public class UserBootstrapper implements CommandLineRunner {
             maria.setPk(m.getPk());
             maria.setVersion(m.getVersion());
 
-            String dateFormat = LocalDateTime.of(2024, 1, 23, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, maria.getUsername());
-            queriesToExecute.add(query);
+            //String dateFormat = LocalDateTime.of(2024, 1, 23, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, maria.getUsername());
+            //queriesToExecute.add(query);
 
             Optional<ReaderDetails> readerDetails3 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/9");
             Optional<Genre> g1 = genreRepository.findByString("Romance");
             Optional<Genre> g2 = genreRepository.findByString("Thriller");
+            List<Genre> interestList = new ArrayList<>();
 
             if (readerDetails3.isEmpty()) {
                 ReaderDetails r9 = new ReaderDetails(
@@ -308,16 +321,12 @@ public class UserBootstrapper implements CommandLineRunner {
                         null,
                         _factoryUser, _factoryGenre);
 
-                if (g1.isPresent()) {
-                    r9.addGenre(g1.get().getGenre());
-                }
+                g1.ifPresent(interestList::add);
 
-                if (g2.isPresent()) {
-                    r9.addGenre(g2.get().getGenre());
-                }
+                g2.ifPresent(interestList::add);
 
-                r9.defineReader(maria.getPk(), maria.getUsername(), maria.getPassword(), maria.getName().getName(), maria.getVersion());
-
+                r9.setReader(maria);
+                r9.setInterestList(interestList);
                 readerRepository.save(r9);
             }
         }
@@ -329,13 +338,14 @@ public class UserBootstrapper implements CommandLineRunner {
             ana.setPk(m.getPk());
             ana.setVersion(m.getVersion());
 
-            String dateFormat = LocalDateTime.of(2024, 1, 24, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ana.getUsername());
-            queriesToExecute.add(query);
+            //String dateFormat = LocalDateTime.of(2024, 1, 24, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ana.getUsername());
+            //queriesToExecute.add(query);
 
             Optional<ReaderDetails> readerDetails4 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/10");
             Optional<Genre> g1 = genreRepository.findByString("Thriller");
             Optional<Genre> g2 = genreRepository.findByString("Fantasia");
+            List<Genre> interestList = new ArrayList<>();
 
             if (readerDetails4.isEmpty()) {
                 ReaderDetails r10 = new ReaderDetails(
@@ -348,16 +358,12 @@ public class UserBootstrapper implements CommandLineRunner {
                         null,
                         _factoryUser, _factoryGenre);
 
-                if (g1.isPresent()) {
-                    r10.addGenre(g1.get().getGenre());
-                }
+                g1.ifPresent(interestList::add);
 
-                if (g2.isPresent()) {
-                    r10.addGenre(g2.get().getGenre());
-                }
+                g2.ifPresent(interestList::add);
 
-                r10.defineReader(ana.getPk(), ana.getUsername(), ana.getPassword(), ana.getName().getName(), ana.getVersion());
-
+                r10.setReader(ana);
+                r10.setInterestList(interestList);
                 readerRepository.save(r10);
             }
         }
@@ -369,13 +375,14 @@ public class UserBootstrapper implements CommandLineRunner {
             francisco.setPk(m.getPk());
             francisco.setVersion(m.getVersion());
 
-            String dateFormat = LocalDateTime.of(2024, 1, 25, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, francisco.getUsername());
-            queriesToExecute.add(query);
+            //String dateFormat = LocalDateTime.of(2024, 1, 25, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, francisco.getUsername());
+            //queriesToExecute.add(query);
 
             Optional<ReaderDetails> readerDetails5 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/11");
             Optional<Genre> g1 = genreRepository.findByString("Informação");
             Optional<Genre> g2 = genreRepository.findByString("Juvenil");
+            List<Genre> interestList = new ArrayList<>();
 
             if (readerDetails5.isEmpty()) {
                 ReaderDetails r11 = new ReaderDetails(
@@ -388,16 +395,12 @@ public class UserBootstrapper implements CommandLineRunner {
                         null,
                         _factoryUser, _factoryGenre);
 
-                if (g1.isPresent()) {
-                    r11.addGenre(g1.get().getGenre());
-                }
+                g1.ifPresent(interestList::add);
 
-                if (g2.isPresent()) {
-                    r11.addGenre(g2.get().getGenre());
-                }
+                g2.ifPresent(interestList::add);
 
-                r11.defineReader(francisco.getPk(), francisco.getUsername(), francisco.getPassword(), francisco.getName().getName(), francisco.getVersion());
-
+                r11.setReader(francisco);
+                r11.setInterestList(interestList);
                 readerRepository.save(r11);
             }
         }
@@ -409,13 +412,14 @@ public class UserBootstrapper implements CommandLineRunner {
             ricardo.setPk(m.getPk());
             ricardo.setVersion(m.getVersion());
 
-            String dateFormat = LocalDateTime.of(2024, 1, 26, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
-            String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ricardo.getUsername());
-            queriesToExecute.add(query);
+            //String dateFormat = LocalDateTime.of(2024, 1, 26, 0, 0, 0, 0).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
+            //String query = String.format("UPDATE PUBLIC.T_USER SET CREATED_AT = '%s' WHERE USERNAME = '%s'", dateFormat, ricardo.getUsername());
+            //queriesToExecute.add(query);
 
             Optional<ReaderDetails> readerDetails6 = readerRepository.findByReaderNumber(LocalDate.now().getYear() + "/12");
             Optional<Genre> g1 = genreRepository.findByString("Informação");
             Optional<Genre> g2 = genreRepository.findByString("Juvenil");
+            List<Genre> interestList = new ArrayList<>();
 
             if (readerDetails6.isEmpty()) {
                 ReaderDetails r12 = new ReaderDetails(
@@ -428,16 +432,12 @@ public class UserBootstrapper implements CommandLineRunner {
                         null,
                         _factoryUser, _factoryGenre);
 
-                if (g1.isPresent()) {
-                    r12.addGenre(g1.get().getGenre());
-                }
+                g1.ifPresent(interestList::add);
 
-                if (g2.isPresent()) {
-                    r12.addGenre(g2.get().getGenre());
-                }
+                g2.ifPresent(interestList::add);
 
-                r12.defineReader(ricardo.getPk(), ricardo.getUsername(), ricardo.getPassword(), ricardo.getName().getName(), ricardo.getVersion());
-
+                r12.setReader(ricardo);
+                r12.setInterestList(interestList);
                 readerRepository.save(r12);
             }
         }

@@ -33,7 +33,7 @@ public class Reader extends User {
         return u;
     }
 
-    public static Reader newReader(final long pk, final String username, final String password, final String name, final long version) {
+    public static Reader newReader(final String pk, final String username, final String password, final String name, final long version) {
         final var u = new Reader(username, password);
         u.setName(name);
         u.setPk(pk);

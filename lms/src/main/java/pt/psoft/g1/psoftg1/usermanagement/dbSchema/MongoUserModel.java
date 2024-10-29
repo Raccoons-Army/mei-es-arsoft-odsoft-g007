@@ -2,11 +2,7 @@ package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -17,12 +13,13 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Document(collection = "T_USERS")
+@Document(collection = "users")
 public class MongoUserModel {
 
     @Id
-    private Long pk;
+    private String pk;
 
+    @Version
     private Long version;
 
     @CreatedDate
@@ -51,7 +48,7 @@ public class MongoUserModel {
 
     private String name;
 
-    private final Set<Role> authorities = new HashSet<>();
+    private Set<Role> authorities = new HashSet<>();
 
     protected MongoUserModel() {
         // for MongoDB ORM only

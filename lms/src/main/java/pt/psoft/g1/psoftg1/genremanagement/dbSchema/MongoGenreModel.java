@@ -11,11 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MongoGenreModel {
 
     @Id
-    private Long pk;
+    private String pk;
 
     String genre;
 
-    public MongoGenreModel(Long pk, String genre) {
+    public MongoGenreModel(String pk, String genre) {
         this.pk = pk;
         this.genre = genre;
     }

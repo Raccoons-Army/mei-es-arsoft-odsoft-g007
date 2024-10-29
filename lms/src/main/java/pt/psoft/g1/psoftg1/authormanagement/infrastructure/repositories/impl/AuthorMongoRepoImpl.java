@@ -113,7 +113,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Optional<Author> findById(Long id) {
+    public Optional<Author> findById(String id) {
         MongoAuthorModel mongoAuthor = mt.findById(id, MongoAuthorModel.class);
 
         return Optional.ofNullable(mongoAuthor)

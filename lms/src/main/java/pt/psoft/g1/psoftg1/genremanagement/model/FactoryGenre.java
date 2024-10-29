@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FactoryGenre {
 
-    public Genre newGenre(long pk, String name) throws InstantiationException {
+    public Genre newGenre(String pk, String name) throws InstantiationException {
         return new Genre(name);
     }
 

@@ -22,7 +22,7 @@ public interface ReaderRepository extends CRUDRepository<ReaderDetails, Long> {
     Optional<ReaderDetails> findByReaderNumber(@Param("readerNumber") @NotNull String readerNumber);
     List<ReaderDetails> findByPhoneNumber(@Param("phoneNumber") @NotNull String phoneNumber);
     Optional<ReaderDetails> findByUsername(@Param("username") @NotNull String username);
-    Optional<ReaderDetails> findByUserId(@Param("userId") @NotNull Long userId);
+    Optional<ReaderDetails> findByUserId(@Param("userId") @NotNull String userId);
     int getCountFromCurrentYear();
     Page<ReaderDetails> findTopReaders(Pageable pageable);
     Page<ReaderBookCountDTO> findTopByGenre(Pageable pageable, String genre, LocalDate startDate, LocalDate endDate);

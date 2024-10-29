@@ -115,7 +115,7 @@ public class Bootstrapper implements CommandLineRunner {
                             "Foi a criação da Terra Média, porém, a trazer-lhe a celebridade. Autor de extraordinários clássicos da ficção, de que são exemplo O Hobbit, O Senhor dos Anéis e O Silmarillion, os seus livros foram traduzidos em mais de 60 línguas e venderam largos milhões de exemplares no mundo inteiro.\n" +
                             "Tolkien foi nomeado Comandante da Ordem do Império Britânico e, em 1972, foi-lhe atribuído o título de Doutor Honoris Causa, pela Universidade de Oxford.\n" +
                             "Morreu em 1973, com 81 anos.",
-                    "authorPhotoTest.jpg");
+                    null);
             authorRepository.save(author);
         }
         if (authorRepository.searchByNameName("Gardner Dozois").isEmpty()) {
@@ -294,7 +294,7 @@ public class Bootstrapper implements CommandLineRunner {
                 authors.add(author.get(0));
                 Book book = new Book("9789722328296",
                         "O Principezinho", "Depois de deixar o seu asteroide e embarcar numa viagem pelo espaço, o principezinho chega, finalmente, à Terra. No deserto, o menino de cabelos da cor do ouro conhece um aviador, a quem conta todas as aventuras que viveu e tudo o que viu ao longo da sua jornada.",
-                        "bookPhotoTest.jpg", factoryGenre, factoryAuthor);
+                        null, factoryGenre, factoryAuthor);
 
 //                defineGenreAndAddAuthors(book, genre.get(), authors);
                 book.setGenre(genre.get());

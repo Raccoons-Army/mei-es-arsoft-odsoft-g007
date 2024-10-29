@@ -137,7 +137,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findById(Long bookId) {
+    public Optional<Book> findById(String bookId) {
         MongoBookModel mongoBook = mt.findById(bookId, MongoBookModel.class);
 
         return Optional.ofNullable(mongoBook)

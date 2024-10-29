@@ -195,7 +195,7 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findById(Long bookId) {
+    public Optional<Book> findById(String bookId) {
         Optional<JpaBookModel> jpaBook = Optional.ofNullable(em.find(JpaBookModel.class, bookId));
         return jpaBook.map(bookMapper::fromJpaBookModel);
     }

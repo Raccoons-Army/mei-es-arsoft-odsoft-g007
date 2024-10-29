@@ -7,7 +7,7 @@ import lombok.Setter;
 public class Genre {
 
     @Setter
-    Long pk;
+    String pk;
 
     String genre;
 

@@ -9,7 +9,7 @@ import pt.psoft.g1.psoftg1.shared.repositories.CRUDRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface AuthorRepository extends CRUDRepository<Author, Long> {
+public interface AuthorRepository extends CRUDRepository<Author, String> {
 
     List<Author> searchByNameNameStartsWith(String name);
     List<Author> searchByNameName(String name);

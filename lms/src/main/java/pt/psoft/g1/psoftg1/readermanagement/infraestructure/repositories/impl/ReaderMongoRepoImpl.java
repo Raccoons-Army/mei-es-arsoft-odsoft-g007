@@ -42,7 +42,7 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public Optional<ReaderDetails> findByUserId(Long userId) {
+    public Optional<ReaderDetails> findByUserId(String userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("user.id").is(userId)); // Adjust if User is referenced differently
         return Optional.ofNullable(mt.findOne(query, ReaderDetails.class));

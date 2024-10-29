@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
 	@Setter
 	@Getter
-	private Long pk;
+	private String pk;
 
 	@Setter
 	@Getter
@@ -151,7 +151,7 @@ public class User implements UserDetails {
 	}
 
 	// for mapstruct
-	public static User newUser(final Long pk, final String username, final String password, final String name, final Set<Role> roles,
+	public static User newUser(final String pk, final String username, final String password, final String name, final Set<Role> roles,
 							   final long version) {
 		final var u = new User(username);
 		u.setPasswordWithoutHashing(password); // skip password hashing

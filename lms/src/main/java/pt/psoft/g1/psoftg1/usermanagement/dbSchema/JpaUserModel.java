@@ -33,7 +33,7 @@ public class JpaUserModel implements Serializable {
     @Id
     @GeneratedValue
     @Column(name="USER_ID")
-    private Long pk;
+    private String pk;
 
     // optimistic lock concurrency control
     @Version

@@ -158,8 +158,8 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
-    public Optional<Author> findById(Long aLong) {
-        Optional<JpaAuthorModel> jpaAuthor = Optional.ofNullable(em.find(JpaAuthorModel.class, aLong));  // Use find method to get Author by ID
+    public Optional<Author> findById(String authorId) {
+        Optional<JpaAuthorModel> jpaAuthor = Optional.ofNullable(em.find(JpaAuthorModel.class, authorId));  // Use find method to get Author by ID
         return jpaAuthor.map(authorMapper::fromJpaAuthor);
     }
 }

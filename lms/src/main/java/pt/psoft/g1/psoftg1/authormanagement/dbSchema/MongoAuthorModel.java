@@ -1,10 +1,11 @@
 package pt.psoft.g1.psoftg1.authormanagement.dbSchema;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 import pt.psoft.g1.psoftg1.shared.dbSchema.MongoEntityWithPhotoModel;
 
 @Getter
@@ -32,7 +33,4 @@ public class MongoAuthorModel extends MongoEntityWithPhotoModel {
         this.version = version;
         setPhotoInternal(photoURI);
     }
-
-
-
 }

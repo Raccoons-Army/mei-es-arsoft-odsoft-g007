@@ -1,8 +1,8 @@
 package pt.psoft.g1.psoftg1.readermanagement.dbSchema;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreModel;
@@ -14,8 +14,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@Document(collection = "READER_DETAILS")
+@Document(collection = "readersDetails")
 public class MongoReaderDetailsModel extends MongoEntityWithPhotoModel {
+
     @Id
     private String pk;
 

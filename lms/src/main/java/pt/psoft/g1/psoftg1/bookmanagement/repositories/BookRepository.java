@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends CRUDRepository<Book, Long> {
+public interface BookRepository extends CRUDRepository<Book, String> {
 
     List<Book> findByGenre(String genre);
     List<Book> findByTitle(String title);

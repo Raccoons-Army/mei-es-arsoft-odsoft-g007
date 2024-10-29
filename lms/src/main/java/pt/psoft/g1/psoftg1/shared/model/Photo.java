@@ -9,7 +9,7 @@ import java.nio.file.Path;
 @Getter
 public class Photo {
 
-    private long pk;
+    private String pk;
 
     private String photoFile;
 

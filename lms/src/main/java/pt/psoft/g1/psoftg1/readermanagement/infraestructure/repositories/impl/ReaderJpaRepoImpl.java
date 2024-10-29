@@ -69,7 +69,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     }
 
     @Override
-    public Optional<ReaderDetails> findByUserId(Long userId) {
+    public Optional<ReaderDetails> findByUserId(String userId) {
         Optional<JpaReaderDetailsModel> m = em.createQuery(
                         "SELECT r FROM JpaReaderDetailsModel r JOIN JpaUserModel u ON r.reader.id = u.id WHERE u.id = :userId",
                         JpaReaderDetailsModel.class)

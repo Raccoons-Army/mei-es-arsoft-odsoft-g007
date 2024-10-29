@@ -65,8 +65,11 @@ public class UserMongoRepoImpl implements UserRepository {
         query.addCriteria(Criteria.where("username").is(username));
         MongoUserModel mongoUserModel = mt.findOne(query, MongoUserModel.class);
 
-        return Optional.ofNullable(mongoUserModel)
-                .map(userMapper::fromMongoUserModel);
+        if (mongoUserModel == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(userMapper.fromMongoUserModel(mongoUserModel));
     }
 
     @Override

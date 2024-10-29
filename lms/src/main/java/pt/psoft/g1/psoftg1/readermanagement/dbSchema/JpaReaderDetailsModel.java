@@ -15,9 +15,9 @@ import java.util.List;
 @Entity
 @Table(name = "READER_DETAILS")
 public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pk;
+    private String pk;
 
     @OneToOne
     @JoinColumn(name = "READER_USER_ID")

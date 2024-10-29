@@ -18,7 +18,7 @@ public class ReaderDetails extends EntityWithPhoto {
 
     @Setter
     @Getter
-    private Long pk;
+    private String pk;
 
     @Getter
     @Setter
@@ -78,7 +78,7 @@ public class ReaderDetails extends EntityWithPhoto {
         _factoryGenre = factoryGenre;
     }
 
-    public Reader defineReader(long pk, String username, String password, String name, long version) {
+    public Reader defineReader(String pk, String username, String password, String name, long version) {
         this.reader = _factoryUser.newReader(pk, username, password, name, version);
         return this.reader;
     }

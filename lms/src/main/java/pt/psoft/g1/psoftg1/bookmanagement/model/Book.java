@@ -19,7 +19,7 @@ public class Book extends EntityWithPhoto {
 
     @Setter
     @Getter
-    Long pk;
+    String pk;
 
     @Setter
     @Getter
@@ -68,7 +68,7 @@ public class Book extends EntityWithPhoto {
         // got ORM only
     }
 
-    public void defineGenre(long pk, String name) throws InstantiationException {
+    public void defineGenre(String pk, String name) throws InstantiationException {
         this.genre = _factoryGenre.newGenre(pk, name);
     }
 
