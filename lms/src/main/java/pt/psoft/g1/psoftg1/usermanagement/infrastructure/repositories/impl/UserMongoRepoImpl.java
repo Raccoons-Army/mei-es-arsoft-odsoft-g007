@@ -108,9 +108,7 @@ public class UserMongoRepoImpl implements UserRepository {
         query.addCriteria(Criteria.where("name").is(name));
         List<MongoUserModel> mongoUserModels = mt.find(query, MongoUserModel.class);
 
-        return mongoUserModels.stream()
-                .map(userMapper::fromMongoUserModel)
-                .collect(Collectors.toList());
+        return userMapper.fromMongoUserModel(mongoUserModels);
     }
 
     @Override
@@ -120,9 +118,7 @@ public class UserMongoRepoImpl implements UserRepository {
         query.addCriteria(Criteria.where("name").regex(pattern, "i"));
         List<MongoUserModel> mongoUserModels = mt.find(query, MongoUserModel.class);
 
-        return mongoUserModels.stream()
-                .map(userMapper::fromMongoUserModel)
-                .collect(Collectors.toList());
+        return userMapper.fromMongoUserModel(mongoUserModels);
     }
 
     @Override

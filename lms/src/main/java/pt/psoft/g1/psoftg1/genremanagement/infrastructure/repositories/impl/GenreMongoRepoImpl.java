@@ -173,10 +173,7 @@ public class GenreMongoRepoImpl implements GenreRepository {
     @Override
     public List<Genre> findAll() {
         List<MongoGenreModel> mongoGenres = mt.findAll(MongoGenreModel.class);
-
-        return mongoGenres.stream()
-                .map(genreMapper::fromMongoGenre)
-                .collect(Collectors.toList());
+        return genreMapper.fromMongoGenre(mongoGenres);
     }
 
     @Override

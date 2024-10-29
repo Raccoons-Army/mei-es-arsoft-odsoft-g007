@@ -200,11 +200,7 @@ public class LendingJpaRepoImpl implements LendingRepository {
         query.from(JpaLendingModel.class);
 
         List<JpaLendingModel> jpaLendings = em.createQuery(query).getResultList();
-        List<Lending> lendings = new ArrayList<>();
-        for (JpaLendingModel i : jpaLendings) {
-            lendings.add(lendingMapper.fromJpaLendingModel(i));
-        }
-        return lendings;
+        return lendingMapper.fromJpaLendingModel(jpaLendings);
     }
 
     @Override

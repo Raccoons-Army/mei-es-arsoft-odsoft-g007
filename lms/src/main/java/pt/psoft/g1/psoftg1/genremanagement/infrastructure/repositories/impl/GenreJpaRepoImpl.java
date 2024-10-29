@@ -291,11 +291,7 @@ public class GenreJpaRepoImpl implements GenreRepository {
         query.from(JpaGenreModel.class);
 
         List<JpaGenreModel> jpaGenres = em.createQuery(query).getResultList();
-        List<Genre> genres = new ArrayList<>();
-        for (JpaGenreModel i : jpaGenres) {
-            genres.add(genreMapper.fromJpaGenre(i));
-        }
-        return genres;
+        return genreMapper.fromJpaGenre(jpaGenres);
     }
 
     @Override

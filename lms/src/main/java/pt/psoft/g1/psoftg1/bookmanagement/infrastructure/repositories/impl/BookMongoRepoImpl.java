@@ -131,9 +131,7 @@ public class BookMongoRepoImpl implements BookRepository {
     public List<Book> findAll() {
         List<MongoBookModel> mongoBooks = mt.findAll(MongoBookModel.class);
 
-        return mongoBooks.stream()
-                .map(bookMapper::fromMongoBookModel)
-                .collect(Collectors.toList());
+       return bookMapper.fromMongoBookModel(mongoBooks);
     }
 
     @Override

@@ -35,11 +35,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("name").regex("^" + name));
         List<MongoAuthorModel> mongoAuthors =  mt.find(query, MongoAuthorModel.class);
-        List<Author> authors = new ArrayList<>();
-        for (MongoAuthorModel i : mongoAuthors) {
-            authors.add(authorMapper.fromMongoAuthor(i));
-        }
-        return authors;
+        return authorMapper.fromMongoAuthor(mongoAuthors);
     }
 
     @Override
@@ -49,9 +45,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
 
         List<MongoAuthorModel> mongoAuthors = mt.find(query, MongoAuthorModel.class);
 
-        return mongoAuthors.stream()
-                .map(authorMapper::fromMongoAuthor)
-                .collect(Collectors.toList());
+        return authorMapper.fromMongoAuthor(mongoAuthors);
     }
 
     @Override
@@ -107,9 +101,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     public List<Author> findAll() {
         List<MongoAuthorModel> mongoAuthors = mt.findAll(MongoAuthorModel.class);
 
-        return mongoAuthors.stream()
-                .map(authorMapper::fromMongoAuthor)
-                .collect(Collectors.toList());
+        return authorMapper.fromMongoAuthor(mongoAuthors);
     }
 
     @Override

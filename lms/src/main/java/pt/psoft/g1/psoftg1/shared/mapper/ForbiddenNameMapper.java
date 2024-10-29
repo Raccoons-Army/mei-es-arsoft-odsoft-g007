@@ -13,7 +13,7 @@ public abstract class ForbiddenNameMapper {
 
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "forbiddenName", source = "forbiddenName")
-    public abstract ForbiddenName toForbiddenName(JpaForbiddenNameModel jpaForbiddenNameModel);
+    public abstract ForbiddenName fromJpaForbiddenNameModel(JpaForbiddenNameModel jpaForbiddenNameModel);
     public abstract List<ForbiddenName> fromJpaForbiddenNameModel(List<JpaForbiddenNameModel> jpaForbiddenNameModel);
 
     @Mapping(target = "pk", source = "pk")
@@ -22,7 +22,7 @@ public abstract class ForbiddenNameMapper {
 
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "forbiddenName", source = "forbiddenName")
-    public abstract ForbiddenName toForbiddenName(MongoForbiddenNameModel mongoForbiddenNameModel);
+    public abstract ForbiddenName fromMongoForbiddenNameModel(MongoForbiddenNameModel mongoForbiddenNameModel);
     public abstract List<ForbiddenName> fromMongoForbiddenNameModel(List<MongoForbiddenNameModel> mongoForbiddenNameModel);
 
     @Mapping(target = "pk", source = "pk")

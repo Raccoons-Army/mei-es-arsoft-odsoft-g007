@@ -151,9 +151,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
     public List<Lending> findAll() {
         List<MongoLendingModel> mongoLendings = mt.findAll(MongoLendingModel.class);
 
-        return mongoLendings.stream()
-                .map(lendingMapper::fromMongoLendingModel)
-                .collect(Collectors.toList());
+       return lendingMapper.fromMongoLendingModel(mongoLendings);
     }
 
     @Override

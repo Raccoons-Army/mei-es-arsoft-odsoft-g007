@@ -39,11 +39,7 @@ public class BookJpaRepoImpl implements BookRepository {
                 .setParameter("genre", genre)
                 .getResultList();
 
-        List<Book> books = new ArrayList<>();
-        for (JpaBookModel i : list) {
-            books.add(bookMapper.fromJpaBookModel(i));
-        }
-        return books;
+        return bookMapper.fromJpaBookModel(list);
     }
 
     @Override
@@ -150,11 +146,7 @@ public class BookJpaRepoImpl implements BookRepository {
                 .setMaxResults(x)
                 .getResultList();
 
-        List<Book> books = new ArrayList<>();
-        for (JpaBookModel i : list) {
-            books.add(bookMapper.fromJpaBookModel(i));
-        }
-        return books;
+        return bookMapper.fromJpaBookModel(list);
     }
 
     @Override
@@ -187,11 +179,8 @@ public class BookJpaRepoImpl implements BookRepository {
         query.from(JpaBookModel.class);
 
         List<JpaBookModel> jpaBooks = em.createQuery(query).getResultList();
-        List<Book> books = new ArrayList<>();
-        for (JpaBookModel i : jpaBooks) {
-            books.add(bookMapper.fromJpaBookModel(i));
-        }
-        return books;
+
+        return bookMapper.fromJpaBookModel(jpaBooks);
     }
 
     @Override

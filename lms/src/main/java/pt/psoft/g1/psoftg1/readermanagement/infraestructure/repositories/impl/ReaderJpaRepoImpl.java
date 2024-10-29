@@ -194,11 +194,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
         query.from(JpaReaderDetailsModel.class);
 
         List<JpaReaderDetailsModel> jpaReadersDetails = em.createQuery(query).getResultList();
-        List<ReaderDetails> readerDetails = new ArrayList<>();
-        for (JpaReaderDetailsModel i : jpaReadersDetails) {
-            readerDetails.add(readerDetailsMapper.fromJpaReaderDetailsModel(i));
-        }
-        return readerDetails;
+        return readerDetailsMapper.fromJpaReaderDetailsModel(jpaReadersDetails);
     }
 
     @Override

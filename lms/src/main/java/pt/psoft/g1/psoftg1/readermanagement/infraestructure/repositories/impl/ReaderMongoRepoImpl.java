@@ -129,9 +129,7 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
     public List<ReaderDetails> findAll() {
         List<MongoReaderDetailsModel> mongoReaderDetailsList = mt.findAll(MongoReaderDetailsModel.class);
 
-        return mongoReaderDetailsList.stream()
-                .map(readerDetailsMapper::fromMongoReaderDetailsModel)
-                .collect(Collectors.toList());
+        return readerDetailsMapper.fromMongoReaderDetailsModel(mongoReaderDetailsList);
     }
 
     @Override

@@ -48,11 +48,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
         query.select(root).where(namePredicate);
 
         List<JpaAuthorModel> jpaAuthors = em.createQuery(query).getResultList();
-        List<Author> authors = new ArrayList<>();
-        for (JpaAuthorModel i : jpaAuthors) {
-            authors.add(authorMapper.fromJpaAuthor(i));
-        }
-        return authors;
+        return authorMapper.fromJpaAuthor(jpaAuthors);
     }
 
     @Override
@@ -150,11 +146,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
         query.from(JpaAuthorModel.class);  // Create query for Author class
 
         List<JpaAuthorModel> jpaAuthors = em.createQuery(query).getResultList();
-        List<Author> authors = new ArrayList<>();
-        for (JpaAuthorModel i : jpaAuthors) {
-            authors.add(authorMapper.fromJpaAuthor(i));
-        }
-        return authors;
+        return authorMapper.fromJpaAuthor(jpaAuthors);
     }
 
     @Override

@@ -31,11 +31,7 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
         query.select(root);
 
         List<JpaForbiddenNameModel> list = em.createQuery(query).getResultList();
-        List<ForbiddenName> result = new ArrayList<>();
-        for (JpaForbiddenNameModel m : list) {
-            result.add(forbiddenNameMapper.toForbiddenName(m));
-        }
-        return result;
+        return forbiddenNameMapper.fromJpaForbiddenNameModel(list);
     }
 
     @Override
@@ -55,7 +51,7 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
     public ForbiddenName save(ForbiddenName forbiddenName) {
         JpaForbiddenNameModel m = forbiddenNameMapper.toJpaForbiddenNameModel(forbiddenName);
         em.persist(m);
-        return forbiddenNameMapper.toForbiddenName(m);
+        return forbiddenNameMapper.fromJpaForbiddenNameModel(m);
     }
 
     @Override
@@ -71,7 +67,7 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
                 .getResultStream()
                 .findFirst();
 
-        return m.map(forbiddenNameMapper::toForbiddenName);
+        return m.map(forbiddenNameMapper::fromJpaForbiddenNameModel);
     }
 
     @Override

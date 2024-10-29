@@ -23,10 +23,7 @@ public class ForbiddenNameMongoRepoImpl implements ForbiddenNameRepository {
     @Override
     public Iterable<ForbiddenName> findAll() {
         List<MongoForbiddenNameModel> mongoForbiddenNames = mt.findAll(MongoForbiddenNameModel.class);
-
-        return mongoForbiddenNames.stream()
-                .map(forbiddenNameMapper::toForbiddenName)
-                .collect(Collectors.toList());
+        return forbiddenNameMapper.fromMongoForbiddenNameModel(mongoForbiddenNames);
     }
 
     @Override
@@ -35,9 +32,7 @@ public class ForbiddenNameMongoRepoImpl implements ForbiddenNameRepository {
         query.addCriteria(Criteria.where("forbiddenName").regex(pat, "i"));
         List<MongoForbiddenNameModel> mongoForbiddenNames = mt.find(query, MongoForbiddenNameModel.class);
 
-        return mongoForbiddenNames.stream()
-                .map(forbiddenNameMapper::toForbiddenName)
-                .collect(Collectors.toList());
+        return forbiddenNameMapper.fromMongoForbiddenNameModel(mongoForbiddenNames);
     }
 
     @Override
@@ -45,7 +40,7 @@ public class ForbiddenNameMongoRepoImpl implements ForbiddenNameRepository {
         MongoForbiddenNameModel mongoForbiddenName = forbiddenNameMapper.toMongoForbiddenNameModel(forbiddenName);
         MongoForbiddenNameModel savedForbiddenName = mt.save(mongoForbiddenName);
 
-        return forbiddenNameMapper.toForbiddenName(savedForbiddenName);
+        return forbiddenNameMapper.fromMongoForbiddenNameModel(savedForbiddenName);
     }
 
     @Override
@@ -55,7 +50,7 @@ public class ForbiddenNameMongoRepoImpl implements ForbiddenNameRepository {
         MongoForbiddenNameModel mongoForbiddenName = mt.findOne(query, MongoForbiddenNameModel.class);
 
         return Optional.ofNullable(mongoForbiddenName)
-                .map(forbiddenNameMapper::toForbiddenName);
+                .map(forbiddenNameMapper::fromMongoForbiddenNameModel);
     }
 
     @Override
