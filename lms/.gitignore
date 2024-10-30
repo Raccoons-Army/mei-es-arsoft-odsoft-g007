@@ -77,16 +77,17 @@ ehthumbs.db
 *~
 
 # Environment and other configuration files
+*.env
 .env
 .env.local
 .env.*.local
 
 # Application.properties for Spring Boot
-application.properties
-application.yml
+# application.properties
+# application.yml
 # Ignore all profile-specific application.properties and application.yml files
-application-*.properties
-application-*.yml
+# application-*.properties
+# application-*.yml
 
 # JetBrains Rider
 .idea/
