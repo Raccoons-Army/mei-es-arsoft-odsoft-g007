@@ -1,7 +1,9 @@
 package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -17,6 +19,7 @@ import java.util.Set;
 public class MongoUserModel {
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @Version

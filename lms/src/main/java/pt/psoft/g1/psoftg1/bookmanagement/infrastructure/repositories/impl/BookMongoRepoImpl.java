@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
@@ -17,6 +18,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -115,8 +117,14 @@ public class BookMongoRepoImpl implements BookRepository {
     @Override
     public Book save(Book book) {
         MongoBookModel mongoBook = bookMapper.toMongoBookModel(book);
-        MongoBookModel savedBook = mt.save(mongoBook);
 
+        if (mongoBook.getPhoto() != null) {
+            MongoPhotoModel photo = mongoBook.getPhoto();
+            photo = mt.save(photo);
+            mongoBook.setPhoto(photo);
+        }
+
+        MongoBookModel savedBook = mt.save(mongoBook);
         return bookMapper.fromMongoBookModel(savedBook);
     }
 

@@ -19,9 +19,6 @@ import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +80,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         true,
                         true,
-                        null,
+                        "readerPhotoTest.jpg",
                         _factoryUser, _factoryGenre);
 
                 r1.setReader(manuel);
@@ -146,7 +143,7 @@ public class UserBootstrapper implements CommandLineRunner {
                         true,
                         false,
                         true,
-                        null,
+                        "readerPhotoTest.jpg",
                         _factoryUser, _factoryGenre);
 
                 r3.setReader(pedro);

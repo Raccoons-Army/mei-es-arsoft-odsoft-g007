@@ -2,10 +2,12 @@ package pt.psoft.g1.psoftg1.shared.dbSchema;
 
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.lang.Nullable;
 
 @Getter
+@Setter
 public abstract class MongoEntityWithPhotoModel {
 
     @Nullable
@@ -14,7 +16,7 @@ public abstract class MongoEntityWithPhotoModel {
 
     //This method is used by the mapper in order to set the photo. This will call the setPhotoInternal method that
     //will contain all the logic to set the photo
-    public void setPhoto(String photoUri) {
+    public void setThePhoto(String photoUri) {
         this.setPhotoInternal(photoUri);
     }
 

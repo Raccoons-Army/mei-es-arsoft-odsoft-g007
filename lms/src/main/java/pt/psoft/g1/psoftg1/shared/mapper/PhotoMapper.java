@@ -20,6 +20,10 @@ public abstract class PhotoMapper {
         return (photoUri != null) ? new MongoPhotoModel(photoUri) : null;
     }
 
+    public Photo mapMongoPhotoModelToPhoto(MongoPhotoModel mongoPhoto) {
+        return new Photo(Path.of(mongoPhoto.getPhotoFile()));
+    }
+
     // Custom mapping method for JpaPhotoModel to String
     public String mapJpaPhotoModelToString(JpaPhotoModel photo) {
         return (photo != null) ? photo.getPhotoFile() : null;

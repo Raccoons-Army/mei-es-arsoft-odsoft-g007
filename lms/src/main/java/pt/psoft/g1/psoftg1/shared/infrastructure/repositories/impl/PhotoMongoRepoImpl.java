@@ -2,6 +2,8 @@ package pt.psoft.g1.psoftg1.shared.infrastructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoForbiddenNameModel;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
 import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
@@ -21,8 +23,11 @@ public class PhotoMongoRepoImpl implements PhotoRepository {
     }
 
     @Override
-    public Photo save(Photo entity) {
-        return null;
+    public Photo save(Photo photo) {
+        MongoPhotoModel mongoPhoto = photoMapper.mapStringToMongoPhotoModel(photo.getPhotoFile());
+        MongoPhotoModel savedPhoto = mt.save(mongoPhoto);
+
+        return photoMapper.mapMongoPhotoModelToPhoto(savedPhoto);
     }
 
     @Override

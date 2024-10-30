@@ -17,6 +17,8 @@ import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
+import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +89,14 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     public Author save(Author author) {
         MongoAuthorModel mongoAuthor = authorMapper.toMongoAuthor(author);
 
-        return authorMapper.fromMongoAuthor(mt.save(mongoAuthor));
+        if (mongoAuthor.getPhoto() != null) {
+            MongoPhotoModel photo = mongoAuthor.getPhoto();
+            photo = mt.save(photo);
+            mongoAuthor.setPhoto(photo);
+        }
+
+        MongoAuthorModel savedAuthor = mt.save(mongoAuthor);
+        return authorMapper.fromMongoAuthor(savedAuthor);
     }
 
     @Override
