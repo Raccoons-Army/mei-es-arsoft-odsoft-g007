@@ -4,12 +4,12 @@ spring:
       client:
         registration:
           facebook:
-            client-id: 744042634554464
-            client-secret: 4c272e478bb8f9fbfeab6864ba931f5b
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope:
               - email
               - public_profile
-            redirect-uri: http://localhost:8080/api/oauth2/callback
+            redirect-uri: ${FACEBOOK_CLIENT_REDIRECT_URI}
             client-name: facebook
         provider:
           facebook:
