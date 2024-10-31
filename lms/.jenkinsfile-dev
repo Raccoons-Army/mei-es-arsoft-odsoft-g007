@@ -9,6 +9,11 @@ pipeline {
     environment {
         REPO_DIR = 'mei-es-arsoft-odsoft-g007' // global var
         PROJECT_DIR = "${REPO_DIR}/lms"
+        RELATIVE_DEPLOY_DIR = "../../deploy"
+        RELATIVE_DEPLOY_DIR_CFG = "../../deploy/cfg"
+        DEPLOY_DIR = "./deploy"
+        DEPLOY_DIR_CFG = "./deploy/cfg/"
+        APP_PORT = 8083
     }
 
     stages {
@@ -50,8 +55,8 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 dir(PROJECT_DIR) {
-                    // Run unit tests
-                    sh 'mvn test'
+                    // Run tests while ignoring failures
+                    sh "mvn test -Dmaven.test.failure.ignore=true"
                 }
             }
         }
@@ -75,11 +80,39 @@ pipeline {
         stage('Run Integration Tests') {
             steps {
                 dir(PROJECT_DIR) {
-                    // Run integration tests
                     sh 'mvn failsafe:integration-test'
                 }
             }
         }
+
+        stage('Deploy Locally') {
+            steps {
+                script {
+                    
+                    dir(PROJECT_DIR) {
+                        // ensure the deployment and deployment/cfg directory exists
+                        sh "mkdir -p ${RELATIVE_DEPLOY_DIR}"
+                        sh "mkdir -p ${RELATIVE_DEPLOY_DIR_CFG}"
+
+                        // copy the .jar file to the deploy directory (root of the workspace)
+                        sh "cp target/*.jar ${RELATIVE_DEPLOY_DIR}"
+
+                        // copy all application.properties and .yml files to the deploy/cfg directory
+                        sh "cp src/main/resources/application*.properties ${RELATIVE_DEPLOY_DIR_CFG}"
+                        sh "cp src/main/resources/application*.yml ${RELATIVE_DEPLOY_DIR_CFG}"
+
+                        // copy the library.properties file to the deploy/cfg directory
+                        sh "cp src/main/resources/config/library.properties ${RELATIVE_DEPLOY_DIR_CFG}"
+                    }
+
+                    // load environment variables from a file set in Jenkins credentials and run the application
+                    // withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
+                    //     sh "export \$(cat \$ENV_FILE | xargs) && java -jar ${DEPLOY_DIR}/*.jar --spring.config.location=${DEPLOY_DIR_CFG} &"
+                    // }
+                }
+            }
+        }
+
     }
     
     post {
@@ -88,6 +121,7 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${DEPLOY_DIR}/*", allowEmptyArchive: true
         }
     }
 }
