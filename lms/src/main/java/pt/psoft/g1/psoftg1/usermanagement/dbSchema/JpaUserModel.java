@@ -68,9 +68,6 @@ public class JpaUserModel implements Serializable {
     @NotBlank
     private String username;
 
-    @Column(nullable = false)
-    @NotNull
-    @NotBlank
     private String password;
 
     private String name;
