@@ -11,8 +11,8 @@ pipeline {
         PROJECT_DIR = "${REPO_DIR}/lms"
         RELATIVE_DEPLOY_DIR = "../../deploy"
         RELATIVE_DEPLOY_DIR_CFG = "../../deploy/cfg"
-        DEPLOY_DIR = "./deploy"
-        DEPLOY_DIR_CFG = "./deploy/cfg/"
+        DEPLOY_DIR = "deploy"
+        DEPLOY_DIR_CFG = "${DEPLOY_DIR}/cfg/"
         APP_PORT = 8083
     }
 
@@ -121,7 +121,7 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "${DEPLOY_DIR}/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${DEPLOY_DIR}/**/*", allowEmptyArchive: true
         }
     }
 }
