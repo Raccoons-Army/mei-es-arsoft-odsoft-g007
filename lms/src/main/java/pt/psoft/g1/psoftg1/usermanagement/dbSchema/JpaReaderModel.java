@@ -9,7 +9,6 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 @Getter
 @Setter
 @Entity
-@Table(name = "Reader")
 public class JpaReaderModel extends JpaUserModel{
 
     protected JpaReaderModel() {

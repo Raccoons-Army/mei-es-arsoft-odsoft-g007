@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Librarian")
 public class JpaLibrarianModel extends JpaUserModel {
 
     protected JpaLibrarianModel() {
