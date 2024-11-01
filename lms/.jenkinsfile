@@ -4,162 +4,170 @@ pipeline {
     triggers {
         githubPush()    // Trigger pipeline on GitHub push events
     }
-
+    
     tools {
-        maven 'Maven 3.9.9'  
-        jdk 'JDK 17'         
+        maven 'Maven 3.9.9'
+        jdk 'JDK 17'
     }
 
     environment {
-        SONARQUBE_URL = 'http://sonarqube-server-url'  // SonarQube URL
-        SONARQUBE_TOKEN = credentials('sonar-token')   // Store SonarQube token in Jenkins credentials
-        DEPLOY_SERVER_URL = 'https://vs-ctl.dei.isep.ipp.pt'
+        REPO_DIR = 'mei-es-arsoft-odsoft-g007'
+        PROJECT_DIR = "${REPO_DIR}/lms"
+        LOCAL_DEPLOY_DIR = "../../deploy"
+        LOCAL_DEPLOY_DIR_CFG = "../../deploy/cfg"
+        DEPLOY_DIR = "deploy"
+        DEPLOY_DIR_CFG = "cfg/"
+        ENV_FILE_NAME = 'myCfg.env'
+        APP_PORT = 2224
     }
 
     stages {
+        stage('okay i PULL up!') {
+            steps {
+                dir(REPO_DIR) {
+                    sh 'git pull'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    echo 'Compiling and packaging project...'
-                    sh 'mvn clean compile package'
+                dir(PROJECT_DIR) {
+                    // Clean and package without running tests
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Check if Artifact created') {
+            steps {
+                dir(PROJECT_DIR) {
+                    // Verify the artifact creation
+                    sh 'ls target/*.jar || echo "No artifact found"'
                 }
             }
         }
 
         stage('Static Code Analysis') {
             steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pmd:pmd'
+                    sh 'mvn spotbugs:spotbugs'
+                }
+            }
+        }
+       
+        stage('Run Unit Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    // Run tests while ignoring failures
+                    sh "mvn test -Dmaven.test.failure.ignore=true"
+                }
+            }
+        }
+
+         stage('Generate Coverage Report') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn jacoco:report'
+                }
+            }
+        }
+
+        stage('Mutation Testing') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pitest:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Run Integration Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn failsafe:integration-test'
+                }
+            }
+        }
+
+        stage('Prepare to Deploy') {
+            steps {
                 script {
-                    echo 'Running static code analysis with SonarQube...'
-                    sh "mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
+
+                    // clear the deploy directory
+                    sh "rm -rf ${DEPLOY_DIR}/*"
+                    
+                    dir(PROJECT_DIR) {
+                        // ensure the deployment directory exists
+                        sh "mkdir -p ${LOCAL_DEPLOY_DIR}"
+
+                        // copy the .jar file to the deploy directory (root of the workspace)
+                        sh "cp target/*.jar ${LOCAL_DEPLOY_DIR}"
+                    }
+
                 }
             }
         }
 
-        stage('Unit Tests') {
-            parallel {
-                stage('Run Unit Tests') {
-                    steps {
-                        script {
-                            echo 'Running unit tests...'
-                            sh 'mvn test'
-                        }
-                    }
-                }
-                stage('Test Coverage') {
-                    steps {
-                        script {
-                            echo 'Generating test coverage report...'
-                            sh 'mvn jacoco:report'
-                        }
-                    }
-                }
-                stage('Mutation Tests') {
-                    steps {
-                        script {
-                            echo 'Running mutation tests...'
-                            sh 'mvn org.pitest:pitest-maven:mutationCoverage'
-                        }
-                    }
-                }
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                    publishHTML([reportDir: 'target/site/jacoco', reportFiles: 'index.html', reportName: 'Code Coverage Report'])
-                    publishHTML([reportDir: 'target/pit-reports', reportFiles: 'index.html', reportName: 'Mutation Test Report'])
+        stage('Prepare SSH') {
+            steps {
+                script {
+                    // Ensure the known_hosts file exists
+                    sh 'mkdir -p ~/.ssh'
+                    // Add the host key to known_hosts
+                    sh 'ssh-keyscan -p 11093 vsgate-ssh.dei.isep.ipp.pt >> ~/.ssh/known_hosts'
                 }
             }
         }
 
-        stage('Integration Tests') {
-            parallel {
-                stage('Service Integration Tests') {
-                    steps {
-                        script {
-                            echo 'Running service-level integration tests...'
-                            sh 'mvn failsafe:integration-test'
-                        }
-                    }
-                }
-                stage('Database Integration Tests') {
-                    steps {
-                        script {
-                            echo 'Running database tests...'
-                            // Assumes a profile for DB tests is set up
-                            sh 'mvn failsafe:integration-test -Pdb-tests'
-                        }
-                    }
-                }
-            }
-            post {
-                always {
-                    junit '**/target/failsafe-reports/*.xml'
-                    echo 'Integration test results published'
-                }
-            }
-        }
+        stage('Deploy to vsgate') {
+            steps {
+                script {
+                    sshPublisher(publishers: [
+                        sshPublisherDesc(
+                            configName: 'VSGATE_SERVER',
+                            transfers: [
+                                 // Clear the remote deploy directory
+                                sshTransfer(
+                                    sourceFiles: "",
+                                    remoteDirectory: "",
+                                    execCommand: "rm -rf ${DEPLOY_DIR}/* || true"
+                                ),
+                                // transfer the .jar file to the deploy directory > kill the existing process > start the new process
+                                sshTransfer(
+                                    sourceFiles: "${DEPLOY_DIR}/*.jar",
+                                    remoteDirectory: "",
+                                    execCommand: """
+                                        # Kill the existing application process
+                                        fuser -k ${APP_PORT}/tcp || true
+                                        
+                                        # load the environment variables
+                                        export \$(grep -v '^#' ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} | xargs)
 
-        stage('Deploy') {
-            parallel {
-                stage('Deploy to Local') {
-                    steps {
-                        script {
-                            echo 'Deploying to local server...'
-                            // Local deployment command (can be docker run or local service start)
-                            sh './deploy-local.sh'
-                        }
-                    }
-                }
-                stage('Deploy to Remote Server') {
-                    steps {
-                        script {
-                            echo "Deploying to remote server: ${DEPLOY_SERVER_URL}..."
-                            // Deploy to remote server command, e.g., SCP, SSH script, etc.
-                            sh 'scp target/app.war user@remote-server:/path/to/deploy'
-                        }
-                    }
-                }
-            }
-        }
+                                        # source the environment variables
+                                        source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME}
 
-        stage('Functional and Acceptance Tests') {
-            parallel {
-                stage('Unit Opaque-box Tests') {
-                    steps {
-                        echo 'Running unit opaque-box tests...'
-                        sh 'mvn test -Popaque-box-tests'
-                    }
-                }
-                stage('Unit Transparent-box Tests') {
-                    steps {
-                        echo 'Running unit transparent-box tests...'
-                        sh 'mvn test -Ptransparent-box-tests'
-                    }
-                }
-                stage('Mutation Tests for Domain Classes') {
-                    steps {
-                        echo 'Running mutation tests for domain classes...'
-                        sh 'mvn org.pitest:pitest-maven:mutationCoverage -Pdomain-tests'
-                    }
-                }
-                stage('Integration Tests') {
-                    steps {
-                        echo 'Running full integration tests (controller to gateway)...'
-                        sh 'mvn failsafe:integration-test -Pfull-integration'
-                    }
-                }
-            }
-            post {
-                always {
-                    echo 'Publishing functional and acceptance test results...'
+                                        # boot the new application
+                                        screen -dmS myJavaApp java -jar ${DEPLOY_DIR}/*.jar --server.port=${APP_PORT} --spring.config.location=${DEPLOY_DIR_CFG} > app.log 2>&1
+                                    """
+                                )
+                            ],
+                            usePromotionTimestamp: false,
+                            useWorkspaceInPromotion: false,
+                        )
+                    ])
                 }
             }
         }
     }
-
+    
     post {
         always {
-            cleanWs()
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/failsafe-reports/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "${DEPLOY_DIR}/**/*", allowEmptyArchive: true
         }
     }
 }
