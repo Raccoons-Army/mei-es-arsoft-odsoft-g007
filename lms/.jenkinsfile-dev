@@ -12,8 +12,9 @@ pipeline {
         LOCAL_DEPLOY_DIR = "../../deploy"
         LOCAL_DEPLOY_DIR_CFG = "../../deploy/cfg"
         DEPLOY_DIR = "deploy"
-        DEPLOY_DIR_CFG = "${DEPLOY_DIR}/cfg/"
+        DEPLOY_DIR_CFG = "cfg/"
         ENV_FILE_NAME = 'myCfg.env'
+        APP_PORT = 2224
     }
 
     stages {
@@ -93,30 +94,13 @@ pipeline {
                     sh "rm -rf ${DEPLOY_DIR}/*"
                     
                     dir(PROJECT_DIR) {
-                        // ensure the deployment and deployment/cfg directory exists
+                        // ensure the deployment directory exists
                         sh "mkdir -p ${LOCAL_DEPLOY_DIR}"
-                        sh "mkdir -p ${LOCAL_DEPLOY_DIR_CFG}"
 
                         // copy the .jar file to the deploy directory (root of the workspace)
                         sh "cp target/*.jar ${LOCAL_DEPLOY_DIR}"
-
-                        // copy all application.properties and .yml files to the deploy/cfg directory
-                        sh "cp src/main/resources/application*.properties ${LOCAL_DEPLOY_DIR_CFG}"
-                        sh "cp src/main/resources/application*.yml ${LOCAL_DEPLOY_DIR_CFG}"
-
-                        // copy the library.properties file to the deploy/cfg directory
-                        sh "cp src/main/resources/config/*.properties ${LOCAL_DEPLOY_DIR_CFG}"
                     }
 
-                    // Copy the .env file from the Jenkins credentials
-                    withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
-                        sh "cp \"${ENV_FILE}\" \"${DEPLOY_DIR_CFG}${ENV_FILE_NAME}\""
-                    }
-
-                    // load environment variables from a file set in Jenkins credentials and run the application
-                    // withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
-                    //     sh "export \$(cat \$ENV_FILE | xargs) && java -jar ${DEPLOY_DIR}/*.jar --spring.config.location=${DEPLOY_DIR_CFG} &"
-                    // }
                 }
             }
         }
@@ -139,11 +123,27 @@ pipeline {
                         sshPublisherDesc(
                             configName: 'VSGATE_SERVER',
                             transfers: [
-                                // transfer the .jar file to the deploy directory
+                                 // Clear the remote deploy directory
                                 sshTransfer(
-                                    sourceFiles: "${DEPLOY_DIR}/**/*",
+                                    sourceFiles: "",
                                     remoteDirectory: "",
-                                    execCommand: "source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} && java -jar ${DEPLOY_DIR}/*.jar --server.port=2224 --spring.config.location=${DEPLOY_DIR_CFG}"
+                                    execCommand: "rm -rf ${DEPLOY_DIR}/* || true"
+                                ),
+                                // transfer the .jar file to the deploy directory > kill the existing process > start the new process
+                                sshTransfer(
+                                    sourceFiles: "${DEPLOY_DIR}/*.jar",
+                                    remoteDirectory: "",
+                                    usePty: true, 
+                                    execCommand: """
+                                        # Kill the existing application process
+                                        fuser -k ${APP_PORT}/tcp || true
+                                        
+                                        # load the environment variables
+                                        export \$(grep -v '^#' ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} | xargs)
+
+                                        # boot the new application
+                                        source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} && nohup java -jar ${DEPLOY_DIR}/*.jar --server.port=${APP_PORT} --spring.config.location=${DEPLOY_DIR_CFG} > app.log 2>&1 &
+                                    """
                                 )
                             ],
                             usePromotionTimestamp: false,
