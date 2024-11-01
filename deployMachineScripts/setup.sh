@@ -9,6 +9,9 @@ sudo apt install wget unzip -y
 # Install curl and git
 sudo apt install -y curl git
 
+# Install screen
+sudo apt-get install screen -y
+
 # Install asdf
 echo "Installing asdf version manager..."
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
