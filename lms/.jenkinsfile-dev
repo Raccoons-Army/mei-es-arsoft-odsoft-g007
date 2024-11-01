@@ -133,7 +133,6 @@ pipeline {
                                 sshTransfer(
                                     sourceFiles: "${DEPLOY_DIR}/*.jar",
                                     remoteDirectory: "",
-                                    usePty: true, 
                                     execCommand: """
                                         # Kill the existing application process
                                         fuser -k ${APP_PORT}/tcp || true
@@ -141,8 +140,11 @@ pipeline {
                                         # load the environment variables
                                         export \$(grep -v '^#' ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} | xargs)
 
+                                        # source the environment variables
+                                        source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME}
+
                                         # boot the new application
-                                        source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} && nohup java -jar ${DEPLOY_DIR}/*.jar --server.port=${APP_PORT} --spring.config.location=${DEPLOY_DIR_CFG} > app.log 2>&1 &
+                                        screen -dmS myJavaApp java -jar ${DEPLOY_DIR}/*.jar --server.port=${APP_PORT} --spring.config.location=${DEPLOY_DIR_CFG} > app.log 2>&1
                                     """
                                 )
                             ],
