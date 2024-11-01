@@ -7,13 +7,13 @@ pipeline {
     }
 
     environment {
-        REPO_DIR = 'mei-es-arsoft-odsoft-g007' // global var
+        REPO_DIR = 'mei-es-arsoft-odsoft-g007'
         PROJECT_DIR = "${REPO_DIR}/lms"
-        RELATIVE_DEPLOY_DIR = "../../deploy"
-        RELATIVE_DEPLOY_DIR_CFG = "../../deploy/cfg"
+        LOCAL_DEPLOY_DIR = "../../deploy"
+        LOCAL_DEPLOY_DIR_CFG = "../../deploy/cfg"
         DEPLOY_DIR = "deploy"
         DEPLOY_DIR_CFG = "${DEPLOY_DIR}/cfg/"
-        APP_PORT = 8083
+        ENV_FILE_NAME = 'myCfg.env'
     }
 
     stages {
@@ -85,24 +85,32 @@ pipeline {
             }
         }
 
-        stage('Deploy Locally') {
+        stage('Prepare to Deploy') {
             steps {
                 script {
+
+                    // clear the deploy directory
+                    sh "rm -rf ${DEPLOY_DIR}/*"
                     
                     dir(PROJECT_DIR) {
                         // ensure the deployment and deployment/cfg directory exists
-                        sh "mkdir -p ${RELATIVE_DEPLOY_DIR}"
-                        sh "mkdir -p ${RELATIVE_DEPLOY_DIR_CFG}"
+                        sh "mkdir -p ${LOCAL_DEPLOY_DIR}"
+                        sh "mkdir -p ${LOCAL_DEPLOY_DIR_CFG}"
 
                         // copy the .jar file to the deploy directory (root of the workspace)
-                        sh "cp target/*.jar ${RELATIVE_DEPLOY_DIR}"
+                        sh "cp target/*.jar ${LOCAL_DEPLOY_DIR}"
 
                         // copy all application.properties and .yml files to the deploy/cfg directory
-                        sh "cp src/main/resources/application*.properties ${RELATIVE_DEPLOY_DIR_CFG}"
-                        sh "cp src/main/resources/application*.yml ${RELATIVE_DEPLOY_DIR_CFG}"
+                        sh "cp src/main/resources/application*.properties ${LOCAL_DEPLOY_DIR_CFG}"
+                        sh "cp src/main/resources/application*.yml ${LOCAL_DEPLOY_DIR_CFG}"
 
                         // copy the library.properties file to the deploy/cfg directory
-                        sh "cp src/main/resources/config/library.properties ${RELATIVE_DEPLOY_DIR_CFG}"
+                        sh "cp src/main/resources/config/*.properties ${LOCAL_DEPLOY_DIR_CFG}"
+                    }
+
+                    // Copy the .env file from the Jenkins credentials
+                    withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
+                        sh "cp \"${ENV_FILE}\" \"${DEPLOY_DIR_CFG}${ENV_FILE_NAME}\""
                     }
 
                     // load environment variables from a file set in Jenkins credentials and run the application
@@ -113,6 +121,38 @@ pipeline {
             }
         }
 
+        stage('Prepare SSH') {
+            steps {
+                script {
+                    // Ensure the known_hosts file exists
+                    sh 'mkdir -p ~/.ssh'
+                    // Add the host key to known_hosts
+                    sh 'ssh-keyscan -p 11093 vsgate-ssh.dei.isep.ipp.pt >> ~/.ssh/known_hosts'
+                }
+            }
+        }
+
+        stage('Deploy to vsgate') {
+            steps {
+                script {
+                    sshPublisher(publishers: [
+                        sshPublisherDesc(
+                            configName: 'VSGATE_SERVER',
+                            transfers: [
+                                // transfer the .jar file to the deploy directory
+                                sshTransfer(
+                                    sourceFiles: "${DEPLOY_DIR}/**/*",
+                                    remoteDirectory: "",
+                                    execCommand: "source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} && java -jar ${DEPLOY_DIR}/*.jar --server.port=2224 --spring.config.location=${DEPLOY_DIR_CFG}"
+                                )
+                            ],
+                            usePromotionTimestamp: false,
+                            useWorkspaceInPromotion: false,
+                        )
+                    ])
+                }
+            }
+        }
     }
     
     post {
