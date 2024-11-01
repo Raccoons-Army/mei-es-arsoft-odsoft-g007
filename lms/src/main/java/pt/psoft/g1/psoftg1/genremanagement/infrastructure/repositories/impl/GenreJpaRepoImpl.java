@@ -52,8 +52,8 @@ public class GenreJpaRepoImpl implements GenreRepository {
     public Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<GenreBookCountDTO> query = cb.createQuery(GenreBookCountDTO.class);
-        Root<Genre> genreRoot = query.from(Genre.class);
-        Join<Genre, Book> bookJoin = genreRoot.join("books"); // Assuming the relationship exists
+        Root<JpaGenreModel> genreRoot = query.from(JpaGenreModel.class);
+        Join<JpaGenreModel, JpaBookModel> bookJoin = genreRoot.join("books");
 
         // Create selection for GenreBookCountDTO
         query.select(cb.construct(GenreBookCountDTO.class, genreRoot.get("genre"), cb.count(bookJoin)))
@@ -79,9 +79,9 @@ public class GenreJpaRepoImpl implements GenreRepository {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<GenreLendingsDTO> cq = cb.createQuery(GenreLendingsDTO.class);
 
-        Root<Lending> lendingRoot = cq.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book", JoinType.LEFT);
-        Join<Book, Genre> genreJoin = bookJoin.join("genre", JoinType.LEFT);
+        Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book", JoinType.LEFT);
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre", JoinType.LEFT);
 
         Expression<Long> loanCount = cb.count(lendingRoot.get("pk"));
         Expression<Number> dailyAvgLoans = cb.quot(cb.toDouble(loanCount), cb.literal(days));
@@ -108,9 +108,9 @@ public class GenreJpaRepoImpl implements GenreRepository {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 
-        Root<Lending> lendingRoot = cq.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book");
-        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
 
         Expression<Integer> yearExpr = cb.function("YEAR", Integer.class, lendingRoot.get("startDate"));
         Expression<Integer> monthExpr = cb.function("MONTH", Integer.class, lendingRoot.get("startDate"));
@@ -154,9 +154,9 @@ public class GenreJpaRepoImpl implements GenreRepository {
     public List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
-        Root<Lending> lendingRoot = cq.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book");
-        Join<Book, Genre> genreJoin = bookJoin.join("genre");
+        Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
 
         Expression<Integer> year = cb.function("YEAR", Integer.class, lendingRoot.get("startDate"));
         Expression<Integer> month = cb.function("MONTH", Integer.class, lendingRoot.get("startDate"));
@@ -201,10 +201,11 @@ public class GenreJpaRepoImpl implements GenreRepository {
     @Override
     public List<Genre> findAllGenres() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Genre> query = cb.createQuery(Genre.class);
-        query.from(Genre.class);  // Create a query for the Genre class
+        CriteriaQuery<JpaGenreModel> query = cb.createQuery(JpaGenreModel.class);
+        query.from(JpaGenreModel.class);
 
-        return em.createQuery(query).getResultList();  // Execute and return the result list
+        List<JpaGenreModel> list = em.createQuery(query).getResultList();
+        return genreMapper.fromJpaGenre(list);
     }
 
     @Override

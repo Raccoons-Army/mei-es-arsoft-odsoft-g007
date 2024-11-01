@@ -82,8 +82,8 @@ public class UserJpaRepoImpl implements UserRepository {
     @Override
     public List<User> searchUsers(Page page, SearchUsersQuery query) {
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<User> cq = cb.createQuery(User.class);
-        final Root<User> root = cq.from(User.class);
+        final CriteriaQuery<JpaUserModel> cq = cb.createQuery(JpaUserModel.class);
+        final Root<JpaUserModel> root = cq.from(JpaUserModel.class);
         cq.select(root);
 
         final List<Predicate> where = new ArrayList<>();
@@ -101,45 +101,49 @@ public class UserJpaRepoImpl implements UserRepository {
 
         cq.orderBy(cb.desc(root.get("createdAt")));
 
-        final TypedQuery<User> q = em.createQuery(cq);
+        final TypedQuery<JpaUserModel> q = em.createQuery(cq);
         q.setFirstResult((page.getNumber() - 1) * page.getLimit());
         q.setMaxResults(page.getLimit());
 
-        return q.getResultList();
+        List<JpaUserModel> list = q.getResultList();
+        return userMapper.fromJpaUserModel(list);
     }
 
     @Override
     @Cacheable(value = "users")
     public List<User> findByNameName(String name) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> query = cb.createQuery(User.class);
-        Root<User> root = query.from(User.class);
+        CriteriaQuery<JpaUserModel> query = cb.createQuery(JpaUserModel.class);
+        Root<JpaUserModel> root = query.from(JpaUserModel.class);
 
         query.select(root)
                 .where(cb.equal(root.get("name"), name));
 
-        return em.createQuery(query).getResultList();
+        List<JpaUserModel> list = em.createQuery(query).getResultList();
+        return userMapper.fromJpaUserModel(list);
     }
 
     @Override
     public List<User> findByNameNameContains(String name) {
         String pattern = "%" + name + "%";
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> query = cb.createQuery(User.class);
-        Root<User> root = query.from(User.class);
+        CriteriaQuery<JpaUserModel> query = cb.createQuery(JpaUserModel.class);
+        Root<JpaUserModel> root = query.from(JpaUserModel.class);
 
         query.select(root)
                 .where(cb.like(root.get("name"), pattern));
 
-        return em.createQuery(query).getResultList();
+        List<JpaUserModel> list = em.createQuery(query).getResultList();
+        return userMapper.fromJpaUserModel(list);
     }
 
     @Override
     public void delete(User user) {
-        if (em.contains(user)) {
-            em.remove(user);  // If the entity is already managed, directly remove it
+        JpaUserModel jpaUser = userMapper.toJpaUserModel(user);
+        if (em.contains(jpaUser)) {
+            em.remove(jpaUser);  // If the entity is already managed, directly remove it
         } else {
-            User managedUser = em.merge(user);  // Merge the detached entity to get it managed
+            JpaUserModel managedUser = em.merge(jpaUser);  // Merge the detached entity to get it managed
             em.remove(managedUser);  // Then remove it
         }
     }

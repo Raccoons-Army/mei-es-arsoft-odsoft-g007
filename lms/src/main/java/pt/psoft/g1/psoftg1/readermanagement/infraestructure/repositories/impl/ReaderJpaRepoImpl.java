@@ -11,6 +11,8 @@ import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
@@ -18,6 +20,7 @@ import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaReaderModel;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
@@ -48,11 +51,13 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
 
     @Override
     public List<ReaderDetails> findByPhoneNumber(String phoneNumber) {
-        return em.createQuery(
-                        "SELECT r FROM ReaderDetails r WHERE r.phoneNumber.phoneNumber = :phoneNumber",
-                        ReaderDetails.class)
+        List<JpaReaderDetailsModel> list = em.createQuery(
+                        "SELECT r FROM JpaReaderDetailsModel r WHERE r.phoneNumber = :phoneNumber",
+                        JpaReaderDetailsModel.class)
                 .setParameter("phoneNumber", phoneNumber)
                 .getResultList();
+
+        return readerDetailsMapper.fromJpaReaderDetailsModel(list);
     }
 
     @Override
@@ -84,42 +89,51 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public int getCountFromCurrentYear() {
         Long count = (Long) em.createQuery(
-                        "SELECT COUNT(rd) FROM ReaderDetails rd JOIN User u ON rd.reader.id = u.id WHERE YEAR(u.createdAt) = YEAR(CURRENT_DATE)")
+                        "SELECT COUNT(rd) FROM JpaReaderDetailsModel rd JOIN JpaUserModel u ON rd.reader.pk = u.pk WHERE YEAR(u.createdAt) = YEAR(CURRENT_DATE)")
                 .getSingleResult();
         return count != null ? count.intValue() : 0;
     }
 
     @Override
     public Page<ReaderDetails> findTopReaders(Pageable pageable) {
-        List<ReaderDetails> readerDetails = em.createQuery(
-                        "SELECT rd FROM ReaderDetails rd JOIN Lending l ON l.readerDetails.pk = rd.pk GROUP BY rd ORDER BY COUNT(l) DESC",
-                        ReaderDetails.class)
+        List<JpaReaderDetailsModel> m = em.createQuery(
+                        "SELECT rd FROM JpaReaderDetailsModel rd JOIN JpaLendingModel l ON l.readerDetails.pk = rd.pk GROUP BY rd ORDER BY COUNT(l) DESC",
+                        JpaReaderDetailsModel.class)
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
 
-        long total = readerDetails.size();
+        long total = m.size();
+
+        List<ReaderDetails> readerDetails = readerDetailsMapper.fromJpaReaderDetailsModel(m);
 
         return new PageImpl<>(readerDetails, pageable, total);
     }
 
     @Override
     public Page<ReaderBookCountDTO> findTopByGenre(Pageable pageable, String genre, LocalDate startDate, LocalDate endDate) {
-        List<ReaderBookCountDTO> results = em.createQuery(
-                        "SELECT NEW pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO(rd, COUNT(l)) " +
-                                "FROM ReaderDetails rd JOIN Lending l ON l.readerDetails.pk = rd.pk " +
-                                "JOIN Book b ON b.pk = l.book.pk " +
-                                "JOIN Genre g ON g.pk = b.genre.pk " +
-                                "WHERE g.genre = :genre AND l.startDate >= :startDate AND l.startDate <= :endDate " +
-                                "GROUP BY rd.pk ORDER BY COUNT(l.pk) DESC",
-                        ReaderBookCountDTO.class)
-                .setParameter("genre", genre)
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate)
-                .setFirstResult((int) pageable.getOffset())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ReaderBookCountDTO> cq = cb.createQuery(ReaderBookCountDTO.class);
+        Root<JpaReaderDetailsModel> readerDetailsRoot = cq.from(JpaReaderDetailsModel.class);
+        Join<JpaReaderDetailsModel, JpaLendingModel> lendingJoin = readerDetailsRoot.join("lendings");
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingJoin.join("book");
+        Join<JpaBookModel, JpaGenreModel> genreJoin = bookJoin.join("genre");
 
+        cq.select(cb.construct(ReaderBookCountDTO.class, readerDetailsRoot, cb.count(lendingJoin)))
+                .where(cb.equal(genreJoin.get("genre"), genre),
+                        cb.greaterThanOrEqualTo(lendingJoin.get("startDate"), startDate),
+                        cb.lessThanOrEqualTo(lendingJoin.get("startDate"), endDate))
+                .groupBy(readerDetailsRoot.get("pk"))
+                .orderBy(cb.desc(cb.count(lendingJoin)));
+
+        TypedQuery<ReaderBookCountDTO> query = em.createQuery(cq);
+        query.setParameter("genre", genre);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<ReaderBookCountDTO> results = query.getResultList();
         long total = results.size();
 
         return new PageImpl<>(results, pageable, total);
@@ -129,25 +143,25 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     public List<ReaderDetails> searchReaderDetails(final pt.psoft.g1.psoftg1.shared.services.Page page, final SearchReadersQuery query) {
 
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<ReaderDetails> cq = cb.createQuery(ReaderDetails.class);
-        final Root<ReaderDetails> readerDetailsRoot = cq.from(ReaderDetails.class);
-        Join<ReaderDetails, User> userJoin = readerDetailsRoot.join("reader");
+        final CriteriaQuery<JpaReaderDetailsModel> cq = cb.createQuery(JpaReaderDetailsModel.class);
+        final Root<JpaReaderDetailsModel> readerDetailsRoot = cq.from(JpaReaderDetailsModel.class);
+        Join<JpaReaderDetailsModel, JpaUserModel> userJoin = readerDetailsRoot.join("reader");
 
         cq.select(readerDetailsRoot);
 
         final List<Predicate> where = new ArrayList<>();
         if (StringUtils.hasText(query.getName())) { //'contains' type search
-            where.add(cb.like(userJoin.get("name").get("name"), "%" + query.getName() + "%"));
+            where.add(cb.like(userJoin.get("name"), "%" + query.getName() + "%"));
             cq.orderBy(cb.asc(userJoin.get("name")));
         }
-        if (StringUtils.hasText(query.getEmail())) { //'exatct' type search
+        if (StringUtils.hasText(query.getEmail())) { //'exact' type search
             where.add(cb.equal(userJoin.get("username"), query.getEmail()));
             cq.orderBy(cb.asc(userJoin.get("username")));
 
         }
-        if (StringUtils.hasText(query.getPhoneNumber())) { //'exatct' type search
-            where.add(cb.equal(readerDetailsRoot.get("phoneNumber").get("phoneNumber"), query.getPhoneNumber()));
-            cq.orderBy(cb.asc(readerDetailsRoot.get("phoneNumber").get("phoneNumber")));
+        if (StringUtils.hasText(query.getPhoneNumber())) { //'exact' type search
+            where.add(cb.equal(readerDetailsRoot.get("phoneNumber"), query.getPhoneNumber()));
+            cq.orderBy(cb.asc(readerDetailsRoot.get("phoneNumber")));
         }
 
         // search using OR
@@ -156,11 +170,11 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
         }
 
 
-        final TypedQuery<ReaderDetails> q = em.createQuery(cq);
+        final TypedQuery<JpaReaderDetailsModel> q = em.createQuery(cq);
         q.setFirstResult((page.getNumber() - 1) * page.getLimit());
         q.setMaxResults(page.getLimit());
 
-        return q.getResultList();
+        return readerDetailsMapper.fromJpaReaderDetailsModel(q.getResultList());
     }
 
     @Override

@@ -20,6 +20,7 @@ public abstract class UserMapper {
     @Mapping(source = "version", target = "version")
     @Mapping(source = "authorities", target = "authorities")
     public abstract JpaUserModel toJpaUserModel(User user);
+    public abstract List<JpaUserModel> toJpaUserModel(List<User> user);
 
     public User fromJpaUserModel(JpaUserModel jpaUserModel){
         return User.newUser(

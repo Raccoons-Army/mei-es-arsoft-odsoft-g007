@@ -44,18 +44,22 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public List<Book> findByTitle(String title) {
-        String query = "SELECT b FROM Book b WHERE b.title.title = :title";
-        return em.createQuery(query, Book.class)
+        String query = "SELECT b FROM JpaBookModel b WHERE b.title = :title";
+        List<JpaBookModel> list = em.createQuery(query, JpaBookModel.class)
                 .setParameter("title", title)
                 .getResultList();
+
+        return bookMapper.fromJpaBookModel(list);
     }
 
     @Override
     public List<Book> findByAuthorName(String authorName) {
-        String query = "SELECT b FROM Book b JOIN b.authors a WHERE a.name = :authorName";
-        return em.createQuery(query, Book.class)
+        String query = "SELECT b FROM JpaBookModel b JOIN b.authors a WHERE a.name = :authorName";
+        List<JpaBookModel> list = em.createQuery(query, JpaBookModel.class)
                 .setParameter("authorName", authorName)
                 .getResultList();
+
+        return bookMapper.fromJpaBookModel(list);
     }
 
     @Override
@@ -73,22 +77,30 @@ public class BookJpaRepoImpl implements BookRepository {
 
     @Override
     public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
-        String query = "SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
-                "FROM Book b JOIN Lending l ON l.book = b " +
-                "WHERE l.startDate > :oneYearAgo GROUP BY b ORDER BY COUNT(l) DESC";
-        List<BookCountDTO> topBooks = em.createQuery(query, BookCountDTO.class)
-                .setParameter("oneYearAgo", oneYearAgo)
-                .setMaxResults(5)
-                .getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<BookCountDTO> query = cb.createQuery(BookCountDTO.class);
+        Root<JpaBookModel> bookRoot = query.from(JpaBookModel.class);
+        Join<JpaBookModel, JpaLendingModel> lendingJoin = bookRoot.join("lendings");
+
+        query.select(cb.construct(BookCountDTO.class, bookRoot, cb.count(lendingJoin)))
+                .where(cb.greaterThan(lendingJoin.get("startDate"), oneYearAgo))
+                .groupBy(bookRoot)
+                .orderBy(cb.desc(cb.count(lendingJoin)));
+
+        TypedQuery<BookCountDTO> typedQuery = em.createQuery(query);
+        typedQuery.setMaxResults(5);
+        List<BookCountDTO> topBooks = typedQuery.getResultList();
         return new PageImpl<>(topBooks, pageable, topBooks.size());
     }
 
     @Override
     public List<Book> findBooksByAuthorNumber(String authorNumber) {
-        String query = "SELECT b FROM Book b JOIN b.authors a WHERE a.authorNumber = :authorNumber";
-        return em.createQuery(query, Book.class)
+        String query = "SELECT b FROM JpaBookModel b JOIN b.authors a WHERE a.authorNumber = :authorNumber";
+        List<JpaBookModel> m = em.createQuery(query, JpaBookModel.class)
                 .setParameter("authorNumber", authorNumber)
                 .getResultList();
+
+        return bookMapper.fromJpaBookModel(m);
     }
 
     @Override
@@ -98,31 +110,31 @@ public class BookJpaRepoImpl implements BookRepository {
         String authorName = query.getAuthorName();
 
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Book> cq = cb.createQuery(Book.class);
-        final Root<Book> root = cq.from(Book.class);
-        final Join<Book, Genre> genreJoin = root.join("genre");
-        final Join<Book, Author> authorJoin = root.join("authors");
+        final CriteriaQuery<JpaBookModel> cq = cb.createQuery(JpaBookModel.class);
+        final Root<JpaBookModel> root = cq.from(JpaBookModel.class);
+        final Join<JpaBookModel, JpaGenreModel> genreJoin = root.join("genre");
+        final Join<JpaBookModel, JpaAuthorModel> authorJoin = root.join("authors");
         cq.select(root);
 
         final List<Predicate> where = new ArrayList<>();
 
         if (StringUtils.hasText(title))
-            where.add(cb.like(root.get("title").get("title"), title + "%"));
+            where.add(cb.like(root.get("title"), title + "%"));
 
         if (StringUtils.hasText(genre))
             where.add(cb.like(genreJoin.get("genre"), genre + "%"));
 
         if (StringUtils.hasText(authorName))
-            where.add(cb.like(authorJoin.get("name").get("name"), authorName + "%"));
+            where.add(cb.like(authorJoin.get("name"), authorName + "%"));
 
         cq.where(where.toArray(new Predicate[0]));
         cq.orderBy(cb.asc(root.get("title"))); // Order by title, alphabetically
 
-        final TypedQuery<Book> q = em.createQuery(cq);
+        final TypedQuery<JpaBookModel> q = em.createQuery(cq);
         q.setFirstResult((page.getNumber() - 1) * page.getLimit());
         q.setMaxResults(page.getLimit());
 
-        return q.getResultList();
+        return bookMapper.fromJpaBookModel(q.getResultList());
     }
 
     @Override

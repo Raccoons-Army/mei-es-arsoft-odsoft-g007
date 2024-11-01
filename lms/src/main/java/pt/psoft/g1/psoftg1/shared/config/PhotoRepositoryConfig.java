@@ -15,8 +15,8 @@ public class PhotoRepositoryConfig {
 
     @Bean
     @Profile("jpa")
-    public PhotoRepository jpaPhotoRepository(EntityManager em) {
-        return new PhotoJpaRepoImpl(em);
+    public PhotoRepository jpaPhotoRepository(EntityManager em, PhotoMapper photoMapper) {
+        return new PhotoJpaRepoImpl(em, photoMapper);
     }
 
     @Bean

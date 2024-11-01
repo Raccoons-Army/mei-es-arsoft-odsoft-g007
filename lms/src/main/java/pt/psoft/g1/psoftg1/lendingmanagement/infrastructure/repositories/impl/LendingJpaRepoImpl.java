@@ -12,6 +12,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.mapper.LendingMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
@@ -44,26 +45,27 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Lending> query = cb.createQuery(Lending.class);
-        Root<Lending> lendingRoot = query.from(Lending.class);
-        Join<Lending, Book> bookJoin = lendingRoot.join("book"); // Assuming the relationship to Book
-        Join<Lending, ReaderDetails> readerJoin = lendingRoot.join("readerDetails"); // Assuming the relationship to ReaderDetails
+        CriteriaQuery<JpaLendingModel> query = cb.createQuery(JpaLendingModel.class);
+        Root<JpaLendingModel> lendingRoot = query.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaLendingModel, JpaReaderDetailsModel> readerJoin = lendingRoot.join("readerDetails");
 
         // Build the where clause
         query.select(lendingRoot)
                 .where(cb.and(
-                        cb.equal(bookJoin.get("isbn").get("isbn"), isbn), // Adjust path as necessary
-                        cb.equal(readerJoin.get("readerNumber").get("readerNumber"), readerNumber) // Adjust path as necessary
+                        cb.equal(bookJoin.get("isbn"), isbn),
+                        cb.equal(readerJoin.get("readerNumber"), readerNumber)
                 ));
 
-        return em.createQuery(query).getResultList();
+        List<JpaLendingModel> list = em.createQuery(query).getResultList();
+        return lendingMapper.fromJpaLendingModel(list);
     }
 
     @Override
     public int getCountFromCurrentYear() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        Root<Lending> lendingRoot = query.from(Lending.class);
+        Root<JpaLendingModel> lendingRoot = query.from(JpaLendingModel.class);
 
         // Count lendings where the start date is in the current year
         query.select(cb.count(lendingRoot))
@@ -75,9 +77,9 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public List<Lending> listOutstandingByReaderNumber(String readerNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Lending> query = cb.createQuery(Lending.class);
-        Root<Lending> lendingRoot = query.from(Lending.class);
-        Join<Lending, ReaderDetails> readerJoin = lendingRoot.join("readerDetails"); // Assuming the relationship to ReaderDetails
+        CriteriaQuery<JpaLendingModel> query = cb.createQuery(JpaLendingModel.class);
+        Root<JpaLendingModel> lendingRoot = query.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaReaderDetailsModel> readerJoin = lendingRoot.join("readerDetails");
 
         // Build the where clause
         query.select(lendingRoot)
@@ -86,14 +88,16 @@ public class LendingJpaRepoImpl implements LendingRepository {
                         cb.isNull(lendingRoot.get("returnedDate"))
                 ));
 
-        return em.createQuery(query).getResultList();
+        List<JpaLendingModel> list = em.createQuery(query).getResultList();
+
+        return lendingMapper.fromJpaLendingModel(list);
     }
 
     @Override
     public Double getAverageDuration() {
         // Using native query to calculate average duration
         return (Double) em.createNativeQuery(
-                        "SELECT AVG(DATEDIFF(day, l.start_date, l.returned_date)) FROM Lending l")
+                        "SELECT AVG(DATEDIFF(day, l.start_date, l.returned_date)) FROM JpaLendingModel l")
                 .getSingleResult();
     }
 
@@ -102,8 +106,8 @@ public class LendingJpaRepoImpl implements LendingRepository {
         // Using native query to calculate average duration by ISBN
         return (Double) em.createNativeQuery(
                         "SELECT AVG(DATEDIFF(day, l.start_date, l.returned_date)) " +
-                                "FROM Lending l " +
-                                "JOIN Book b ON l.BOOK_PK = b.PK " +
+                                "FROM JpaLendingModel l " +
+                                "JOIN JpaBookModel b ON l.BOOK_PK = b.PK " +
                                 "WHERE b.ISBN = :isbn")
                 .setParameter("isbn", isbn)
                 .getSingleResult();
@@ -112,8 +116,8 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public List<Lending> getOverdue(Page page) {
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Lending> cq = cb.createQuery(Lending.class);
-        final Root<Lending> root = cq.from(Lending.class);
+        final CriteriaQuery<JpaLendingModel> cq = cb.createQuery(JpaLendingModel.class);
+        final Root<JpaLendingModel> root = cq.from(JpaLendingModel.class);
         cq.select(root);
 
         final List<Predicate> where = new ArrayList<>();
@@ -125,48 +129,50 @@ public class LendingJpaRepoImpl implements LendingRepository {
         cq.where(where.toArray(new Predicate[0]));
         cq.orderBy(cb.asc(root.get("limitDate"))); // Order by limitDate, oldest first
 
-        final TypedQuery<Lending> q = em.createQuery(cq);
+        final TypedQuery<JpaLendingModel> q = em.createQuery(cq);
         q.setFirstResult((page.getNumber() - 1) * page.getLimit());
         q.setMaxResults(page.getLimit());
 
-        return q.getResultList();
+        List<JpaLendingModel> list = q.getResultList();
+        return lendingMapper.fromJpaLendingModel(list);
     }
 
     @Override
-    public List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate){
+    public List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate) {
         final CriteriaBuilder cb = em.getCriteriaBuilder();
-        final CriteriaQuery<Lending> cq = cb.createQuery(Lending.class);
-        final Root<Lending> lendingRoot = cq.from(Lending.class);
-        final Join<Lending, Book> bookJoin = lendingRoot.join("book");
-        final Join<Lending, ReaderDetails> readerDetailsJoin = lendingRoot.join("readerDetails");
+        final CriteriaQuery<JpaLendingModel> cq = cb.createQuery(JpaLendingModel.class);
+        final Root<JpaLendingModel> lendingRoot = cq.from(JpaLendingModel.class);
+        final Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        final Join<JpaLendingModel, JpaReaderDetailsModel> readerDetailsJoin = lendingRoot.join("readerDetails");
         cq.select(lendingRoot);
 
         final List<Predicate> where = new ArrayList<>();
 
         if (StringUtils.hasText(readerNumber))
-            where.add(cb.like(readerDetailsJoin.get("readerNumber").get("readerNumber"), readerNumber));
+            where.add(cb.like(readerDetailsJoin.get("readerNumber"), readerNumber));
         if (StringUtils.hasText(isbn))
-            where.add(cb.like(bookJoin.get("isbn").get("isbn"), isbn));
-        if (returned != null){
-            if(returned){
+            where.add(cb.like(bookJoin.get("isbn"), isbn));
+        if (returned != null) {
+            if (returned) {
                 where.add(cb.isNotNull(lendingRoot.get("returnedDate")));
-            }else{
+            } else {
                 where.add(cb.isNull(lendingRoot.get("returnedDate")));
             }
         }
-        if(startDate!=null)
+        if (startDate != null)
             where.add(cb.greaterThanOrEqualTo(lendingRoot.get("startDate"), startDate));
-        if(endDate!=null)
+        if (endDate != null)
             where.add(cb.lessThanOrEqualTo(lendingRoot.get("startDate"), endDate));
 
         cq.where(where.toArray(new Predicate[0]));
         cq.orderBy(cb.asc(lendingRoot.get("lendingNumber")));
 
-        final TypedQuery<Lending> q = em.createQuery(cq);
+        final TypedQuery<JpaLendingModel> q = em.createQuery(cq);
         q.setFirstResult((page.getNumber() - 1) * page.getLimit());
         q.setMaxResults(page.getLimit());
 
-        return q.getResultList();
+        List<JpaLendingModel> list = q.getResultList();
+        return lendingMapper.fromJpaLendingModel(list);
     }
 
 

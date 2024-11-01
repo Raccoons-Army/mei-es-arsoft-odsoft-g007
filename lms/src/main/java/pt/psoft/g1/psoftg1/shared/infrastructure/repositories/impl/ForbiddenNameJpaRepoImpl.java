@@ -13,7 +13,6 @@ import pt.psoft.g1.psoftg1.shared.mapper.ForbiddenNameMapper;
 import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,13 +37,15 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
     public List<ForbiddenName> findByForbiddenNameIsContained(String pat) {
         String pattern = "%" + pat + "%";
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ForbiddenName> query = cb.createQuery(ForbiddenName.class);
-        Root<ForbiddenName> root = query.from(ForbiddenName.class);
+        CriteriaQuery<JpaForbiddenNameModel> query = cb.createQuery(JpaForbiddenNameModel.class);
+        Root<JpaForbiddenNameModel> root = query.from(JpaForbiddenNameModel.class);
 
         query.select(root)
                 .where(cb.like(root.get("forbiddenName"), pattern));
 
-        return em.createQuery(query).getResultList();
+        List<JpaForbiddenNameModel> list = em.createQuery(query).getResultList();
+
+        return forbiddenNameMapper.fromJpaForbiddenNameModel(list);
     }
 
     @Override
@@ -72,11 +73,11 @@ public class ForbiddenNameJpaRepoImpl implements ForbiddenNameRepository {
 
     @Override
     @Modifying
-    @Query("DELETE FROM ForbiddenName fn WHERE fn.forbiddenName = :forbiddenName")
+    @Query("DELETE FROM JpaForbiddenNameModel fn WHERE fn.forbiddenName = :forbiddenName")
     public int deleteForbiddenName(String forbiddenName) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaDelete<ForbiddenName> delete = cb.createCriteriaDelete(ForbiddenName.class);
-        Root<ForbiddenName> root = delete.from(ForbiddenName.class);
+        CriteriaDelete<JpaForbiddenNameModel> delete = cb.createCriteriaDelete(JpaForbiddenNameModel.class);
+        Root<JpaForbiddenNameModel> root = delete.from(JpaForbiddenNameModel.class);
 
         delete.where(cb.equal(root.get("forbiddenName"), forbiddenName));
 

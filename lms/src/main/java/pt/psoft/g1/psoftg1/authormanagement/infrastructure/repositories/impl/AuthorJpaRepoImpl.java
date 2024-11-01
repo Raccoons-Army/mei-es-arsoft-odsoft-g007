@@ -12,7 +12,9 @@ import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 
 import java.util.ArrayList;
@@ -28,13 +30,14 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     @Override
     public List<Author> searchByNameNameStartsWith(String name) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Author> query = cb.createQuery(Author.class);
-        Root<Author> root = query.from(Author.class);
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaAuthorModel> root = query.from(JpaAuthorModel.class);
 
         query.select(root)
                 .where(cb.like(root.get("name"), name + "%"));  // Uses SQL LIKE for prefix matching
 
-        return em.createQuery(query).getResultList();
+        List<JpaAuthorModel> m = em.createQuery(query).getResultList();
+        return authorMapper.fromJpaAuthor(m);
     }
 
     @Override
@@ -55,12 +58,12 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     public Page<AuthorLendingView> findTopAuthorByLendings(Pageable pageable) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<AuthorLendingView> query = cb.createQuery(AuthorLendingView.class);
-        Root<Book> bookRoot = query.from(Book.class);
-        Join<Book, Author> authorJoin = bookRoot.join("authors");
-        Join<Book, Lending> lendingJoin = bookRoot.join("lendings");
+        Root<JpaBookModel> bookRoot = query.from(JpaBookModel.class);
+        Join<JpaBookModel, JpaAuthorModel> authorJoin = bookRoot.join("authors");
+        Join<JpaBookModel, JpaLendingModel> lendingJoin = bookRoot.join("lendings");
 
         // Create selection for AuthorLendingView
-        query.select(cb.construct(AuthorLendingView.class, authorJoin.get("name").get("name"),
+        query.select(cb.construct(AuthorLendingView.class, authorJoin.get("name"),
                         cb.count(lendingJoin.get("pk"))))
                 .groupBy(authorJoin.get("name"))
                 .orderBy(cb.desc(cb.count(lendingJoin)));
@@ -78,13 +81,13 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     @Override
     public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Author> query = cb.createQuery(Author.class);
-        Root<Book> bookRoot = query.from(Book.class);
-        Join<Book, Author> coAuthorJoin = bookRoot.join("authors");
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaBookModel> bookRoot = query.from(JpaBookModel.class);
+        Join<JpaBookModel, JpaAuthorModel> coAuthorJoin = bookRoot.join("authors");
 
-        Subquery<Book> subquery = query.subquery(Book.class);
-        Root<Book> subqueryRoot = subquery.from(Book.class);
-        Join<Book, Author> authorJoin = subqueryRoot.join("authors");
+        Subquery<JpaBookModel> subquery = query.subquery(JpaBookModel.class);
+        Root<JpaBookModel> subqueryRoot = subquery.from(JpaBookModel.class);
+        Join<JpaBookModel, JpaAuthorModel> authorJoin = subqueryRoot.join("authors");
 
         // Subquery to get books for the specific author
         subquery.select(subqueryRoot)
@@ -96,7 +99,9 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
                         cb.notEqual(coAuthorJoin.get("authorNumber"), authorNumber) // Co-authors must not have the same authorNumber
                 ));
 
-        return em.createQuery(query).getResultList();
+        List<JpaAuthorModel> m = em.createQuery(query).getResultList();
+
+        return authorMapper.fromJpaAuthor(m);
     }
 
     @Override

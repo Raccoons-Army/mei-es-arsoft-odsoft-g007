@@ -5,6 +5,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import pt.psoft.g1.psoftg1.shared.dbSchema.JpaPhotoModel;
+import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
@@ -15,12 +17,13 @@ import java.util.Optional;
 public class PhotoJpaRepoImpl implements PhotoRepository {
 
     private final EntityManager em;
+    private final PhotoMapper photoMapper;
 
     @Override
     public void deleteByPhotoFile(String photoFile) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaDelete<Photo> delete = cb.createCriteriaDelete(Photo.class);
-        Root<Photo> root = delete.from(Photo.class);
+        CriteriaDelete<JpaPhotoModel> delete = cb.createCriteriaDelete(JpaPhotoModel.class);
+        Root<JpaPhotoModel> root = delete.from(JpaPhotoModel.class);
 
         delete.where(cb.equal(root.get("photoFile"), photoFile));
 

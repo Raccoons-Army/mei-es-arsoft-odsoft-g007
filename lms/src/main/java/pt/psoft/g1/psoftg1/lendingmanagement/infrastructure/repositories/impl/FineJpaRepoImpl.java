@@ -6,11 +6,14 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaFineModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.mapper.FineMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -22,32 +25,39 @@ public class FineJpaRepoImpl implements FineRepository {
     @Override
     public Optional<Fine> findByLendingNumber(String lendingNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Fine> query = cb.createQuery(Fine.class);
-        Root<Fine> fine = query.from(Fine.class);
-        Join<Fine, Lending> lending = fine.join("lending"); // Assuming 'lending' is the attribute name in Fine
+        CriteriaQuery<JpaFineModel> query = cb.createQuery(JpaFineModel.class);
+        Root<JpaFineModel> fine = query.from(JpaFineModel.class);
+        Join<JpaFineModel, JpaLendingModel> lending = fine.join("lending");
 
         query.select(fine)
-                .where(cb.equal(lending.get("lendingNumber").get("lendingNumber"), lendingNumber)); // Adjust path as necessary
+                .where(cb.equal(lending.get("lendingNumber"), lendingNumber));
 
-        return em.createQuery(query).getResultStream().findFirst(); // Return the first result as Optional
+        Optional<JpaFineModel> m = em.createQuery(query).getResultStream().findFirst();
+
+        return m.map(fineMapper::fromJpaFineModel);
     }
 
 
     @Override
     public Iterable<Fine> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Fine> query = cb.createQuery(Fine.class);
-        query.from(Fine.class); // Define the query to select from Fine
-        return em.createQuery(query).getResultList(); // Execute the query and return results
+        CriteriaQuery<JpaFineModel> query = cb.createQuery(JpaFineModel.class);
+        query.from(JpaFineModel.class); // Define the query to select from Fine
+
+        List<JpaFineModel> list = em.createQuery(query).getResultList();
+
+        return fineMapper.fromJpaFineModel(list);
     }
 
     @Override
     public Fine save(Fine fine) {
+        JpaFineModel fineModel = fineMapper.toJpaFineModel(fine);
         if (fine.getPk() == null) {
-            em.persist(fine); // If it's a new entity, persist it
-            return fine; // Return the persisted entity
+            em.persist(fineModel);
         } else {
-            return em.merge(fine); // If it's an existing entity, merge it
+            em.merge(fineModel);
         }
+
+        return fineMapper.fromJpaFineModel(fineModel);
     }
 }
