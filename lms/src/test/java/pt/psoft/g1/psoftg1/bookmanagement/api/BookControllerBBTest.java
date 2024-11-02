@@ -54,7 +54,7 @@ public class BookControllerBBTest {
         // Arrange
         String isbn = "9782826012092";
         CreateBookRequest request = new CreateBookRequest();
-        request.setTitle("How to Rizz Up Girls In The Dungeon");
+        request.setTitle("Book Title?");
         request.setGenre("Fiction");
         request.setAuthors(Arrays.asList("Author One", "Author Two"));
 
@@ -83,7 +83,7 @@ public class BookControllerBBTest {
         // Arrange
         String isbn = "9782826012092";
         CreateBookRequest request = new CreateBookRequest();
-        request.setTitle("How to Rizz Up Girls In The Dungeon");
+        request.setTitle("Book Title");
         request.setGenre("Fiction");
         request.setAuthors(Arrays.asList("Author One", "Author Two"));
 

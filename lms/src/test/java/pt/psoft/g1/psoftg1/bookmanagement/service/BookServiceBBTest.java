@@ -45,18 +45,19 @@ public class BookServiceBBTest {
 
     @BeforeEach
     public void setup() {
-        request = new CreateBookRequest();
-        request.setTitle("Test Book Title");
-        request.setGenre("Fiction");
-        request.setAuthors(List.of("Author One", "Author Two"));
+        request = mock(CreateBookRequest.class);
     }
 
     @Test
     public void testCreateBook_Success() {
-        Genre genre = mock();
+        Genre genreMock = mock();
+
+        when(request.getTitle()).thenReturn("Test Book Title");
+        when(request.getGenre()).thenReturn("Fiction");
+        when(request.getAuthors()).thenReturn(List.of("Author One", "Author Two"));
 
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
-        when(genreRepository.findByString(request.getGenre())).thenReturn(Optional.of(genre));
+        when(genreRepository.findByString(request.getGenre())).thenReturn(Optional.of(genreMock));
 
         // Simulate saving the book to return it after save
         Book savedBook = new Book(isbn, request.getTitle(), null, null, factoryGenre, factoryAuthor);

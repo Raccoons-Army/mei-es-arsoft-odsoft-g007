@@ -209,7 +209,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public List<Book> searchBooks(Page page, SearchBooksQuery query) {
+		public List<Book> searchBooks(Page page, SearchBooksQuery query) {
 		if (page == null) {
 			page = new Page(1, 10);
 		}
