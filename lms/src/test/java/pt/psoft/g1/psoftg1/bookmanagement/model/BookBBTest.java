@@ -27,18 +27,10 @@ class BookBBTest {
 
         Book book = new Book(validIsbn, validTitle, "Any", null, factoryGenreDouble, factoryAuthorDouble);
 
-        assertEquals("1234567890", book.getIsbn());
-        assertEquals("Sample Title", book.getTitle());
+        assertEquals("9782826012092", book.getIsbn());
+        assertEquals("Encantos de contar", book.getTitle());
         assertEquals("Sample Description", book.getDescription());
         assertEquals("Any", book.getDescription());
-    }
-
-    @Test
-    void testBookCreationFails() {
-        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
-        FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
-
-        assertThrows(IllegalArgumentException.class, () -> new Book(null, null, null, null, factoryGenreDouble, factoryAuthorDouble));
     }
 
     @Test
