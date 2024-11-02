@@ -30,7 +30,6 @@ class BookBBTest {
         assertEquals("9782826012092", book.getIsbn());
         assertEquals("Encantos de contar", book.getTitle());
         assertEquals("Sample Description", book.getDescription());
-        assertEquals("Any", book.getDescription());
     }
 
     @Test
