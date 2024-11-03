@@ -38,6 +38,9 @@ In our project, we implemented **Modifiability** by **Reducing Coupling** betwee
 #### Implementation
 - **Interface Definition**: Defining an interface by encapsulating common behaviors. The interface defines common methods, but does not expose the underlying implementation details of how these operations are carried out for different implementations.
 - **Implementation Classes**: Each implementation class encapsulates the specific details of operations for its respective type.
+#### Example
+- BookRepository interface defines common methods implemented by the JpaBookRepoImpl and MongoBookRepoImpl like save, findById, findALl, and more specific ones.
+- IamAuthentication interface defines common methods implemented by the GoogleAuth and FacebookAuth.
 ---
 
 #### 2. Use an Intermediary
@@ -45,6 +48,11 @@ In our project, we implemented **Modifiability** by **Reducing Coupling** betwee
 #### Implementation
 - **Service Layer as Intermediary**: The service layer acts as an intermediary that communicates with the interface. It invokes methods on the Interface without needing to know which implementation class is being used.
 - **Dynamic Configuration**: The intermediary service can dynamically determine which implementation to instantiate based on the current context. This involves using a configuration class that returns the appropriate repository implementation at runtime based on the configuration.
+
+#### Example
+- BookService knows communicates with BookRepository interface but dont know the actually implementation of it.
+- BookService receives the respective BookRepository implementation through Dependency Injection at runtime.
+
 ---
 
 #### 3. Abstract Common Services
@@ -78,4 +86,23 @@ In our project, we implemented **Modifiability** by **Reducing Coupling** betwee
 
 #### Modular Monolith Architecture
 - The project demonstrates elements of a modular monolith architecture by organizing the system into domain-specific packages. However, these packages still contain significant dependencies on each other, resulting in notable coupling between components.
+---
+
+### Alternatives of Design
+
+#### Event-Driven Architecture
+**Overview:** Architecture where components communicate through events, allowing for decoupling of services and flexibility in adding new implementations.
+
+**Implementation:**
+- Define an event bus where services can publish and subscribe to events related to database operations, IAM actions, etc.
+- Each implementation listens for relevant events and responds accordingly.
+- Use configuration to determine which services are active and how they respond to events.
+
+**Benefits:**
+- Highly decoupled architecture, enabling flexible and scalable systems.
+- New services can be added or modified without impacting existing ones.
+
+**Challenges:**
+- Complexity in managing event flow and ensuring event delivery.
+- Debugging can become more challenging as the flow of events may not be linear.
 ---
