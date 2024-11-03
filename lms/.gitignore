@@ -93,3 +93,19 @@ ehthumbs.db
 .idea/
 *.sln.iml
 
+# Visual Paradigm temporary files and directories
+.vpp.lock
+*.bak
+*.backup
+*.log
+*.tmp
+
+# Ignoring specific temporary folders Visual Paradigm uses
+*.vpp~   # Temporary file backup
+*.vpp.bak   # Backup file
+*.vpp.log   # Log files
+
+# Ignore workspace and user settings
+.vpworkspace/
+.vpuserrepository/
+
