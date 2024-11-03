@@ -104,6 +104,9 @@ ehthumbs.db
 *.vpp~   # Temporary file backup
 *.vpp.bak   # Backup file
 *.vpp.log   # Log files
+*.vpp.vbak
+*.vpp.bak*
+*.vpp.lck
 
 # Ignore workspace and user settings
 .vpworkspace/
