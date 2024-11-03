@@ -14,6 +14,8 @@
     - [Logic View](#logic-view-1)
     - [Implementation View](#implementation-view-1)
     - [Physical View](#physical-view)
+    - [Recommendation feature](#recommendation-feature)
+    - [OAuth IAM - Google and Facebook](#oauth-iam---google-and-facebook)
 - [ASR](#asr)
 - [Architectural design alternatives and rational](#architectural-design-alternatives-and-rational)
 
@@ -69,6 +71,11 @@ The way we've change the system to the point that it is now.
 #### Physical View Level 2
 ![STB_Physical_View_L1](lms/Docs/SystemAnalysisAndDesign/physicalViews/STBVFN2.svg)
 
+### Recommendation feature
+![STB_Physical_View_L1](lms/Docs/SystemAnalysisAndDesign/sequenceDiagrams/recommendation_SD_N2.svg)
+
+### OAuth IAM - Google and Facebook
+![STB_Physical_View_L1](lms/Docs/SystemAnalysisAndDesign/sequenceDiagrams/loginIAM_SD_STB.svg)
 
 ## ASR
 
