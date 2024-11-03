@@ -25,7 +25,7 @@ class BookBBTest {
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        Book book = new Book(validIsbn, validTitle, "Any", null, factoryGenreDouble, factoryAuthorDouble);
+        Book book = new Book(validIsbn, validTitle, "Sample Description", null, factoryGenreDouble, factoryAuthorDouble);
 
         assertEquals("9782826012092", book.getIsbn());
         assertEquals("Encantos de contar", book.getTitle());
