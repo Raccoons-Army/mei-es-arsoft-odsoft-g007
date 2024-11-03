@@ -4,17 +4,16 @@
 - [`lms/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms) contains the Library Management REST API and all its documentation.
 - [`lms/Docs/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms/Docs) has:
   - [`baseProject/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms/Docs/baseProject) where there's all the documentation made by the students that developed the API
-  - [`SystemAnalysis/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms/Docs/SystemAnalysis) where there's all the documentation made by us. Contains the Logic Views, Implementation Views, Physical Views and Process Views from the SAI (system-as-is) and STB (system-to-be)
+  - [`SystemAnalysisAndDesign/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms/Docs/SystemAnalysis) where there's all the documentation made by us. Contains the Logic Views, Implementation Views, Physical Views and Process Views from the SAI (system-as-is) and STB (system-to-be)
 
 # Index
 - [SAI (system-as-is)](#sai-system-as-is)
-    - Level 1
-    - Level 2
-    - Level 3
+    - [Logic View](#logic-view)
+    - [Implementation View](#implementation-view)
 - [STB (system-to-be)](#stb-system-to-be)
-    - Level 1
-    - Level 2
-    - Level 3
+    - [Logic View](#logic-view-1)
+    - [Implementation View](#implementation-view-1)
+    - [Physical View](#physical-view)
 - [ASR](#asr)
 - [Architectural design alternatives and rational](#architectural-design-alternatives-and-rational)
 
@@ -22,8 +21,54 @@
 ## SAI (system-as-is)
 The way the system was presented to use at the begining of the project.
 
+### Logic View
+
+#### Logic View Level 1
+![SAI_Logic_View_L1](lms/Docs/SystemAnalysisAndDesign/logicViews/SAIVLN1.svg)
+
+#### Logic View Level 2
+![SAI_Logic_View_L2](lms/Docs/SystemAnalysisAndDesign/logicViews/SAIVLN2.svg)
+
+#### Logic View Level 3
+![SAI_Logic_View_L3](lms/Docs/SystemAnalysisAndDesign/logicViews/SAIVLN3.svg)
+
+### Implementation View
+
+#### Implementation View Level 2
+![SAI_Implementation_View_L2](lms/Docs/SystemAnalysisAndDesign/implementationViews/SAIVIN2.svg)
+
+#### Implementation View Level 3
+![SAI_Implementation_View_L3](lms/Docs/SystemAnalysisAndDesign/implementationViews/SAIVIN3.svg)
+
+
+
 ## STB (system-to-be)
 The way we've change the system to the point that it is now.
+
+### Logic View
+
+#### Logic View Level 1
+![STB_Logic_View_L1](lms/Docs/SystemAnalysisAndDesign/logicViews/STBVLN1.svg)
+
+#### Logic View Level 2
+![STB_Logic_View_L2](lms/Docs/SystemAnalysisAndDesign/logicViews/STBVLN2.svg)
+
+#### Logic View Level 3
+![STB_Logic_View_L3](lms/Docs/SystemAnalysisAndDesign/logicViews/STBVLN3.svg)
+
+### Implementation View
+
+#### Implementation View Level 2
+![STB_Implementation_View_L2](lms/Docs/SystemAnalysisAndDesign/implementationViews/STBVIN2.svg)
+
+#### Implementation View Level 3
+![STB_Implementation_View_L3](lms/Docs/SystemAnalysisAndDesign/implementationViews/STBVIN3.svg)
+
+### Physical View
+
+#### Physical View Level 2
+![STB_Physical_View_L1](lms/Docs/SystemAnalysisAndDesign/physicalViews/STBVFN2.svg)
+
 
 ## ASR
 
