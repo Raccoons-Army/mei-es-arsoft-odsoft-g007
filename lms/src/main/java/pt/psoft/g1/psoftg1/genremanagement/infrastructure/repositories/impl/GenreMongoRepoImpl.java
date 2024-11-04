@@ -22,10 +22,7 @@ import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -36,47 +33,127 @@ public class GenreMongoRepoImpl implements GenreRepository {
 
     @Override
     public Page<GenreBookCountDTO> findTop5GenreByBookCount(Pageable pageable) {
-        GroupOperation groupByGenre = Aggregation.group("genre")
+        // Step 1: Group by genre and count the number of books in each genre
+        AggregationOperation groupByGenreAndCount = Aggregation.group("genre")
                 .count().as("bookCount");
+
+        // Step 2: Sort by book count in descending order
+        SortOperation sortByBookCountDesc = Aggregation.sort(Sort.by(Sort.Direction.DESC, "bookCount"));
+
+        // Step 3: Pagination using skip and limit
+        AggregationOperation skip = Aggregation.skip(pageable.getOffset());
+        AggregationOperation limit = Aggregation.limit(pageable.getPageSize());
+
+        // Combine all operations into an aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(
-                groupByGenre,
-                Aggregation.sort(Sort.by(Sort.Direction.DESC, "bookCount")),
-                Aggregation.limit(5)
+                groupByGenreAndCount,
+                sortByBookCountDesc,
+                skip,
+                limit
         );
 
-        AggregationResults<GenreBookCountDTO> results = mt.aggregate(
-                aggregation, "books", GenreBookCountDTO.class);
+        // Execute the aggregation query
+        AggregationResults<GenreBookCountDTO> results = mt.aggregate(aggregation, "books", GenreBookCountDTO.class);
 
-        List<GenreBookCountDTO> list = results.getMappedResults();
-        return new PageImpl<>(list, pageable, list.size());
+        // Step 4: Calculate total genre count for pagination
+        long total = mt.count(new Query(), "books");
+
+        // Return a Page object containing the results and pagination details
+        return new PageImpl<>(results.getMappedResults(), pageable, total);
     }
 
     @Override
     public List<GenreLendingsDTO> getAverageLendingsInMonth(LocalDate month, pt.psoft.g1.psoftg1.shared.services.Page page) {
-        LocalDate startOfMonth = month.withDayOfMonth(1);
-        LocalDate endOfMonth = month.withDayOfMonth(month.lengthOfMonth());
+        int days = month.lengthOfMonth();
+        LocalDate firstOfMonth = LocalDate.of(month.getYear(), month.getMonth(), 1);
+        LocalDate lastOfMonth = LocalDate.of(month.getYear(), month.getMonth(), days);
 
-        MatchOperation matchOperation = Aggregation.match(
-                Criteria.where("startDate").gte(startOfMonth).lte(endOfMonth)
+        // Step 1: Filter lendings within the specified month
+        MatchOperation matchByDate = Aggregation.match(Criteria.where("startDate")
+                .gte(firstOfMonth)
+                .lte(lastOfMonth));
+
+        // Step 2: Group by genre and count lendings
+        AggregationOperation groupByGenreAndCount = Aggregation.group("book.genre")
+                .count().as("totalLendings");
+
+        // Step 3: Project to calculate daily average lendings for each genre
+        ProjectionOperation calculateDailyAvg = Aggregation.project("totalLendings")
+                .and("totalLendings").divide(days).as("averageLendings")
+                .and("_id").as("genre");
+
+        // Step 4: Pagination using skip and limit
+        AggregationOperation skip = Aggregation.skip((long) (page.getNumber() - 1) * page.getLimit());
+        AggregationOperation limit = Aggregation.limit(page.getLimit());
+
+        // Combine all operations into an aggregation pipeline
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchByDate,
+                groupByGenreAndCount,
+                calculateDailyAvg,
+                skip,
+                limit
         );
 
-        GroupOperation groupByGenre = Aggregation.group("book.genre")
-                .count().as("loanCount")
-                .avg("loanCount").as("dailyAvgLoans");
+        // Execute the aggregation query
+        AggregationResults<GenreLendingsDTO> results = mt.aggregate(aggregation, "lendings", GenreLendingsDTO.class);
 
-        Aggregation aggregation = Aggregation.newAggregation(matchOperation, groupByGenre);
-        AggregationResults<GenreLendingsDTO> results = mt.aggregate(
-                aggregation, "lendings", GenreLendingsDTO.class);
-
-        return results.getMappedResults().stream()
-                .skip((page.getNumber() - 1) * page.getLimit())
-                .limit(page.getLimit())
-                .collect(Collectors.toList());
+        // Return the list of GenreLendingsDTO results
+        return results.getMappedResults();
     }
 
     @Override
     public List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre() {
-        return null;
+        // Step 1: Define date range for the last 12 months
+        LocalDate now = LocalDate.now();
+        LocalDate twelveMonthsAgo = now.minusMonths(12);
+
+        // Step 2: Match lendings within the last 12 months
+        MatchOperation matchLastYear = Aggregation.match(Criteria.where("startDate").gte(twelveMonthsAgo).lte(now));
+
+        // Step 3: Project genre, year, and month
+        ProjectionOperation projectFields = Aggregation.project()
+                .and("book.genre").as("genre")
+                .andExpression("year(startDate)").as("year")
+                .andExpression("month(startDate)").as("month");
+
+        // Step 4: Group by genre, year, and month, and count lendings
+        AggregationOperation groupByGenreYearMonth = Aggregation.group("genre", "year", "month")
+                .count().as("value");
+
+        // Step 5: Sort by year, month, and genre
+        SortOperation sortByYearMonthGenre = Aggregation.sort(Sort.by(Sort.Direction.ASC, "year", "month", "genre"));
+
+        // Combine all operations into an aggregation pipeline
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchLastYear,
+                projectFields,
+                groupByGenreYearMonth,
+                sortByYearMonthGenre
+        );
+
+        // Execute the aggregation query
+        AggregationResults<Map> results = mt.aggregate(aggregation, "lendings", Map.class);
+
+        // Process results to group by year and month
+        Map<Integer, Map<Integer, List<GenreLendingsDTO>>> groupedResults = new HashMap<>();
+
+        for (Map result : results.getMappedResults()) {
+            String genre = (String) result.get("_id.genre");
+            int year = (Integer) result.get("_id.year");
+            int month = (Integer) result.get("_id.month");
+            Number count = (Number) result.get("value");
+
+            GenreLendingsDTO genreLendingsDTO = new GenreLendingsDTO(genre, count);
+
+            groupedResults
+                    .computeIfAbsent(year, k -> new HashMap<>())
+                    .computeIfAbsent(month, k -> new ArrayList<>())
+                    .add(genreLendingsDTO);
+        }
+
+        // Convert grouped results to GenreLendingsPerMonthDTO
+        return getGenreLendingsPerMonthDtos(groupedResults);
     }
 
     @Override
@@ -125,7 +202,8 @@ public class GenreMongoRepoImpl implements GenreRepository {
 
     @Override
     public List<Genre> findAllGenres() {
-        return mt.findAll(Genre.class);
+        List<MongoGenreModel> list = mt.findAll(MongoGenreModel.class);
+        return genreMapper.fromMongoGenre(list);
     }
 
     @Override

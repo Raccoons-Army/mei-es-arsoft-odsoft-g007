@@ -16,6 +16,7 @@ import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
@@ -76,13 +77,14 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         Query subquery = new Query();
         subquery.addCriteria(Criteria.where("authors.authorNumber").is(authorNumber));
-        List<Book> booksByAuthor = mt.find(subquery, Book.class);
+        List<MongoBookModel> booksByAuthor = mt.find(subquery, MongoBookModel.class);
 
         Query query = new Query();
         query.addCriteria(Criteria.where("books").in(booksByAuthor)
                 .and("authors.authorNumber").ne(authorNumber));
 
-        return mt.find(query, Author.class);
+        List<MongoAuthorModel> list = mt.find(query, MongoAuthorModel.class);
+        return authorMapper.fromMongoAuthor(list);
     }
 
     @Override
