@@ -123,10 +123,6 @@ public class GenreMongoRepoImpl implements GenreRepository {
         return getGenreLendingsPerMonthDtos(groupedResults);
     }
 
-
-
-
-
     @Override
     public List<Genre> findAllGenres() {
         return mt.findAll(Genre.class);
@@ -140,8 +136,10 @@ public class GenreMongoRepoImpl implements GenreRepository {
                 matchOperation, groupByGenre, Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")), Aggregation.limit(1)
         );
 
-        AggregationResults<Genre> results = mt.aggregate(aggregation, "lendings", Genre.class);
-        return Optional.ofNullable(results.getUniqueMappedResult());
+        AggregationResults<MongoGenreModel> results = mt.aggregate(aggregation, "lendings", MongoGenreModel.class);
+        Optional<MongoGenreModel> list = Optional.ofNullable(results.getUniqueMappedResult());
+
+        return list.map(genreMapper::fromMongoGenre);
     }
 
     @Override
@@ -151,8 +149,10 @@ public class GenreMongoRepoImpl implements GenreRepository {
                 groupByGenre, Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")), Aggregation.limit(y)
         );
 
-        AggregationResults<Genre> results = mt.aggregate(aggregation, "lendings", Genre.class);
-        return results.getMappedResults();
+        AggregationResults<MongoGenreModel> results = mt.aggregate(aggregation, "lendings", MongoGenreModel.class);
+        List<MongoGenreModel> list = results.getMappedResults();
+
+        return genreMapper.fromMongoGenre(list);
     }
 
     @Override

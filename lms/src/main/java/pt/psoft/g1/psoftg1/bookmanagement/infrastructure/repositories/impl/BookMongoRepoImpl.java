@@ -6,8 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
@@ -36,15 +35,19 @@ public class BookMongoRepoImpl implements BookRepository {
     @Override
     public List<Book> findByGenre(String genre) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("genre.genre").is(genre)); // Accessing nested property
-        return mt.find(query, Book.class);
+        query.addCriteria(Criteria.where("genre").is(genre)); // Accessing nested property
+        List<MongoBookModel> m = mt.find(query, MongoBookModel.class);
+
+        return bookMapper.fromMongoBookModel(m);
     }
 
     @Override
     public List<Book> findByTitle(String title) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("title.title").is(title)); // Accessing nested property
-        return mt.find(query, Book.class);
+        query.addCriteria(Criteria.where("title").is(title)); // Accessing nested property
+        List<MongoBookModel> list = mt.find(query, MongoBookModel.class);
+
+        return bookMapper.fromMongoBookModel(list);
     }
 
     @Override
@@ -88,11 +91,11 @@ public class BookMongoRepoImpl implements BookRepository {
         List<Criteria> criteriaList = new ArrayList<>();
 
         if (title != null && !title.isEmpty()) {
-            criteriaList.add(Criteria.where("title.title").regex("^" + title)); // Prefix match for title
+            criteriaList.add(Criteria.where("title").regex("^" + title)); // Prefix match for title
         }
 
         if (genre != null && !genre.isEmpty()) {
-            criteriaList.add(Criteria.where("genre.genre").regex("^" + genre)); // Prefix match for genre
+            criteriaList.add(Criteria.where("genre").regex("^" + genre)); // Prefix match for genre
         }
 
         if (authorName != null && !authorName.isEmpty()) {
@@ -104,14 +107,40 @@ public class BookMongoRepoImpl implements BookRepository {
         }
 
         //mongoQuery.with(page.toPageable()); // Apply pagination
-        mongoQuery.with(Sort.by(Sort.Direction.ASC, "title.title")); // Sort by title alphabetically
+        mongoQuery.with(Sort.by(Sort.Direction.ASC, "title")); // Sort by title alphabetically
 
         return mt.find(mongoQuery, Book.class);
     }
 
     @Override
     public List<Book> findTopXBooksFromGenre(int x, String genre) {
-        return null;
+        // Match books by the specified genre
+        MatchOperation matchGenre = Aggregation.match(Criteria.where("genre").is(genre));
+
+        // Group by book ID and count the number of lendings
+        AggregationOperation groupByBookAndCount = Aggregation.group("bookId")
+                .count().as("lendingCount");
+
+        // Sort by lending count in descending order
+        SortOperation sortByLendingCountDesc = Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount"));
+
+        // Limit the result to 'x' books
+        AggregationOperation limit = Aggregation.limit(x);
+
+        // Combine all operations into an aggregation pipeline
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchGenre,
+                groupByBookAndCount,
+                sortByLendingCountDesc,
+                limit
+        );
+
+        // Execute the aggregation query
+        AggregationResults<MongoBookModel> results = mt.aggregate(aggregation, "lendings", MongoBookModel.class);
+
+        List<MongoBookModel> list = results.getMappedResults();
+
+        return bookMapper.fromMongoBookModel(list);
     }
 
     @Override
@@ -139,7 +168,7 @@ public class BookMongoRepoImpl implements BookRepository {
     public List<Book> findAll() {
         List<MongoBookModel> mongoBooks = mt.findAll(MongoBookModel.class);
 
-       return bookMapper.fromMongoBookModel(mongoBooks);
+        return bookMapper.fromMongoBookModel(mongoBooks);
     }
 
     @Override
