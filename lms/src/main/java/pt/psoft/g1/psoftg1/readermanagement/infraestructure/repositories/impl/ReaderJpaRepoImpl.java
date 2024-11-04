@@ -63,7 +63,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public Optional<ReaderDetails> findByUsername(String username) {
         Optional<JpaReaderDetailsModel> m = em.createQuery(
-                        "SELECT r FROM JpaReaderDetailsModel r JOIN JpaUserModel u ON r.reader.id = u.id WHERE u.username = :username",
+                        "SELECT r FROM JpaReaderDetailsModel r WHERE r.reader.username = :username",
                         JpaReaderDetailsModel.class)
                 .setParameter("username", username)
                 .getResultList()

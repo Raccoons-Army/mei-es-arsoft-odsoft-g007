@@ -32,15 +32,17 @@ public class LendingMongoRepoImpl implements LendingRepository {
     @Override
     public List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("book.isbn.isbn").is(isbn)
-                .and("readerDetails.readerNumber.readerNumber").is(readerNumber));
-        return mt.find(query, Lending.class);
+        query.addCriteria(Criteria.where("book.isbn").is(isbn)
+                .and("readerDetails.readerNumber").is(readerNumber));
+        List<MongoLendingModel> list = mt.find(query, MongoLendingModel.class);
+
+        return lendingMapper.fromMongoLendingModel(list);
     }
 
     @Override
     public int getCountFromCurrentYear() {
         Query query = new Query(Criteria.where("startDate").gte(LocalDate.now().withDayOfYear(1))); // Start of the current year
-        return (int) mt.count(query, Lending.class);
+        return (int) mt.count(query, MongoLendingModel.class);
     }
 
     @Override
@@ -48,7 +50,9 @@ public class LendingMongoRepoImpl implements LendingRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("readerDetails.readerNumber.readerNumber").is(readerNumber)
                 .and("returnedDate").is(null));
-        return mt.find(query, Lending.class);
+        List<MongoLendingModel> list = mt.find(query, MongoLendingModel.class);
+
+        return lendingMapper.fromMongoLendingModel(list);
     }
 
     @Override
@@ -66,7 +70,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
                 Aggregation.group().avg("duration").as("averageDuration")
         );
 
-        AggregationResults<AverageDurationResult> result = mt.aggregate(aggregation, Lending.class, AverageDurationResult.class);
+        AggregationResults<AverageDurationResult> result = mt.aggregate(aggregation, MongoLendingModel.class, AverageDurationResult.class);
         return result.getUniqueMappedResult() != null ? result.getUniqueMappedResult().getAverageDuration() : null;
     }
 
@@ -86,7 +90,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
         );
 
         // Perform the aggregation and get the result
-        AggregationResults<AverageDurationResult> result = mt.aggregate(aggregation, Lending.class, AverageDurationResult.class);
+        AggregationResults<AverageDurationResult> result = mt.aggregate(aggregation, MongoLendingModel.class, AverageDurationResult.class);
         return result.getUniqueMappedResult() != null ? result.getUniqueMappedResult().getAverageDuration() : null;
     }
 
@@ -97,7 +101,9 @@ public class LendingMongoRepoImpl implements LendingRepository {
                 .and("limitDate").lt(LocalDate.now()));
         query.with(Sort.by(Sort.Order.asc("limitDate"))); // Order by limitDate, oldest first
         query.with(PageRequest.of(page.getNumber() - 1, page.getLimit())); // Pagination
-        return mt.find(query, Lending.class);
+        List<MongoLendingModel> list = mt.find(query, MongoLendingModel.class);
+
+        return lendingMapper.fromMongoLendingModel(list);
     }
 
     @Override
@@ -129,7 +135,8 @@ public class LendingMongoRepoImpl implements LendingRepository {
         query.with(Sort.by(Sort.Order.asc("lendingNumber"))); // Order by lendingNumber
         query.with(PageRequest.of(page.getNumber() - 1, page.getLimit())); // Pagination
 
-        return mt.find(query, Lending.class);
+        List<MongoLendingModel> list = mt.find(query, MongoLendingModel.class);
+        return lendingMapper.fromMongoLendingModel(list);
     }
 
     @Override
@@ -151,7 +158,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
     public List<Lending> findAll() {
         List<MongoLendingModel> mongoLendings = mt.findAll(MongoLendingModel.class);
 
-       return lendingMapper.fromMongoLendingModel(mongoLendings);
+        return lendingMapper.fromMongoLendingModel(mongoLendings);
     }
 
     @Override

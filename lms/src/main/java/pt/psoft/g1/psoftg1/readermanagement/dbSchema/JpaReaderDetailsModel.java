@@ -7,6 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 import pt.psoft.g1.psoftg1.genremanagement.dbSchema.JpaGenreModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.JpaEntityWithPhotoModel;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaReaderModel;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +24,7 @@ public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
 
     @OneToOne
     @JoinColumn(name = "READER_USER_ID")
-    private JpaReaderModel reader;
+    private JpaUserModel reader;
 
     @Column(name = "READER_NUMBER")
     private String readerNumber;

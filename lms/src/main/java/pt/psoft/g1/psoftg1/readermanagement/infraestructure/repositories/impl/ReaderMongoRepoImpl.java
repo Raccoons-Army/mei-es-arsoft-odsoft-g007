@@ -32,21 +32,27 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
     public List<ReaderDetails> findByPhoneNumber(String phoneNumber) {
         Query query = new Query();
         query.addCriteria(Criteria.where("phoneNumber").is(phoneNumber));
-        return mt.find(query, ReaderDetails.class);
+        List<MongoReaderDetailsModel> list = mt.find(query, MongoReaderDetailsModel.class);
+
+        return readerDetailsMapper.fromMongoReaderDetailsModel(list);
     }
 
     @Override
     public Optional<ReaderDetails> findByUsername(String username) {
         Query query = new Query();
         query.addCriteria(Criteria.where("user.username").is(username)); // Assuming ReaderDetails embeds User or references it
-        return Optional.ofNullable(mt.findOne(query, ReaderDetails.class));
+        Optional<MongoReaderDetailsModel> m = Optional.ofNullable(mt.findOne(query, MongoReaderDetailsModel.class));
+
+        return m.map(readerDetailsMapper::fromMongoReaderDetailsModel);
     }
 
     @Override
     public Optional<ReaderDetails> findByUserId(String userId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("user.id").is(userId)); // Adjust if User is referenced differently
-        return Optional.ofNullable(mt.findOne(query, ReaderDetails.class));
+        Optional<MongoReaderDetailsModel> m = Optional.ofNullable(mt.findOne(query, MongoReaderDetailsModel.class));
+
+        return m.map(readerDetailsMapper::fromMongoReaderDetailsModel);
     }
 
     @Override
@@ -55,7 +61,7 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
         Query query = new Query();
         query.addCriteria(Criteria.where("user.createdAt").gte(java.time.LocalDate.of(currentYear, 1, 1))
                 .lt(java.time.LocalDate.of(currentYear + 1, 1, 1)));
-        long count = mt.count(query, ReaderDetails.class);
+        long count = mt.count(query, MongoReaderDetailsModel.class);
         return (int) count;
     }
 
@@ -65,10 +71,12 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
         query.with(pageable);
         query.addCriteria(Criteria.where("lendings").exists(true)); // Assuming lendings are stored as a reference in ReaderDetails
 
-        List<ReaderDetails> readerDetails = mt.find(query, ReaderDetails.class);
+        List<MongoReaderDetailsModel> list = mt.find(query, MongoReaderDetailsModel.class);
 
         // Count total documents matching the criteria
-        long total = mt.count(query, ReaderDetails.class);
+        long total = mt.count(query, MongoReaderDetailsModel.class);
+
+        List<ReaderDetails> readerDetails = readerDetailsMapper.fromMongoReaderDetailsModel(list);
 
         return new PageImpl<>(readerDetails, pageable, total);
     }
