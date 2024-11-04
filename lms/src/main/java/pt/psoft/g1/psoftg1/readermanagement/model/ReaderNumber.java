@@ -16,6 +16,11 @@ public class ReaderNumber implements Serializable {
     }
 
     public ReaderNumber(String number) {
+        // if contains / already, then just set the value
+        if (number.contains("/")) {
+            this.readerNumber = number;
+            return;
+        }
         this.readerNumber = LocalDate.now().getYear() + "/" + number;
     }
 
