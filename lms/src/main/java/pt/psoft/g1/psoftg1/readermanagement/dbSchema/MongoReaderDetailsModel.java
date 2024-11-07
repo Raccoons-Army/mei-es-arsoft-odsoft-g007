@@ -3,11 +3,13 @@ package pt.psoft.g1.psoftg1.readermanagement.dbSchema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreModel;
 import pt.psoft.g1.psoftg1.shared.dbSchema.MongoEntityWithPhotoModel;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoReaderModel;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoUserModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,7 +23,7 @@ public class MongoReaderDetailsModel extends MongoEntityWithPhotoModel {
     private String pk;
 
     @DBRef
-    private MongoReaderModel reader;
+    private MongoUserModel reader;
 
     private String readerNumber;
 
@@ -35,6 +37,7 @@ public class MongoReaderDetailsModel extends MongoEntityWithPhotoModel {
 
     private boolean thirdPartySharingConsent;
 
+    @Version
     private Long version;
 
     @DBRef

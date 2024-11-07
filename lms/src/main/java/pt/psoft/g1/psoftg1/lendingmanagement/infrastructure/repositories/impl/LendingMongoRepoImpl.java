@@ -172,7 +172,7 @@ public class LendingMongoRepoImpl implements LendingRepository {
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("lendingNumber.lendingNumber").is(lendingNumber));
+        query.addCriteria(Criteria.where("lendingNumber").is(lendingNumber));
         MongoLendingModel mongoLending = mt.findOne(query, MongoLendingModel.class);
 
         return Optional.ofNullable(mongoLending)

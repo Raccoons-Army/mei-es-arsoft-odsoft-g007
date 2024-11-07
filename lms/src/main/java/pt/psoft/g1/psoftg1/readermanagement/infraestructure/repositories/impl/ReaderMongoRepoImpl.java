@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderBookCountDTO;
 import pt.psoft.g1.psoftg1.readermanagement.services.SearchReadersQuery;
 import pt.psoft.g1.psoftg1.shared.dbSchema.MongoPhotoModel;
+import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoUserModel;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
@@ -39,11 +41,24 @@ public class ReaderMongoRepoImpl implements ReaderRepository {
 
     @Override
     public Optional<ReaderDetails> findByUsername(String username) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("user.username").is(username)); // Assuming ReaderDetails embeds User or references it
-        Optional<MongoReaderDetailsModel> m = Optional.ofNullable(mt.findOne(query, MongoReaderDetailsModel.class));
+        // Step 1: Find the MongoUserModel by username
+        Query userQuery = new Query();
+        userQuery.addCriteria(Criteria.where("username").is(username));
+        MongoUserModel mongoUser = mt.findOne(userQuery, MongoUserModel.class);
 
-        return m.map(readerDetailsMapper::fromMongoReaderDetailsModel);
+        if (mongoUser == null) {
+            return Optional.empty();
+        }
+
+        // Step 2: Use the found MongoUserModel's ID to query MongoReaderDetailsModel
+        Query readerDetailsQuery = new Query();
+        readerDetailsQuery.addCriteria(Criteria.where("reader.$id").is(new ObjectId(mongoUser.getPk())));
+
+        MongoReaderDetailsModel mongoReaderDetails = mt.findOne(readerDetailsQuery, MongoReaderDetailsModel.class);
+
+        // Map the MongoReaderDetailsModel to ReaderDetails if found
+        return Optional.ofNullable(mongoReaderDetails)
+                .map(readerDetailsMapper::fromMongoReaderDetailsModel);
     }
 
     @Override

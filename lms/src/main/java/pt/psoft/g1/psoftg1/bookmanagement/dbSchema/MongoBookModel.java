@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.bookmanagement.dbSchema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
@@ -30,6 +31,8 @@ public class MongoBookModel extends MongoEntityWithPhotoModel {
     private List<MongoAuthorModel> authors;
 
     private String description;
+
+    @Version
     private Long version;
 
     public MongoBookModel(String pk, String isbn, String title, MongoGenreModel genre, List<MongoAuthorModel> authors,

@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.genremanagement.infrastructure.repositories.impl;
 
+import com.mongodb.DBRef;
 import org.bson.Document;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -208,29 +209,97 @@ public class GenreMongoRepoImpl implements GenreRepository {
 
     @Override
     public Optional<Genre> findReaderMostRequestedGenre(String readerNumber) {
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("readerDetails.readerNumber").is(readerNumber));
-        GroupOperation groupByGenre = Aggregation.group("book.genre").count().as("lendingCount");
+        // Perform a lookup to join the readerDetails collection with the lendings collection
+        AggregationOperation lookupReaderDetails = Aggregation.lookup("readersDetails", "readerDetails.$id", "_id", "readerDetailsResolved");
+
+        // Unwind the readerDetailsResolved array to access the readerDetails field
+        AggregationOperation unwindReaderDetails = Aggregation.unwind("readerDetailsResolved");
+
+        // Match the lendings based on the readerNumber field inside readerDetails
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("readerDetailsResolved.readerNumber").is(readerNumber));
+
+        // Lookup to resolve the genre from the books collection
+        AggregationOperation lookupGenre = Aggregation.lookup("books", "book.$id", "_id", "bookDetails");
+
+        // Unwind the bookDetails array (to make genre accessible)
+        AggregationOperation unwindBookDetails = Aggregation.unwind("bookDetails");
+
+        // Group by the book genre (after resolving the genre)
+        GroupOperation groupByGenre = Aggregation.group("bookDetails.genre").count().as("lendingCount");
+
+        // Sort by the number of lendings in descending order
+        SortOperation sortByLendingCountDesc = Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount"));
+
+        // Limit the result to 1 (most requested genre)
+        AggregationOperation limit = Aggregation.limit(1);
+
+        // Combine all operations into the aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(
-                matchOperation, groupByGenre, Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")), Aggregation.limit(1)
+                lookupReaderDetails,
+                unwindReaderDetails,
+                matchOperation,
+                lookupGenre,
+                unwindBookDetails,
+                groupByGenre,
+                sortByLendingCountDesc,
+                limit
         );
 
-        AggregationResults<MongoGenreModel> results = mt.aggregate(aggregation, "lendings", MongoGenreModel.class);
-        Optional<MongoGenreModel> list = Optional.ofNullable(results.getUniqueMappedResult());
+        // Execute the aggregation query
+        AggregationResults<Document> results = mt.aggregate(aggregation, "lendings", Document.class);
 
-        return list.map(genreMapper::fromMongoGenre);
+        // Get the first result (if available)
+        Optional<Document> result = Optional.ofNullable(results.getUniqueMappedResult());
+
+        // Map the result to MongoGenreModel and convert it to Genre
+        return result.map(doc -> {
+            // Extract the genre reference from _id (which contains $ref and $id)
+            DBRef genreRef = (DBRef) doc.get("_id");  // The _id field contains the DBRef
+            String genreId = genreRef.getId().toString();  // Get the actual ObjectId from DBRef
+
+            // Retrieve the MongoGenreModel using the genreId
+            MongoGenreModel genre = mt.findById(genreId, MongoGenreModel.class);
+
+            // Convert to Genre model (assuming you have a genreMapper)
+            return genreMapper.fromMongoGenre(genre);
+        });
     }
+
 
     @Override
     public List<Genre> getTopYGenresMostLent(int y) {
-        GroupOperation groupByGenre = Aggregation.group("book.genre").count().as("lendingCount");
+        // First, perform a lookup to join the genre from the genres collection
+        AggregationOperation lookupBooks = Aggregation.lookup("books", "book.$id", "_id", "bookDetails");
+
+        // Group by the genre after resolving the reference
+        GroupOperation groupByGenre = Aggregation.group("bookDetails.genre")
+                .count().as("lendingCount");
+
+        // Create the aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(
-                groupByGenre, Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")), Aggregation.limit(y)
+                lookupBooks,
+                groupByGenre,
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")),
+                Aggregation.limit(y)
         );
 
-        AggregationResults<MongoGenreModel> results = mt.aggregate(aggregation, "lendings", MongoGenreModel.class);
-        List<MongoGenreModel> list = results.getMappedResults();
+        // Execute the aggregation
+        AggregationResults<Map> results = mt.aggregate(aggregation, "lendings", Map.class);
 
-        return genreMapper.fromMongoGenre(list);
+        // Map the results into your Genre list
+        List<Map> resultList = results.getMappedResults();
+        List<Genre> genres = new ArrayList<>();
+
+        for (Map result : resultList) {
+            // Extract genre from the ArrayList (bookDetails.genre)
+            List<?> genreList = (List<?>) result.get("_id"); // _id holds the genre array from lookup
+            if (genreList != null && !genreList.isEmpty()) {
+                MongoGenreModel genre = (MongoGenreModel) genreList.get(0); // Get the first genre in the list
+                genres.add(genreMapper.fromMongoGenre(genre));
+            }
+        }
+
+        return genres;
     }
 
     @Override

@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.lendingmanagement.dbSchema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
@@ -30,6 +31,7 @@ public class MongoLendingModel {
     private LocalDate returnedDate;
     private Integer fineValuePerDayInCents;
     private String commentary;
+
     private Long version;
 
     public MongoLendingModel(String pk, MongoBookModel book, MongoReaderDetailsModel readerDetails,

@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,13 +33,33 @@ public class BookMongoRepoImpl implements BookRepository {
     private final BookMapper bookMapper;
 
     @Override
-    public List<Book> findByGenre(String genre) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("genre").is(genre)); // Accessing nested property
-        List<MongoBookModel> m = mt.find(query, MongoBookModel.class);
+    public List<Book> findByGenre(String genreName) {
+        // Step 1: Define the Aggregation pipeline
+        AggregationOperation lookupGenre = Aggregation.lookup("genres", "genre.$id", "_id", "genreDetails");
 
-        return bookMapper.fromMongoBookModel(m);
+        // Step 2: Match the genre by name in the genreDetails field (after lookup)
+        MatchOperation matchGenre = Aggregation.match(Criteria.where("genreDetails.genre").is(genreName));
+
+        // Step 3: Optional - project the necessary fields if needed
+        AggregationOperation projectFields = Aggregation.project("pk", "isbn", "title", "description", "genre", "authors", "photo", "version");
+
+        // Combine all steps in the aggregation pipeline
+        Aggregation aggregation = Aggregation.newAggregation(
+                lookupGenre,      // Lookup genres collection
+                matchGenre,       // Match the genre name
+                projectFields     // Optional: Project only necessary fields (optional)
+        );
+
+        // Execute the aggregation query
+        AggregationResults<MongoBookModel> results = mt.aggregate(aggregation, "books", MongoBookModel.class);
+
+        // Return the mapped list of books
+        List<MongoBookModel> books = results.getMappedResults();
+
+        // Map the results to your Book list
+        return bookMapper.fromMongoBookModel(books);
     }
+
 
     @Override
     public List<Book> findByTitle(String title) {
@@ -141,21 +162,37 @@ public class BookMongoRepoImpl implements BookRepository {
 
     @Override
     public List<Book> findTopXBooksFromGenre(int x, String genre) {
-        // Match books by the specified genre
-        MatchOperation matchGenre = Aggregation.match(Criteria.where("genre").is(genre));
+        // Step 1: Lookup books collection to get book details for each lending entry
+        AggregationOperation lookupBooks = Aggregation.lookup("books", "book.$id", "_id", "bookDetails");
 
-        // Group by book ID and count the number of lendings
-        AggregationOperation groupByBookAndCount = Aggregation.group("bookId")
+        // Step 2: Unwind the bookDetails array to access individual book documents
+        AggregationOperation unwindBookDetails = Aggregation.unwind("bookDetails");
+
+        // Step 3: Lookup genres collection using the genre field from the bookDetails
+        AggregationOperation lookupGenre = Aggregation.lookup("genres", "bookDetails.genre.$id", "_id", "genreDetails");
+
+        // Step 4: Unwind the genreDetails array to access individual genre documents
+        AggregationOperation unwindGenreDetails = Aggregation.unwind("genreDetails");
+
+        // Step 5: Match only the documents where genreDetails.genre equals the specified genre name
+        MatchOperation matchGenre = Aggregation.match(Criteria.where("genreDetails.genre").is(genre));
+
+        // Step 6: Group by the book's _id and count the number of lendings
+        AggregationOperation groupByBookAndCount = Aggregation.group("bookDetails._id")
                 .count().as("lendingCount");
 
-        // Sort by lending count in descending order
+        // Step 7: Sort by lending count in descending order
         SortOperation sortByLendingCountDesc = Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount"));
 
-        // Limit the result to 'x' books
+        // Step 8: Limit the result to 'x' books
         AggregationOperation limit = Aggregation.limit(x);
 
         // Combine all operations into an aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(
+                lookupBooks,
+                unwindBookDetails,
+                lookupGenre,
+                unwindGenreDetails,
                 matchGenre,
                 groupByBookAndCount,
                 sortByLendingCountDesc,
@@ -163,12 +200,23 @@ public class BookMongoRepoImpl implements BookRepository {
         );
 
         // Execute the aggregation query
-        AggregationResults<MongoBookModel> results = mt.aggregate(aggregation, "lendings", MongoBookModel.class);
+        AggregationResults<Document> results = mt.aggregate(aggregation, "lendings", Document.class);
+        List<Document> listAfterAggregation = results.getMappedResults();
 
-        List<MongoBookModel> list = results.getMappedResults();
+        // Extract the book IDs from the aggregation results
+        List<ObjectId> bookIds = listAfterAggregation.stream()
+                .map(doc -> (ObjectId) doc.get("_id"))
+                .collect(Collectors.toList());
 
-        return bookMapper.fromMongoBookModel(list);
+        // Step 7: Fetch the actual books using the book IDs
+        Criteria criteriaForBooks = Criteria.where("_id").in(bookIds);
+        Query bookQuery = new Query(criteriaForBooks);
+
+        List<MongoBookModel> books = mt.find(bookQuery, MongoBookModel.class, "books");
+
+        return bookMapper.fromMongoBookModel(books);
     }
+
 
     @Override
     public Book save(Book book) {
