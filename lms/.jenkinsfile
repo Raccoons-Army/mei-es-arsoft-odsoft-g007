@@ -22,13 +22,6 @@ pipeline {
     }
 
     stages {
-        stage('okay i PULL up!') {
-            steps {
-                dir(REPO_DIR) {
-                    sh 'git pull'
-                }
-            }
-        }
 
         stage('Build') {
             steps {
