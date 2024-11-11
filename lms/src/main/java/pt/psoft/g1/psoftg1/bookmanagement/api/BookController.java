@@ -54,7 +54,6 @@ public class BookController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BookView> create(CreateBookRequest resource, @PathVariable("isbn") String isbn) {
 
-
         //Guarantee that the client doesn't provide a link on the body, null = no photo or error
         resource.setPhotoURI(null);
         MultipartFile file = resource.getPhoto();
