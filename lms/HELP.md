@@ -3,6 +3,7 @@ The following was discovered as part of building this project:
 
 * The original package name 'pt.psoft.g1.psoft-g1' is invalid and this project uses 'pt.psoft.g1.psoftg1' instead.
 
+
 # Getting Started
 
 ### Reference Documentation
