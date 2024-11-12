@@ -283,9 +283,10 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <targetTests>
-                        <param>**/*Test</param> <!-- Only include unit tests -->
-                    </targetTests>
+                    <targetTests>pt.psoft.g1.psoftg1.*Test</targetTests>
+                    <mutators>
+                        <mutator>DEFAULTS</mutator>
+                    </mutators>
                     <outputFormats>
                         <outputFormat>XML</outputFormat>
                         <outputFormat>HTML</outputFormat>
@@ -293,7 +294,6 @@
                     <!--<verbose>true</verbose>-->
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
