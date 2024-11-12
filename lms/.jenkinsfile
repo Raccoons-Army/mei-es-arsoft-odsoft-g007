@@ -12,8 +12,7 @@ pipeline {
 
     environment {
         PROJECT_DIR = "lms/"
-        LOCAL_DEPLOY_DIR = "../../deploy"
-        LOCAL_DEPLOY_DIR_CFG = "../../deploy/cfg"
+        LOCAL_DEPLOY_DIR = "../deploy"
         DEPLOY_DIR = "deploy"
         DEPLOY_DIR_CFG = "cfg/"
         ENV_FILE_NAME = 'myCfg.env'
@@ -127,7 +126,7 @@ pipeline {
                                 ),
                                 // transfer the .jar file to the deploy directory > kill the existing process > start the new process
                                 sshTransfer(
-                                    sourceFiles: "${DEPLOY_DIR}/*.jar",
+                                    sourceFiles: "${LOCAL_DEPLOY_DIR}/*.jar",
                                     remoteDirectory: "",
                                     execCommand: """
                                         # Kill the existing application process

@@ -10,7 +10,6 @@ pipeline {
         REPO_DIR = 'mei-es-arsoft-odsoft-g007'
         PROJECT_DIR = "${REPO_DIR}/lms"
         LOCAL_DEPLOY_DIR = "../../deploy"
-        LOCAL_DEPLOY_DIR_CFG = "../../deploy/cfg"
         DEPLOY_DIR = "deploy"
         DEPLOY_DIR_CFG = "cfg/"
         ENV_FILE_NAME = 'myCfg.env'
