@@ -41,7 +41,7 @@ pipeline {
        
         stage('Run Unit Tests') {
             steps {
-                echo "Deploying to ${DEPLOY_TARGET} environment."
+                echo "Deploying to ${env.BRANCH_NAME} environment."
 
                 dir(PROJECT_DIR) {
                     // Run tests while ignoring failures
