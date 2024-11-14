@@ -1,15 +1,18 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     tools {
         maven 'Maven 3.9.9'
         jdk 'JDK 17'
     }
 
     environment {
-        REPO_DIR = 'mei-es-arsoft-odsoft-g007'
-        PROJECT_DIR = "${REPO_DIR}/lms"
-        LOCAL_DEPLOY_DIR = "../../deploy"
+        PROJECT_DIR = "lms/"
+        LOCAL_DEPLOY_DIR = "../deploy"
         DEPLOY_DIR = "deploy"
         DEPLOY_DIR_CFG = "cfg/"
         ENV_FILE_NAME = 'myCfg.env'
@@ -17,28 +20,12 @@ pipeline {
     }
 
     stages {
-        stage('okay i PULL up!') {
-            steps {
-                dir(REPO_DIR) {
-                    sh 'git pull'
-                }
-            }
-        }
 
         stage('Build') {
             steps {
                 dir(PROJECT_DIR) {
                     // Clean and package without running tests
                     sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
-
-        stage('Check if Artifact created') {
-            steps {
-                dir(PROJECT_DIR) {
-                    // Verify the artifact creation
-                    sh 'ls target/*.jar || echo "No artifact found"'
                 }
             }
         }
@@ -104,23 +91,26 @@ pipeline {
             }
         }
 
-        stage('Prepare SSH') {
-            steps {
-                script {
-                    // Ensure the known_hosts file exists
-                    sh 'mkdir -p ~/.ssh'
-                    // Add the host key to known_hosts
-                    sh 'ssh-keyscan -p 11093 vsgate-ssh.dei.isep.ipp.pt >> ~/.ssh/known_hosts'
-                }
-            }
-        }
-
         stage('Deploy to vsgate') {
             steps {
                 script {
+                    // Set DEPLOY_TARGET based on the branch name
+                    def serverConfigName = ''
+                    switch (env.BRANCH_NAME) {
+                        case 'main':
+                            serverConfigName = 'RAC_PROD'
+                            break
+                        case 'dev':
+                            serverConfigName = 'RAC_DEV'
+                            break
+                        default:
+                            serverConfigName = 'RAC_TEST'
+                            break
+                    }
+
                     sshPublisher(publishers: [
                         sshPublisherDesc(
-                            configName: 'VSGATE_SERVER',
+                            configName: serverConfigName,
                             transfers: [
                                  // Clear the remote deploy directory
                                 sshTransfer(
