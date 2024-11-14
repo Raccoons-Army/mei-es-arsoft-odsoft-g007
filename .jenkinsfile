@@ -91,7 +91,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to vsgate') {
+        stage('Deploy') {
             steps {
                 script {
                     // Set DEPLOY_TARGET based on the branch name
