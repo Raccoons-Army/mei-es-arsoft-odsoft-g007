@@ -41,8 +41,6 @@ pipeline {
        
         stage('Run Unit Tests') {
             steps {
-                sh 'printenv'
-
                 dir(PROJECT_DIR) {
                     // Run tests while ignoring failures
                     sh "mvn test -Dmaven.test.failure.ignore=true"
@@ -98,12 +96,12 @@ pipeline {
                 script {
                     // Set DEPLOY_TARGET based on the branch name
                     def serverConfigName = ''
-                    switch (env.BRANCH_NAME) {
-                        case 'main':
-                            serverConfigName = 'RAC_PROD'
-                            break
-                        case 'dev':
+                    switch (env.GIT_BRANCH) {
+                        case 'origin/dev':
                             serverConfigName = 'RAC_DEV'
+                            break
+                        case 'origin/main':
+                            serverConfigName = 'RAC_PROD'
                             break
                         default:
                             serverConfigName = 'RAC_TEST'
