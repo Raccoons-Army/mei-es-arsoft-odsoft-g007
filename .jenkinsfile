@@ -41,6 +41,8 @@ pipeline {
        
         stage('Run Unit Tests') {
             steps {
+                echo "Deploying to ${DEPLOY_TARGET} environment."
+
                 dir(PROJECT_DIR) {
                     // Run tests while ignoring failures
                     sh "mvn test -Dmaven.test.failure.ignore=true"
