@@ -54,7 +54,6 @@ public class BookServiceBBTest {
     public void testCreateBook_Success() {
         Genre genreMock = mock();
         Author authorMock = mock(Author.class);
-        Photo photoMock = mock(Photo.class);
 
         when(request.getTitle()).thenReturn("Test Book Title");
         when(request.getGenre()).thenReturn("Fiction");
@@ -62,8 +61,6 @@ public class BookServiceBBTest {
 
         Book savedBook = mock(Book.class);
         when(savedBook.getIsbn()).thenReturn(isbn);
-
-        when(authorMock.getPhoto()).thenReturn(photoMock);
 
         // Mocking repository and request interactions
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
