@@ -12,15 +12,10 @@ pipeline {
 
     environment {
         PROJECT_DIR = "lms/"
-        LOCAL_DEPLOY_DIR = "../deploy"
-        DEPLOY_DIR = "deploy"
-        DEPLOY_DIR_CFG = "cfg/"
-        ENV_FILE_NAME = 'myCfg.env'
         APP_PORT = 2224
     }
 
     stages {
-
         stage('Build') {
             steps {
                 dir(PROJECT_DIR) {
@@ -77,14 +72,14 @@ pipeline {
                 script {
 
                     // clear the deploy directory
-                    sh "rm -rf ${DEPLOY_DIR}/*"
+                    sh "rm -rf deploy/*"
                     
                     dir(PROJECT_DIR) {
                         // ensure the deployment directory exists
-                        sh "mkdir -p ${LOCAL_DEPLOY_DIR}"
+                        sh "mkdir -p ../deploy"
 
                         // copy the .jar file to the deploy directory (root of the workspace)
-                        sh "cp target/*.jar ${LOCAL_DEPLOY_DIR}"
+                        sh "cp target/*.jar ../deploy"
                     }
 
                 }
@@ -116,24 +111,21 @@ pipeline {
                                 sshTransfer(
                                     sourceFiles: "",
                                     remoteDirectory: "",
-                                    execCommand: "rm -rf ${DEPLOY_DIR}/* || true"
+                                    execCommand: "rm -rf /deploy/* || true"
                                 ),
                                 // transfer the .jar file to the deploy directory > kill the existing process > start the new process
                                 sshTransfer(
-                                    sourceFiles: "${DEPLOY_DIR}/*.jar",
-                                    remoteDirectory: "",
+                                    sourceFiles: "deploy/*.jar",
+                                    remoteDirectory: "/deploy/",
                                     execCommand: """
                                         # Kill the existing application process
-                                        fuser -k ${APP_PORT}/tcp || true
+                                        fuser -k 2224/tcp || true
                                         
                                         # load the environment variables
-                                        export \$(grep -v '^#' ${DEPLOY_DIR_CFG}${ENV_FILE_NAME} | xargs)
-
-                                        # source the environment variables
-                                        source ${DEPLOY_DIR_CFG}${ENV_FILE_NAME}
+                                        export \$(grep -v '^#' /cfg/myCfg.env | xargs)
 
                                         # boot the new application
-                                        screen -dmS myJavaApp java -jar ${DEPLOY_DIR}/*.jar --server.port=${APP_PORT} --spring.config.location=${DEPLOY_DIR_CFG} > app.log 2>&1
+                                        screen -dmS myJavaApp java -jar /deploy/*.jar --server.port=2224 --spring.config.location=/cfg/ > /deploy/app.log 2>&1
                                     """
                                 )
                             ],
@@ -152,7 +144,7 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "${DEPLOY_DIR}/**/*", allowEmptyArchive: true
+            archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
         }
     }
 }
