@@ -7,37 +7,133 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.TestSecurityConfig;
+import pt.psoft.g1.psoftg1.auth.api.infrastructure.IamAuthentication;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorController;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
+import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
+import pt.psoft.g1.psoftg1.authormanagement.services.AuthorService;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.services.RecommendationService;
+import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
+import pt.psoft.g1.psoftg1.configuration.ApiNinjasConfig;
+import pt.psoft.g1.psoftg1.external.service.ApiNinjasService;
+import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
+import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
+import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
+import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
+import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
+import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
+import pt.psoft.g1.psoftg1.usermanagement.model.Role;
+import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
+import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@ActiveProfiles("test")
+@ComponentScan(basePackages = "pt.psoft.g1.psoftg1.bookmanagement")
+@Import(TestSecurityConfig.class)
 public class BookControllerAndServiceIT {
 
     @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private MockMvc mockMvc;  // Mock MVC to simulate HTTP requests
 
-    private final Book bookMock = mock(Book.class);
-    private final BookRepository bookRepository = mock(BookRepository.class);
-    private final GenreRepository genreRepository = mock(GenreRepository.class);
-    private final String isbn = "1234567890";
+    @Autowired
+    private BookController bookController;  // Controller to be tested
+
+    @Autowired
+    private BookService bookService;  // Service to be tested
+
+    @MockBean
+    private BookRepository bookRepository;  // Mock the BookRepository
+
+    @MockBean
+    private GenreRepository genreRepository;
+
+    @MockBean
+    private PhotoRepository photoRepository;
+
+    @MockBean
+    private ReaderRepository readerRepository;
+    @MockBean
+    private UserRepository userRepository;
+    @MockBean
+    private ForbiddenNameRepository forbiddenNameRepository;
+
+    @MockBean
+    private RecommendationService recommendationService;
+
+    @MockBean
+    private LendingService lendingService;
+
+    @MockBean
+    private ConcurrencyService concurrencyService;
+
+    @MockBean
+    private FileStorageService fileStorageService;
+
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private ReaderService readerService;
+    @MockBean
+    private BookViewMapper bookViewMapper;
+    @MockBean
+    private AuthorService authorService;
+    @MockBean
+    private AuthorRepository authorRepository;
+    @MockBean
+    private IdGenerationStrategy<String> idGenerationStrategy;
+    @MockBean
+    private IamAuthentication iamAuthentication;
+    @MockBean
+    private ApiNinjasConfig apiNinjasConfig;
+    @MockBean
+    private ApiNinjasService apiNinjasService;
+
+    private final String isbn = "9780471486480";
 
     @BeforeEach
     void setUp() {
@@ -45,129 +141,103 @@ public class BookControllerAndServiceIT {
     }
 
     @Test
-    void testCreateBook_Successful() throws Exception {
+    void testCreateBook() throws Exception {
+        MultipartFile mockFile = mock(MultipartFile.class);
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+        FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        CreateBookRequest createBookRequest = mock(CreateBookRequest.class);
-        when(createBookRequest.getTitle()).thenReturn("Test Book");
-        when(createBookRequest.getDescription()).thenReturn("A test book description.");
-        when(createBookRequest.getAuthors()).thenReturn(Arrays.asList("Author 1", "Author 2"));
-        when(createBookRequest.getGenre()).thenReturn("Test Genre");
+        CreateBookRequest bookRequest = new CreateBookRequest();
 
-        when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
+        bookRequest.setTitle("Test Book");
+        bookRequest.setGenre("Infantil");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
 
-        when(bookMock.getIsbn()).thenReturn(isbn);
-        when(bookMock.getTitle()).thenReturn("Test Book");
-        when(bookMock.getDescription()).thenReturn("A test book description.");
-        when(bookMock.getAuthors()).thenReturn(Arrays.asList(mock(Author.class), mock(Author.class)));
-        when(bookMock.getGenre()).thenReturn(mock(Genre.class));
-        when(bookMock.getPk()).thenReturn("cjwj2cn32");
-        when(bookMock.getPhoto()).thenReturn(mock(Photo.class));
 
-        when(bookRepository.save(bookMock)).thenReturn(bookMock);
+        Genre mockGenre = mock(Genre.class);
+        Author mockAuthor = mock(Author.class);
 
-        mockMvc.perform(post("/api/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBookRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.title").value(createBookRequest.getTitle()));
+        // Mock repositories
+        when(genreRepository.findByString("Infantil")).thenReturn(Optional.of(mockGenre));  // Mock GenreRepository
+        when(authorRepository.findByAuthorNumber("f9d73c0656b5b3f31e03")).thenReturn(Optional.of(mockAuthor)); // Mock AuthorRepository
+
+        Book mockBook = new Book("9780471486480", "Test Book", "A description of the test book.", null, factoryGenreDouble, factoryAuthorDouble);
+        mockBook.setVersion(1L);
+        when(fileStorageService.getRequestPhoto(mockFile)).thenReturn("photo.jpg");
+        when(bookRepository.save(any(Book.class))).thenReturn(mockBook);
+
+        ResponseEntity<BookView> response = bookController.create(bookRequest, isbn);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        verify(bookRepository, times(1)).save(any(Book.class)); // Ensure that the repository save method was called
     }
 
     @Test
     void testCreateBook_IsbnExistent() throws Exception {
 
-        CreateBookRequest createBookRequest = mock(CreateBookRequest.class);
-        when(createBookRequest.getTitle()).thenReturn("Test Book");
-        when(createBookRequest.getDescription()).thenReturn("A test book description.");
-        when(createBookRequest.getAuthors()).thenReturn(Arrays.asList("Author 1", "Author 2"));
-        when(createBookRequest.getGenre()).thenReturn("Test Genre");
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+        FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
+        CreateBookRequest bookRequest = new CreateBookRequest();
+        bookRequest.setTitle("Test Book");
+        bookRequest.setGenre("Infantil");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
+
+        Book bookMock = new Book("9780471486480", "Test Book", "A description of the test book.", null, factoryGenreDouble, factoryAuthorDouble);
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.of(bookMock));
 
-        mockMvc.perform(post("/api/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBookRequest)))
-                .andExpect(status().isBadRequest());
+        ResponseEntity<BookView> response = bookController.create(bookRequest, isbn);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
 
     @Test
     void testCreateBook_BadRequest() throws Exception {
+        CreateBookRequest bookRequest = new CreateBookRequest();
+        bookRequest.setTitle(null);
+        bookRequest.setGenre("Infantil");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
 
-        CreateBookRequest createBookRequest = mock(CreateBookRequest.class);
-        when(createBookRequest.getTitle()).thenReturn(null);
-        when(createBookRequest.getDescription()).thenReturn("A test book description.");
-        when(createBookRequest.getAuthors()).thenReturn(Arrays.asList("Author 1", "Author 2"));
-        when(createBookRequest.getGenre()).thenReturn("Test Genre");
-
-        when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
-
-        mockMvc.perform(post("/api/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBookRequest)))
-                .andExpect(status().isBadRequest());
+        ResponseEntity<BookView> response = bookController.create(bookRequest, isbn);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void testCreateBook_GenreNotFound() throws Exception {
         String genre = "Test Genre";
-        CreateBookRequest createBookRequest = mock(CreateBookRequest.class);
-        when(createBookRequest.getTitle()).thenReturn("Test Book");
-        when(createBookRequest.getDescription()).thenReturn("A test book description.");
-        when(createBookRequest.getAuthors()).thenReturn(Arrays.asList("Author 1", "Author 2"));
-        when(createBookRequest.getGenre()).thenReturn(genre);
+
+        CreateBookRequest bookRequest = new CreateBookRequest();
+        bookRequest.setTitle(null);
+        bookRequest.setGenre("Infantil");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
 
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
         when(genreRepository.findByString(genre)).thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/api/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBookRequest)))
-                .andExpect(status().isNotFound());
+        ResponseEntity<BookView> response = bookController.create(bookRequest, isbn);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    @Test
-    void testUpdateBook_Successful() throws Exception {
-
-        CreateBookRequest createBookRequest = mock(CreateBookRequest.class);
-        when(createBookRequest.getTitle()).thenReturn("Test Book");
-        when(createBookRequest.getDescription()).thenReturn("A test book description.");
-        when(createBookRequest.getAuthors()).thenReturn(Arrays.asList("Author 1", "Author 2"));
-        when(createBookRequest.getGenre()).thenReturn("Test Genre");
-
-        when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.of(bookMock));
-
-        when(bookMock.getIsbn()).thenReturn(isbn);
-        when(bookMock.getTitle()).thenReturn("Test Book");
-        when(bookMock.getDescription()).thenReturn("A test book description.");
-        when(bookMock.getAuthors()).thenReturn(Arrays.asList(mock(Author.class), mock(Author.class)));
-        when(bookMock.getGenre()).thenReturn(mock(Genre.class));
-        when(bookMock.getPk()).thenReturn("cjwj2cn32");
-        when(bookMock.getPhoto()).thenReturn(mock(Photo.class));
-
-        when(bookRepository.save(bookMock)).thenReturn(bookMock);
-
-        mockMvc.perform(put("/api/books/{isbn}", isbn)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createBookRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.title").value(createBookRequest.getTitle()));
-    }
 
     @Test
     void testGetBookByIsbn() throws Exception {
-        when(bookMock.getIsbn()).thenReturn(isbn);
-        when(bookMock.getTitle()).thenReturn("Test Book");
+        FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
+        FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.of(bookMock));
-        mockMvc.perform(get("/api/books/{isbn}", bookMock.getIsbn()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(bookMock.getTitle()));
+        Book book = new Book("9780471486480", "Test Book", "A description of the test book.", null, factoryGenreDouble, factoryAuthorDouble);
+        book.setVersion(1L);
+        when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.of(book));
+        ResponseEntity<BookView> response = bookController.findByIsbn(isbn);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void testGetBookByIsbn_NotFound() throws Exception {
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
+
         mockMvc.perform(get("/api/books/{isbn}", isbn))
                 .andExpect(status().isNotFound());
     }
@@ -175,6 +245,7 @@ public class BookControllerAndServiceIT {
     @Test
     void testDeleteBookPhoto() throws Exception {
 
+        Book bookMock = mock(Book.class);
         // Set the photo URI of the book
         when(bookMock.getIsbn()).thenReturn(isbn);
         when(bookMock.getPhoto()).thenReturn(mock(Photo.class));

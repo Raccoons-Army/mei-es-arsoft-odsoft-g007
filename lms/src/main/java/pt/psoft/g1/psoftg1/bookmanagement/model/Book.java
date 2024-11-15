@@ -11,48 +11,57 @@ import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 
+import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Setter
+@Getter
 public class Book extends EntityWithPhoto {
 
-    @Setter
-    @Getter
     String pk;
 
-    @Setter
-    @Getter
     private Long version;
 
     Isbn isbn;
 
     Title title;
 
-    @Getter
     Genre genre;
 
-    @Getter
     private List<Author> authors = new ArrayList<>();
 
     Description description;
 
     FactoryGenre _factoryGenre;
+
     FactoryAuthor _factoryAuthor;
 
-    private void setTitle(String title) {this.title = new Title(title);}
+    public void setTitle(String title) {this.title = new Title(title);}
 
-    private void setIsbn(String isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = new Isbn(isbn);
     }
 
-    private void setDescription(String description) {this.description = new Description(description); }
+    public void setDescription(String description) {this.description = new Description(description); }
 
     public void setGenre(Genre genre) {this.genre = genre; }
 
     public void setAuthors(List<Author> authors) {this.authors = authors; }
 
     public String getDescription(){ return this.description.toString(); }
+
+    //@ConstructorProperties({"isbn", "title", "description", "photoURI", "genre", "authors"})
+    public Book(String isbn, String title, String description, String photoURI, Genre genre, List<Author> authors) {
+        setTitle(title);
+        setIsbn(isbn);
+        if(description != null)
+            setDescription(description);
+        setPhotoInternal(photoURI);
+        setGenre(genre);
+        setAuthors(authors);
+    }
 
     public Book(String isbn, String title, String description, String photoURI, FactoryGenre factoryGenre, FactoryAuthor factoryAuthor) {
         setTitle(title);
@@ -64,7 +73,7 @@ public class Book extends EntityWithPhoto {
         _factoryAuthor = factoryAuthor;
     }
 
-    protected Book() {
+    public Book() {
         // got ORM only
     }
 

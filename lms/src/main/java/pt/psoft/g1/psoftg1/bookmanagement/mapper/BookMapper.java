@@ -7,6 +7,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.MongoBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.genremanagement.mapper.GenreMapper;
+import pt.psoft.g1.psoftg1.shared.dbSchema.JpaPhotoModel;
 import pt.psoft.g1.psoftg1.shared.mapper.PhotoMapper;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public abstract class BookMapper {
     @Mapping(target = "genre", source = "genre")
     @Mapping(target = "authors", source = "authors") 
     @Mapping(target = "description", source = "description")
-    @Mapping(target = "photoURI", source = "photo") 
+    @Mapping(target = "photo", source = "photo")
     public abstract Book fromMongoBookModel(MongoBookModel mongoBookModel);
     public abstract List<Book> fromMongoBookModel(List<MongoBookModel> mongoBookModel);
 
@@ -52,7 +53,8 @@ public abstract class BookMapper {
     @Mapping(target = "genre", source = "genre")
     @Mapping(target = "authors", source = "authors") 
     @Mapping(target = "description", source = "description")
-    @Mapping(target = "photoURI", source = "photo") 
+    @Mapping(target = "photo", source = "photo")
     public abstract Book fromJpaBookModel(JpaBookModel jpaBookModel);
     public abstract List<Book> fromJpaBookModel(List<JpaBookModel> jpaBookModel);
+
 }

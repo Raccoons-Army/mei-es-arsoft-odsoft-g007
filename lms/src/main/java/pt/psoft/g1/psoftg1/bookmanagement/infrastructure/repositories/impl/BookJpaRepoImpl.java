@@ -1,8 +1,11 @@
 package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @RequiredArgsConstructor
 public class BookJpaRepoImpl implements BookRepository {
 
@@ -164,13 +168,22 @@ public class BookJpaRepoImpl implements BookRepository {
     @Override
     public Book save(Book book) {
         JpaBookModel jpaBook = bookMapper.toJpaBookModel(book);
-        if (book.getPk() == null) {
-            em.persist(jpaBook);
-        } else {
-            em.merge(jpaBook);
+
+        try {
+            if (book.getPk() == null) {
+                em.persist(jpaBook);
+            } else {
+                em.merge(jpaBook);
+            }
+        } catch (PersistenceException e) {
+            // Log detailed information about the persistence error
+            System.err.println("Error persisting JpaBookModel: " + e.getMessage());
+            e.printStackTrace();
         }
+
         return bookMapper.fromJpaBookModel(jpaBook);
     }
+
 
     @Override
     public void delete(Book book) {

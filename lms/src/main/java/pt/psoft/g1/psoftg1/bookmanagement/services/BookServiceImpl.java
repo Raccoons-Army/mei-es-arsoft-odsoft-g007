@@ -53,6 +53,15 @@ public class BookServiceImpl implements BookService {
 		}
 
 		List<String> authorNumbers = request.getAuthors();
+		List<Author> authors = new ArrayList<>();
+		for (String authorNumber : authorNumbers) {
+
+			Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
+			if(temp.isEmpty()) {
+				continue;
+			}
+			authors.add(temp.get());
+		}
 
 		MultipartFile photo = request.getPhoto();
 		String photoURI = request.getPhotoURI();
@@ -64,26 +73,14 @@ public class BookServiceImpl implements BookService {
 		final var genre = genreRepository.findByString(request.getGenre())
 				.orElseThrow(() -> new NotFoundException("Genre not found"));
 
-		Book newBook = new Book(isbn, request.getTitle(), request.getDescription(), photoURI, factoryGenre, factoryAuthor);
-
+		Book book = null;
 		try {
-			newBook.defineGenre(genre.getGenre());
-
-			for (String authorNumber : authorNumbers) {
-
-				Optional<Author> temp = authorRepository.findByAuthorNumber(authorNumber);
-				if(temp.isEmpty()) {
-					continue;
-				}
-
-				Author author = temp.get();
-				newBook.addAuthor(author.getAuthorNumber(), author.getName(), author.getBio(), author.getPhoto().getPhotoFile());
-			}
-		}catch (InstantiationException e) {
-			System.err.println("Failed to instantiate: " + e.getMessage());
+			 book = new Book(isbn, request.getTitle(), request.getDescription(), photoURI, genre, authors);
+			 return bookRepository.save(book);
+		} catch (Exception e) {
+			e.printStackTrace(); // or log it
+			throw new RuntimeException("Error creating book: " + e.getMessage());
 		}
-
-        return bookRepository.save(newBook);
 	}
 
 
