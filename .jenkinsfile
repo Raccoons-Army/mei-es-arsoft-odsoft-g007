@@ -116,7 +116,7 @@ pipeline {
                                 // transfer the .jar file to the deploy directory > kill the existing process > start the new process
                                 sshTransfer(
                                     sourceFiles: "deploy/*.jar",
-                                    remoteDirectory: "/deploy/",
+                                    remoteDirectory: "",
                                     execCommand: """
                                         # Kill the existing application process
                                         fuser -k 2224/tcp || true
