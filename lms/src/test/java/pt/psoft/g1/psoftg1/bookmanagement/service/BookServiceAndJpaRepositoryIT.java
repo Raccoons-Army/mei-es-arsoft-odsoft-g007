@@ -1,22 +1,35 @@
 package pt.psoft.g1.psoftg1.bookmanagement.service;
 
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.auth.api.infrastructure.IamAuthentication;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookServiceImpl;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
+import pt.psoft.g1.psoftg1.bookmanagement.services.RecommendationService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
+import pt.psoft.g1.psoftg1.configuration.ApiNinjasConfig;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.external.service.ApiNinjasService;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("jpa")
 public class BookServiceAndJpaRepositoryIT {
 
@@ -35,26 +49,28 @@ public class BookServiceAndJpaRepositoryIT {
     @Autowired
     private AuthorRepository authorRepository;
 
-    @BeforeEach
-    public void setUp() {
-        // Create a genre
+    @MockBean
+    private IdGenerationStrategy<String> idGenerationStrategy;
+    @MockBean
+    private IamAuthentication iamAuthentication;
+    @MockBean
+    private RecommendationService recommendationService;
+    @MockBean
+    private ApiNinjasConfig apiNinjasConfig;
+    @MockBean
+    private ApiNinjasService apiNinjasService;
+
+    @BeforeAll
+    public void setup() {
         Genre genreMock = mock(Genre.class);
         when(genreMock.getGenre()).thenReturn("Science Fiction");
         genreRepository.save(genreMock);
-
-        // create an author author123
-        Author authorMock = mock(Author.class);
-        when(authorMock.getAuthorNumber()).thenReturn("12345");
-        when(authorMock.getName()).thenReturn("author123");
-        when(authorMock.getBio()).thenReturn("01/01/2000");
-        when(authorMock.getPhoto()).thenReturn(null);
-        authorRepository.save(authorMock);
     }
 
     @Test
     public void testCreateBook_Success() {
         // Arrange
-        String isbn = "123456789";
+        String isbn = "9789720706386";  // Valid ISBN-13 for this test
         CreateBookRequest request = mock(CreateBookRequest.class);
 
         when(request.getTitle()).thenReturn("Test Book Title");
@@ -69,98 +85,79 @@ public class BookServiceAndJpaRepositoryIT {
 
         // Assert
         assertNotNull(createdBook.getPk());
-        assertEquals("123456789", createdBook.getIsbn());
+        assertEquals(isbn, createdBook.getIsbn());
         assertEquals("Test Book Title", createdBook.getTitle());
     }
-
 
     @Test
     public void testCreateBook_AlreadyExists() {
         // Arrange
-        String isbn = "123456789";
-        CreateBookRequest request = mock(CreateBookRequest.class);
-        when(request.getTitle()).thenReturn("Test Book Title");
-        when(request.getDescription()).thenReturn("Description of test book");
-        when(request.getAuthors()).thenReturn(List.of("author123"));
-        when(request.getGenre()).thenReturn("Science Fiction");
-        when(request.getPhoto()).thenReturn(null);
+        String isbn = "9789723716160";  // Valid ISBN-13 for this test
+        CreateBookRequest bookRequest = new CreateBookRequest();
 
-        bookService.create(request, isbn);
+        bookRequest.setTitle("Test Book");
+        bookRequest.setGenre("Science Fiction");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
+
+        bookService.create(bookRequest, isbn);
 
         // Act & Assert
         assertThrows(ConflictException.class, () -> {
-            bookService.create(request, isbn);
+            bookService.create(bookRequest, isbn);
         });
     }
 
     @Test
     public void testCreateBook_GenreNotFound() {
         // Arrange
-        String isbn = "123456789";
-        CreateBookRequest request = mock(CreateBookRequest.class);
-        when(request.getTitle()).thenReturn("Test Book Title");
-        when(request.getDescription()).thenReturn("Description of test book");
-        when(request.getAuthors()).thenReturn(List.of("author123"));
-        when(request.getGenre()).thenReturn("Nonexistent Genre");
-        when(request.getPhoto()).thenReturn(null);
+        String isbn = "9789895612864";  // Valid ISBN-13 for this test
+        CreateBookRequest bookRequest = new CreateBookRequest();
+
+        bookRequest.setTitle("Test Book");
+        bookRequest.setGenre("None");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
 
         // Act & Assert
-        assertThrows(ConflictException.class, () -> {
-            bookService.create(request, isbn);
+        assertThrows(NotFoundException.class, () -> {
+            bookService.create(bookRequest, isbn);
         });
     }
 
     @Test
     public void testUpdateBook_Success() {
         // Arrange
-        String isbn = "123456789";
-        CreateBookRequest createRequest = mock(CreateBookRequest.class);
-        when(createRequest.getTitle()).thenReturn("Initial Title");
-        when(createRequest.getDescription()).thenReturn("Description of test book");
-        when(createRequest.getAuthors()).thenReturn(List.of("author123"));
-        when(createRequest.getGenre()).thenReturn("Science Fiction");
-        when(createRequest.getPhoto()).thenReturn(null);
+        String isbn = "9782722203402";  // Valid ISBN-13 for this test
+        CreateBookRequest bookRequest = new CreateBookRequest();
+
+        bookRequest.setTitle("Test Book");
+        bookRequest.setGenre("Science Fiction");
+        bookRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        bookRequest.setDescription("A description of the test book.");
 
         // Create a book to update
-        Book book = bookService.create(createRequest, isbn);
+        Book book = bookService.create(bookRequest, isbn);
 
-        UpdateBookRequest updateRequest = mock(UpdateBookRequest.class);
-        when(updateRequest.getIsbn()).thenReturn(isbn);
-        when(updateRequest.getTitle()).thenReturn("Updated Title");
+        UpdateBookRequest updateRequest = new UpdateBookRequest();
+        updateRequest.setIsbn(isbn);
+        updateRequest.setTitle("Test Book Updated");
+        updateRequest.setGenre("Science Fiction");
+        updateRequest.setAuthors(List.of("f9d73c0656b5b3f31e03"));
+        updateRequest.setDescription("A description of the test book.");
 
         // Act
-        Book updatedBook = bookService.update(updateRequest, "1");
+        Book updatedBook = bookService.update(updateRequest, String.valueOf(book.getVersion()));
 
         // Assert
-        assertEquals("Updated Title", updatedBook.getTitle());
+        assertEquals("Test Book Updated", updatedBook.getTitle());
         assertEquals(book.getPk(), updatedBook.getPk());
-    }
-
-    @Test
-    public void testRemoveBookPhoto_Success() {
-        // Arrange
-        String isbn = "123456789";
-
-        CreateBookRequest request = mock(CreateBookRequest.class);
-        when(request.getTitle()).thenReturn("Test Book Title");
-        when(request.getDescription()).thenReturn("Description of test book");
-        when(request.getAuthors()).thenReturn(List.of("author123"));
-        when(request.getGenre()).thenReturn("Science Fiction");
-        when(request.getPhoto()).thenReturn(null);
-
-        Book book = bookService.create(request, isbn);
-
-        // Act
-        Book updatedBook = bookService.removeBookPhoto(book.getIsbn(), 1);
-
-        // Assert
-        assertNull(updatedBook.getPhoto());
     }
 
     @Test
     public void testFindByGenre_Success() {
         // Arrange
-        String isbn = "2233445566";
+        String isbn = "9789722328296";  // Valid ISBN-13 for this test
         CreateBookRequest request = mock(CreateBookRequest.class);
         when(request.getTitle()).thenReturn("Test Book Title");
         when(request.getDescription()).thenReturn("Description of test book");

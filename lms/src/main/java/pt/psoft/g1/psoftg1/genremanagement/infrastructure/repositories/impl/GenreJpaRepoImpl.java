@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import java.util.*;
 
 import org.springframework.data.domain.PageImpl;
 
-
+@Transactional
 @RequiredArgsConstructor
 public class GenreJpaRepoImpl implements GenreRepository {
 
