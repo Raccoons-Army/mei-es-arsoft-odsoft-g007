@@ -12,7 +12,6 @@ pipeline {
 
     environment {
         PROJECT_DIR = "lms/"
-        APP_PORT = 2224
     }
 
     stages {
