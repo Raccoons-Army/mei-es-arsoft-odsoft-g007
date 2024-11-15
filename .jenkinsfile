@@ -144,6 +144,22 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
+
+            // Publish HTML reports
+                        publishHTML([
+                            reportName: 'Failsafe Report',
+                            reportDir: "${PROJECT_DIR}/target/failsafe-reports",
+                            reportFiles: 'index.html',
+                            keepAll: true,
+                            alwaysLinkToLastBuild: true
+                        ])
+                        publishHTML([
+                            reportName: 'Surefire Report',
+                            reportDir: "${PROJECT_DIR}/target/surefire-reports",
+                            reportFiles: 'index.html',
+                            keepAll: true,
+                            alwaysLinkToLastBuild: true
+                        ])
         }
     }
 }
