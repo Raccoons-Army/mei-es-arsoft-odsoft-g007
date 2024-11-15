@@ -150,6 +150,7 @@ pipeline {
                             reportName: 'Failsafe Report',
                             reportDir: "${PROJECT_DIR}/target/failsafe-reports",
                             reportFiles: 'index.html',
+                            allowMissing: true,
                             keepAll: true,
                             alwaysLinkToLastBuild: true
                         ])
@@ -157,6 +158,7 @@ pipeline {
                             reportName: 'Surefire Report',
                             reportDir: "${PROJECT_DIR}/target/surefire-reports",
                             reportFiles: 'index.html',
+                            allowMissing: true,
                             keepAll: true,
                             alwaysLinkToLastBuild: true
                         ])
