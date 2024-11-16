@@ -1,0 +1,46 @@
+# Ignore Mac-specific files
+.DS_Store
+
+# Eclipse/STS/IntelliJ IDEA
+.idea/
+
+# OS-specific files
+Thumbs.db
+ehthumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*~
+
+# Environment and other configuration files
+*.env
+.env
+.env.local
+.env.*.local
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Paradigm temporary files and directories
+.vpp.lock
+*.bak
+*.backup
+*.log
+*.tmp
+
+# Ignoring specific temporary folders Visual Paradigm uses
+*.vpp~   # Temporary file backup
+*.vpp.bak   # Backup file
+*.vpp.log   # Log files
+*.vpp.vbak
+*.vpp.bak*
+*.vpp.lck
+
+# Ignore workspace and user settings
+.vpworkspace/
+.vpuserrepository/
+
