@@ -147,7 +147,6 @@ pipeline {
             archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
 
             // Publish HTML reports
-
             publishHTML([
               reportName: 'Failsafe Report',
               reportDir: "${PROJECT_DIR}/target/site",
@@ -156,7 +155,6 @@ pipeline {
               keepAll: true,
               alwaysLinkToLastBuild: true
             ])
-            
             publishHTML([
               reportName: 'Surefire Report',
               reportDir: "${PROJECT_DIR}/target/site",
