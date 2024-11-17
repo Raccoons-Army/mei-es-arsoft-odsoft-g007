@@ -62,6 +62,7 @@ pipeline {
             steps {
                 dir(PROJECT_DIR) {
                     sh 'mvn failsafe:integration-test'
+                    sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
                 }
             }
         }
@@ -146,22 +147,24 @@ pipeline {
             archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
 
             // Publish HTML reports
-                        publishHTML([
-                            reportName: 'Failsafe Report',
-                            reportDir: "${PROJECT_DIR}/target/failsafe-reports",
-                            reportFiles: 'index.html',
-                            allowMissing: true,
-                            keepAll: true,
-                            alwaysLinkToLastBuild: true
-                        ])
-                        publishHTML([
-                            reportName: 'Surefire Report',
-                            reportDir: "${PROJECT_DIR}/target/surefire-reports",
-                            reportFiles: 'index.html',
-                            allowMissing: true,
-                            keepAll: true,
-                            alwaysLinkToLastBuild: true
-                        ])
+
+            publishHTML([
+              reportName: 'Failsafe Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'failsafe-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            
+            publishHTML([
+              reportName: 'Surefire Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'surefire-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
         }
     }
 }
