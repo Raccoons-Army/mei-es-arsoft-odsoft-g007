@@ -1,7 +1,6 @@
 package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -15,8 +14,8 @@ public class JpaReaderModel extends JpaUserModel{
         // got ORM only
     }
 
-    public JpaReaderModel(String username, String password) {
-        super(username, password);
+    public JpaReaderModel(String username) {
+        super(username);
         this.addAuthority(new Role(Role.READER));
     }
 
@@ -26,14 +25,11 @@ public class JpaReaderModel extends JpaUserModel{
      * helper creation scenarios
      *
      * @param username
-     * @param password
-     * @param name
      * @return
      */
 
-    public static JpaReaderModel newReader(final String username, final String password, final String name) {
-        final var u = new JpaReaderModel(username, password);
-        u.setName(name);
+    public static JpaReaderModel newReader(final String username) {
+        final var u = new JpaReaderModel(username);
         return u;
     }
 }

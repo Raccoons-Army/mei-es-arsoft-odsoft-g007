@@ -13,13 +13,12 @@ public class MongoLibrarianModel extends MongoUserModel {
         // for MongoDB ORM only
     }
 
-    public MongoLibrarianModel(String username, String password) {
-        super(username, password);
+    public MongoLibrarianModel(String username) {
+        super(username);
     }
 
-    public static MongoLibrarianModel newLibrarian(final String username, final String password, final String name) {
-        final var librarian = new MongoLibrarianModel(username, password);
-        librarian.setName(name);
+    public static MongoLibrarianModel newLibrarian(final String username) {
+        final var librarian = new MongoLibrarianModel(username);
         return librarian;
     }
 }

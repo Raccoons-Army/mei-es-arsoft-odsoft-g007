@@ -1,21 +1,11 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.springframework.stereotype.Component;
-import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
-import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
 
 @Component
 public class FactoryBook {
 
-    FactoryGenre _factoryGenre;
-    FactoryAuthor _factoryAuthor;
-
-    public FactoryBook(FactoryGenre factoryGenre, FactoryAuthor factoryAuthor) {
-        _factoryGenre = factoryGenre;
-        _factoryAuthor = factoryAuthor;
-    }
-
-    public Book newBook(String isbn, String title, String description, String photoURI) {
-        return new Book(isbn, title, description, photoURI, _factoryGenre, _factoryAuthor);
+    public Book newBook(String isbn) {
+        return new Book(isbn);
     }
 }

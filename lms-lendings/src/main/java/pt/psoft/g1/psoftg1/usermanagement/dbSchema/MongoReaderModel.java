@@ -15,14 +15,13 @@ public class MongoReaderModel extends MongoUserModel {
         // for MongoDB ORM only
     }
 
-    public MongoReaderModel(String username, String password) {
-        super(username, password);
+    public MongoReaderModel(String username) {
+        super(username);
         this.addAuthority(new Role(Role.READER));
     }
 
-    public static MongoReaderModel newReader(final String username, final String password, final String name) {
-        final var reader = new MongoReaderModel(username, password);
-        reader.setName(name);
+    public static MongoReaderModel newReader(final String username) {
+        final var reader = new MongoReaderModel(username);
         return reader;
     }
 }

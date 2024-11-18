@@ -7,16 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,37 +35,13 @@ public class JpaUserModel implements Serializable {
     @Version
     private Long version;
 
-    // auditing info
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    // auditing info
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime modifiedAt;
-
-    // auditing info
-    @CreatedBy
-    @Column(nullable = false, updatable = false)
-    private String createdBy;
-
-    // auditing info
-    @LastModifiedBy
-    @Column(nullable = false)
-    private String modifiedBy;
-
     private boolean enabled = true;
 
-    @Column(unique = true, /*updatable = false,*/ nullable = false)
+    @Column(unique = true, nullable = false)
     @Email
     @NotNull
     @NotBlank
     private String username;
-
-    private String password;
-
-    private String name;
 
     @ElementCollection
     @CollectionTable(name = "USER_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_USER_ID"))
@@ -80,14 +51,8 @@ public class JpaUserModel implements Serializable {
         // for ORM only
     }
 
-    /**
-     *
-     * @param username
-     * @param password
-     */
-    public JpaUserModel(final String username, final String password) {
+    public JpaUserModel(final String username) {
         this.username = username;
-        setPassword(password);
     }
 
     /**
@@ -96,14 +61,10 @@ public class JpaUserModel implements Serializable {
      * helper creation scenarios
      *
      * @param username
-     * @param password
-     * @param name
      * @return
      */
-    public static JpaUserModel newUser(final String username, final String password, final String name) {
-        final var u = new JpaUserModel(username, password);
-        u.setName(name);
-        return u;
+    public static JpaUserModel newUser(final String username) {
+        return new JpaUserModel(username);
     }
 
     /**
@@ -112,13 +73,11 @@ public class JpaUserModel implements Serializable {
      * helper creation scenarios
      *
      * @param username
-     * @param password
-     * @param name
      * @param role
      * @return
      */
-    public static JpaUserModel newUser(final String username, final String password, final String name, final String role) {
-        var u = newUser(username, password, name);
+    public static JpaUserModel newUser(final String username, final String role) {
+        var u = newUser(username);
         u.addAuthority(new Role(role));
         return u;
     }

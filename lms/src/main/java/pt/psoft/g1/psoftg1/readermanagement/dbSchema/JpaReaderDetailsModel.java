@@ -26,7 +26,7 @@ public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
     @JoinColumn(name = "READER_USER_ID")
     private JpaUserModel reader;
 
-    @Column(name = "READER_NUMBER")
+    @Column(name = "READER_NUMBER", unique = true)
     private String readerNumber;
 
     @Column(nullable = false, updatable = false)

@@ -1,7 +1,6 @@
 package pt.psoft.g1.psoftg1.usermanagement.dbSchema;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
 @Entity
 public class JpaLibrarianModel extends JpaUserModel {
@@ -10,8 +9,8 @@ public class JpaLibrarianModel extends JpaUserModel {
         // got ORM only
     }
 
-    public JpaLibrarianModel(String username, String password) {
-        super(username, password);
+    public JpaLibrarianModel(String username) {
+        super(username);
     }
 
     /**
@@ -20,13 +19,9 @@ public class JpaLibrarianModel extends JpaUserModel {
      * helper creation scenarios
      *
      * @param username
-     * @param password
-     * @param name
      * @return
      */
-    public static JpaLibrarianModel newLibrarian(final String username, final String password, final String name) {
-        final var u = new JpaLibrarianModel(username, password);
-        u.setName(name);
-        return u;
+    public static JpaLibrarianModel newLibrarian(final String username) {
+        return new JpaLibrarianModel(username);
     }
 }

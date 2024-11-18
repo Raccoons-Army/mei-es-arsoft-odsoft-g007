@@ -13,27 +13,23 @@ public abstract class ReaderMapper {
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "version", target = "version")
     public abstract JpaReaderModel toJpaReaderModel(Reader reader);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "version", target = "version")
     public abstract Reader fromJpaReaderModel(JpaReaderModel jpaReaderModel);
     public abstract List<Reader> fromJpaReaderModel(List<JpaReaderModel> jpaReaderModel);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "version", target = "version")
     public abstract MongoReaderModel toMongoReaderModel(Reader reader);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
+    @Mapping(source = "version", target = "version")
     public abstract Reader fromMongoReaderModel(MongoReaderModel mongoReaderModel);
     public abstract List<Reader> fromMongoReaderModel(List<MongoReaderModel> mongoReaderModel);
 

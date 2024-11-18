@@ -13,27 +13,19 @@ public abstract class LibrarianMapper {
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
     public abstract JpaReaderModel toJpaReaderModel(Librarian librarian);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
     public abstract Librarian fromJpaReaderModel(JpaReaderModel jpaReaderModel);
     public abstract List<Librarian> fromJpaReaderModel(List<JpaReaderModel> jpaReaderModel);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
     public abstract MongoReaderModel toMongoReaderModel(Librarian librarian);
 
     @Mapping(source = "pk", target = "pk")
     @Mapping(source = "username", target = "username")
-    @Mapping(source = "password", target = "password")
-    @Mapping(source = "name", target = "name")
     public abstract Librarian fromMongoReaderModel(MongoReaderModel mongoReaderModel);
     public abstract List<Librarian> fromMongoReaderModel(List<MongoReaderModel> mongoReaderModel);
 

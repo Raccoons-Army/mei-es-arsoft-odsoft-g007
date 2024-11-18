@@ -16,26 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "A DTO for creating a Book")
 public class CreateBookRequest {
-
-    @Setter
-    private String description;
-
     @NotBlank
-    private String title;
-
-    @NotBlank
-    private String genre;
-
-    @Nullable
-    @Getter
-    @Setter
-    private MultipartFile photo;
-
-    @Nullable
-    @Getter
-    @Setter
-    private String photoURI;
-
-    @NotNull
-    private List<String> authors;
+    private String isbn;
 }

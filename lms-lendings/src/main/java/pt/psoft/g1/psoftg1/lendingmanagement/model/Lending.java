@@ -131,13 +131,13 @@ public class Lending {
         _factoryReaderDetails = factoryReaderDetails;
     }
 
-    public Book defineBook(String isbn, String title, String description, String photoURI) {
-        this.book = _factoryBook.newBook(isbn, title, description, photoURI);
+    public Book defineBook(String isbn) {
+        this.book = _factoryBook.newBook(isbn);
         return this.book;
     }
 
-    public ReaderDetails defineReaderDetails(String readerNumber, String birthDate, String phoneNumber, boolean gdpr, boolean marketing, boolean thirdParty, String photoURI) {
-        this.readerDetails = _factoryReaderDetails.newReaderDetails(readerNumber, birthDate, phoneNumber, gdpr, marketing, thirdParty, photoURI);
+    public ReaderDetails defineReaderDetails(String readerNumber) {
+        this.readerDetails = _factoryReaderDetails.newReaderDetails(readerNumber);
         return this.readerDetails;
     }
 
@@ -215,10 +215,6 @@ public class Lending {
             fineValueInCents = Optional.of(fineValuePerDayInCents * days);
         }
         return fineValueInCents;
-    }
-
-    public String getTitle(){
-        return this.book.getTitle().toString();
     }
 
     public String getLendingNumber() {

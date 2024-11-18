@@ -1,9 +1,9 @@
 package pt.psoft.g1.psoftg1.readermanagement.config;
 
 import jakarta.persistence.EntityManager;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl.ReaderJpaRepoImpl;
 import pt.psoft.g1.psoftg1.readermanagement.infraestructure.repositories.impl.ReaderMongoRepoImpl;

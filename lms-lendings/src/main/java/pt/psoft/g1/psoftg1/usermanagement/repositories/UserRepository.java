@@ -20,13 +20,13 @@
  */
 package pt.psoft.g1.psoftg1.usermanagement.repositories;
 
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.usermanagement.model.User;
+import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
+
 import java.util.List;
 import java.util.Optional;
-
-import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
-import pt.psoft.g1.psoftg1.usermanagement.model.User;
-import pt.psoft.g1.psoftg1.shared.services.Page;
-import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 
 /**
  *
@@ -41,8 +41,7 @@ public interface UserRepository {
 
 	default User getById(final Long id) {
 		final Optional<User> maybeUser = findById(id);
-		// throws 404 Not Found if the user does not exist or is not enabled
-		return maybeUser.filter(User::isEnabled).orElseThrow(() -> new NotFoundException(User.class, id));
+		return maybeUser.orElseThrow(() -> new NotFoundException("User not found"));
 	}
 
 	Optional<User> findByUsername(String username);

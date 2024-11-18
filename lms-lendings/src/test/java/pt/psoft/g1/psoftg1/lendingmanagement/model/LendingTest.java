@@ -4,17 +4,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.genremanagement.model.FactoryGenre;
-import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
-import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +16,6 @@ import static org.mockito.Mockito.mock;
 
 @PropertySource({"classpath:config/library.properties"})
 class LendingTest {
-    private static final ArrayList<Author> authors = new ArrayList<>();
     private static Book book;
     private static ReaderDetails readerDetails;
     @Value("${lendingDurationInDays}")
@@ -31,32 +24,11 @@ class LendingTest {
     private int fineValuePerDayInCents;
 
     @BeforeAll
-    public static void setup() throws InstantiationException {
-        FactoryGenre doubleFactoryGenre = mock(FactoryGenre.class);
-        FactoryAuthor doubleFactoryAuthor = mock(FactoryAuthor.class);
+    public static void setup() {
+        book = new Book("9782826012092");
         FactoryUser factoryUserDouble = mock(FactoryUser.class);
 
-        book = new Book("9782826012092",
-                "O Inspetor Max",
-                "conhecido pastor-alemão que trabalha para a Judiciária, vai ser fundamental para resolver um importante caso de uma rede de malfeitores que quer colocar uma bomba num megaconcerto de uma ilustre cantora",
-                null, doubleFactoryGenre, doubleFactoryAuthor);
-
-        book.defineGenre("Romance");
-        book.addAuthor("aa1", "Manuel Antonio Pina",
-                "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
-                null);
-
-        readerDetails = new ReaderDetails(
-                "1",
-                "2000-01-01",
-                "919191919",
-                true,
-                true,
-                true,
-                null,
-                factoryUserDouble, doubleFactoryGenre);
-
-        readerDetails.defineReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
+        readerDetails = new ReaderDetails("2024/1", factoryUserDouble);
     }
 
     @Test
@@ -97,12 +69,6 @@ class LendingTest {
     void testGetDaysOverDue() {
         Lending lending = new Lending("aa1", book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
         assertEquals(Optional.empty(), lending.getDaysOverdue());
-    }
-
-    @Test
-    void testGetTitle() {
-        Lending lending = new Lending("aa1", book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
-        assertEquals("O Inspetor Max", lending.getTitle());
     }
 
     @Test

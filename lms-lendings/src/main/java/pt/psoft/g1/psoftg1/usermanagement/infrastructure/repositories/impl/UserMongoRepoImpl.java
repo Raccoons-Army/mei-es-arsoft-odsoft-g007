@@ -19,7 +19,6 @@ import pt.psoft.g1.psoftg1.usermanagement.services.SearchUsersQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class UserMongoRepoImpl implements UserRepository {

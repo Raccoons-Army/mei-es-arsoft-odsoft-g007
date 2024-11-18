@@ -20,13 +20,12 @@
  */
 package pt.psoft.g1.psoftg1.usermanagement.services;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example

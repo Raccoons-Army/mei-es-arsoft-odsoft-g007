@@ -20,22 +20,15 @@
  */
 package pt.psoft.g1.psoftg1.usermanagement.services;
 
-import static java.util.stream.Collectors.toSet;
+import org.mapstruct.*;
+import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
+import pt.psoft.g1.psoftg1.usermanagement.model.Role;
+import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
-import org.mapstruct.NullValueCheckStrategy;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-
-import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
-import pt.psoft.g1.psoftg1.usermanagement.model.Role;
-import pt.psoft.g1.psoftg1.usermanagement.model.User;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Based on https://github.com/Yoh0xFF/java-spring-security-example

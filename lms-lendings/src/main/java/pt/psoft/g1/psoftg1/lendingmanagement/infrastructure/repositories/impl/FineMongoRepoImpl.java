@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import pt.psoft.g1.psoftg1.genremanagement.dbSchema.MongoGenreModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.MongoFineModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.mapper.FineMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
