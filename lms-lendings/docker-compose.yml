@@ -8,8 +8,10 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8087:8080"
+        env_file:
+            - MY_ENV_VARS.env
         environment:
-            SPRING_PROFILES_ACTIVE: instance1,bootstrap
+            SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
         networks:
             - lms_network
         volumes:
@@ -23,8 +25,10 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8088:8080"
+        env_file:
+            - MY_ENV_VARS2.env
         environment:
-            SPRING_PROFILES_ACTIVE: instance2,bootstrap
+            SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
         networks:
             - lms_network
         volumes:
