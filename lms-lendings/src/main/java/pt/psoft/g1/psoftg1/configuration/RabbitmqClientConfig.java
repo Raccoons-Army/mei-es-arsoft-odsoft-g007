@@ -5,65 +5,153 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderDetailsEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.shared.model.BookEvents;
 import pt.psoft.g1.psoftg1.shared.model.LendingEvents;
+import pt.psoft.g1.psoftg1.shared.model.ReaderDetailsEvents;
 
 @Profile("!test")
 @Configuration
-public  class RabbitmqClientConfig {
+public class RabbitmqClientConfig {
 
-    @Bean
-    public DirectExchange direct() {
+    // Lendings exchange
+    @Bean(name = "lendingsExchange")
+    public DirectExchange lendingsExchange() {
         return new DirectExchange("LMS.lendings");
+    }
+
+    // Books Exchange
+    @Bean(name = "booksExchange")
+    public DirectExchange booksExchange() {
+        return new DirectExchange("LMS.books");
+    }
+
+    // Readers Details Exchange
+    @Bean(name = "readersExchange")
+    public DirectExchange readersExchange() {
+        return new DirectExchange("LMS.readersDetails");
     }
 
     private static class ReceiverConfig {
 
+        // Lending Queues
         @Bean(name = "autoDeleteQueue_Lending_Created")
         public Queue autoDeleteQueue_Lending_Created() {
-
             System.out.println("autoDeleteQueue_Lending_Created created!");
             return new AnonymousQueue();
         }
 
-        @Bean
+        @Bean(name = "autoDeleteQueue_Lending_Updated")
         public Queue autoDeleteQueue_Lending_Updated() {
             return new AnonymousQueue();
         }
 
-        @Bean
+        @Bean(name = "autoDeleteQueue_Lending_Deleted")
         public Queue autoDeleteQueue_Lending_Deleted() {
             return new AnonymousQueue();
         }
 
+        // Books Queues
+        @Bean(name = "autoDeleteQueue_Book_Created")
+        public Queue autoDeleteQueue_Book_Created() {
+            return new AnonymousQueue();
+        }
+
+        @Bean(name = "autoDeleteQueue_Book_Deleted")
+        public Queue autoDeleteQueue_Book_Deleted() {
+            return new AnonymousQueue();
+        }
+
+        // Readers Details Queues
+        @Bean(name = "autoDeleteQueue_ReaderDetails_Created")
+        public Queue autoDeleteQueue_ReaderDetails_Created() {
+            return new AnonymousQueue();
+        }
+
+        @Bean(name = "autoDeleteQueue_ReaderDetails_Deleted")
+        public Queue autoDeleteQueue_ReaderDetails_Deleted() {
+            return new AnonymousQueue();
+        }
+
+        // Lending Bindings
         @Bean
-        public Binding binding1(DirectExchange direct,
-                                @Qualifier("autoDeleteQueue_Lending_Created") Queue autoDeleteQueue_Lending_Created) {
+        public Binding lendingCreatedBinding(@Qualifier("lendingsExchange") DirectExchange direct,
+                                             @Qualifier("autoDeleteQueue_Lending_Created") Queue autoDeleteQueue_Lending_Created) {
             return BindingBuilder.bind(autoDeleteQueue_Lending_Created)
                     .to(direct)
                     .with(LendingEvents.LENDING_CREATED);
         }
 
         @Bean
-        public Binding binding2(DirectExchange direct,
-                                Queue autoDeleteQueue_Lending_Updated) {
+        public Binding lendingUpdatedBinding(@Qualifier("lendingsExchange") DirectExchange lendingExchange,
+                                             @Qualifier("autoDeleteQueue_Lending_Updated") Queue autoDeleteQueue_Lending_Updated) {
             return BindingBuilder.bind(autoDeleteQueue_Lending_Updated)
-                    .to(direct)
+                    .to(lendingExchange)
                     .with(LendingEvents.LENDING_UPDATED);
         }
 
         @Bean
-        public Binding binding3(DirectExchange direct,
-                                Queue autoDeleteQueue_Lending_Deleted) {
+        public Binding lendingDeletedBinding(@Qualifier("lendingsExchange") DirectExchange lendingExchange,
+                                             @Qualifier("autoDeleteQueue_Lending_Deleted") Queue autoDeleteQueue_Lending_Deleted) {
             return BindingBuilder.bind(autoDeleteQueue_Lending_Deleted)
-                    .to(direct)
+                    .to(lendingExchange)
                     .with(LendingEvents.LENDING_DELETED);
         }
 
+        // Books Bindings
         @Bean
-        public LendingEventRabbitmqReceiver receiver(LendingService lendingService, @Qualifier("autoDeleteQueue_Lending_Created") Queue autoDeleteQueue_Lending_Created) {
+        public Binding bookCreatedBinding(@Qualifier("booksExchange") DirectExchange booksExchange,
+                                          @Qualifier("autoDeleteQueue_Book_Created") Queue autoDeleteQueue_Book_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_Book_Created)
+                    .to(booksExchange)
+                    .with(BookEvents.BOOK_CREATED);
+        }
+
+        @Bean
+        public Binding bookDeletedBinding(@Qualifier("booksExchange") DirectExchange booksExchange,
+                                          @Qualifier("autoDeleteQueue_Book_Deleted") Queue autoDeleteQueue_Book_Deleted) {
+            return BindingBuilder.bind(autoDeleteQueue_Book_Deleted)
+                    .to(booksExchange)
+                    .with(BookEvents.BOOK_DELETED);
+        }
+
+        // Readers Details Bindings
+        @Bean
+        public Binding readerDetailsCreatedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
+                                                   @Qualifier("autoDeleteQueue_ReaderDetails_Created") Queue autoDeleteQueue_ReaderDetails_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_ReaderDetails_Created)
+                    .to(readersExchange)
+                    .with(ReaderDetailsEvents.READER_DETAILS_CREATED);
+        }
+
+        @Bean
+        public Binding readerDetailsDeletedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
+                                                   @Qualifier("autoDeleteQueue_ReaderDetails_Deleted") Queue autoDeleteQueue_ReaderDetails_Deleted) {
+            return BindingBuilder.bind(autoDeleteQueue_ReaderDetails_Deleted)
+                    .to(readersExchange)
+                    .with(ReaderDetailsEvents.READER_DETAILS_DELETED);
+        }
+
+
+        // Receivers
+        @Bean
+        public LendingEventRabbitmqReceiver receiver(LendingService lendingService) {
             return new LendingEventRabbitmqReceiver(lendingService);
+        }
+
+        @Bean
+        public BookEventRabbitmqReceiver bookReceiver(BookService bookService) {
+            return new BookEventRabbitmqReceiver(bookService);
+        }
+
+        @Bean
+        public ReaderDetailsEventRabbitmqReceiver readerDetailsReceiver(ReaderService readerDetailsService) {
+            return new ReaderDetailsEventRabbitmqReceiver(readerDetailsService);
         }
     }
 }

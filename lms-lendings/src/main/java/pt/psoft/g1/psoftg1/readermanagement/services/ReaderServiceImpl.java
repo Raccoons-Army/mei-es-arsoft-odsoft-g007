@@ -2,8 +2,11 @@ package pt.psoft.g1.psoftg1.readermanagement.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderDetailsViewAMQP;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
 
 import java.util.Optional;
 
@@ -11,21 +14,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReaderServiceImpl implements ReaderService {
     private final ReaderRepository readerRepo;
-    private final ReaderMapper readerMapper;
+    private final FactoryUser _factoryUser;
 
     @Override
-    public void create(CreateReaderRequest request) {
+    public void create(ReaderDetailsViewAMQP request) {
         if (readerRepo.findByReaderNumber(request.getReaderNumber()).isPresent()) {
-            return;
+            throw new ConflictException("ReaderDetails with number " + request.getReaderNumber() + " already exists");
         }
-        ReaderDetails rd = readerMapper.createReaderDetails(request);
+        ReaderDetails rd = new ReaderDetails(request.getReaderNumber(), _factoryUser);
+        rd.defineReader(request.getReaderUsername());
 
         readerRepo.save(rd);
-    }
-
-    @Override
-    public Iterable<ReaderDetails> findAll() {
-        return this.readerRepo.findAll();
     }
 
     @Override
