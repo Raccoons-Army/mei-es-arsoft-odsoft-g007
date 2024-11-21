@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
@@ -81,6 +82,27 @@ public class LendingServiceImpl implements LendingService {
         int seq = lendingRepository.getCountFromCurrentYear() + 1;
         final Lending l = new Lending(idGenerationStrategy.generateId(), b, r, seq, lendingDurationInDays, fineValuePerDayInCents);
 
+        return lendingRepository.save(l);
+    }
+
+    @Override
+    public Lending create(LendingViewAMQP resource) {
+        final var b = bookRepository.findByIsbn(resource.getBookIsbn())
+                .orElseThrow(() -> new NotFoundException("Book not found"));
+        final var r = readerRepository.findByReaderNumber(resource.getReaderNumber())
+                .orElseThrow(() -> new NotFoundException("Reader not found"));
+        final Lending l = new Lending(idGenerationStrategy.generateId(), b, r, resource.getLendingNumber(),
+                resource.getStartDate(), resource.getLimitDate(),
+                resource.getFineValuePerDayInCents());
+
+        return lendingRepository.save(l);
+    }
+
+    @Override
+    public Lending update(LendingViewAMQP resource) {
+        final var l = lendingRepository.findByLendingNumber(resource.getLendingNumber())
+                .orElseThrow(() -> new NotFoundException("Lending not found"));
+        l.setReturned(resource.getVersion(), resource.getCommentary());
         return lendingRepository.save(l);
     }
 

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>pt.psoft.g1</groupId>
-    <artifactId>psoft-g1</artifactId>
+    <artifactId>LMSLendings</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>psoft-g1</name>
-    <description>Demo project for Spring Boot</description>
+    <name>LMSLendings</name>
+    <description>LMS Lendings Microservice</description>
 
     <properties>
         <java.version>17</java.version>
@@ -117,6 +117,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- AMQP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
         <!-- Dev tools -->

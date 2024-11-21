@@ -118,6 +118,24 @@ public class Lending {
         setDaysOverdue();
     }
 
+    public Lending(String id, Book book, ReaderDetails readerDetails, String lendingNumber, LocalDate startDate,
+                   LocalDate limitDate, int fineValuePerDayInCents){
+        try {
+            this.book = Objects.requireNonNull(book);
+            this.readerDetails = Objects.requireNonNull(readerDetails);
+        }catch (NullPointerException e){
+            throw new IllegalArgumentException("Null objects passed to lending");
+        }
+        this.pk = id;
+        this.lendingNumber = new LendingNumber(lendingNumber);
+        this.startDate = startDate;
+        this.limitDate = limitDate;
+        this.returnedDate = null;
+        this.fineValuePerDayInCents = fineValuePerDayInCents;
+        setDaysUntilReturn();
+        setDaysOverdue();
+    }
+
     public Lending(String id, int seq, int lendingDuration, int fineValuePerDayInCents, FactoryBook factoryBook, FactoryReaderDetails factoryReaderDetails){
         this.pk = id;
         this.lendingNumber = new LendingNumber(seq);
