@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.api;
+package pt.psoft.g1.psoftg1.authormanagement.api;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -12,20 +12,14 @@ import java.util.Map;
 
 @Data
 @Schema(description = "A Book form AMQP communication")
-public class BookViewAMQP {
+public class AuthorViewAMQP {
     @NotNull
-    private String title;
+    private String authorNumber;
 
     @NotNull
-    private List<String> authorIds;
+    private String name;
 
-    @NotNull
-    private String genre;
-
-    private String description;
-
-    @NotNull
-    private String isbn;
+    private String bio;
 
     @NotNull
     private Long version;
