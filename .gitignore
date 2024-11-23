@@ -44,3 +44,6 @@ ehthumbs.db
 .vpworkspace/
 .vpuserrepository/
 
+# Ignore all target folders
+target/
+
