@@ -18,6 +18,8 @@ import java.util.*;
 public abstract class LendingViewMapper extends MapperInterface {
 
     @Mapping(target = "lendingNumber", source = "lendingNumber")
+    @Mapping(target = "bookIsbn", expression = "java(lending.getBook().getIsbn())")
+    @Mapping(target = "readerNumber", expression = "java(lending.getReaderDetails().getReaderNumber())")
     @Mapping(target = "fineValueInCents", expression = "java(lending.getFineValueInCents().orElse(null))")
     @Mapping(target = "_links.self", source = ".", qualifiedByName = "lendingLink")
     @Mapping(target = "_links.book", source = "book", qualifiedByName = "bookLink")

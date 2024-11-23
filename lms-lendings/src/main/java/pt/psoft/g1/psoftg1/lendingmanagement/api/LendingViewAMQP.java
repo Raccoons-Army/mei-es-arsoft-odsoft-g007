@@ -23,10 +23,10 @@ public class LendingViewAMQP {
     private String readerNumber;
 
     @NotNull
-    private LocalDate startDate;
+    private String startDate;
 
     @NotNull
-    private LocalDate limitDate;
+    private String limitDate;
 
     @NotNull
     private int fineValuePerDayInCents;

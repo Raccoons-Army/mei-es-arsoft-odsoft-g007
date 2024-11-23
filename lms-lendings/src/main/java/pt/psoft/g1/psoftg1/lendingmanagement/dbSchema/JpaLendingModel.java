@@ -20,7 +20,6 @@ import java.time.LocalDate;
 public class JpaLendingModel {
 
     @Id
-    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @Column(name = "LENDING_NUMBER", length = 32)

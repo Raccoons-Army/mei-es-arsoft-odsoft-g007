@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
 
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,7 @@ public class LendingEventRabbitmqReceiver {
 
     private final LendingService lendingService;
 
+    @Transactional
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Created.name}")
     public void receiveLendingCreated(Message msg) {
 
@@ -37,6 +39,7 @@ public class LendingEventRabbitmqReceiver {
         }
     }
 
+    @Transactional
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Updated.name}")
     public void receiveLendingUpdated(Message msg) {
         try {
@@ -58,6 +61,7 @@ public class LendingEventRabbitmqReceiver {
         }
     }
 
+    @Transactional
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Deleted.name}")
     public void receiveLendingDeleted(String in) {
         System.out.println(" [x] Received Lending Deleted '" + in + "'");

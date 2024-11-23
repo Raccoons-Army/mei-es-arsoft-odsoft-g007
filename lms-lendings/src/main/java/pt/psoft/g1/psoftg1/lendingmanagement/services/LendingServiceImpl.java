@@ -17,6 +17,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.shared.util.DateUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -107,7 +108,8 @@ public class LendingServiceImpl implements LendingService {
         final var r = readerRepository.findByReaderNumber(resource.getReaderNumber())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         final Lending l = new Lending(idGenerationStrategy.generateId(), b, r, resource.getLendingNumber(),
-                resource.getStartDate(), resource.getLimitDate(),
+                LocalDate.parse(resource.getStartDate(), DateUtils.ISO_DATE_FORMATTER),
+                LocalDate.parse(resource.getLimitDate(), DateUtils.ISO_DATE_FORMATTER),
                 resource.getFineValuePerDayInCents());
 
         return lendingRepository.save(l);

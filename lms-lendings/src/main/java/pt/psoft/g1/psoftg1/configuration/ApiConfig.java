@@ -19,6 +19,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
  *
  */
 @Configuration
+@EnableConfigurationProperties
 public class ApiConfig {
 
     /*

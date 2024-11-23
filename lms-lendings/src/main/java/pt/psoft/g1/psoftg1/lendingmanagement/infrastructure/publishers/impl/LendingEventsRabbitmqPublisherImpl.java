@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.infrastructure.publishers.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,6 +18,7 @@ import pt.psoft.g1.psoftg1.shared.model.LendingEvents;
 public class LendingEventsRabbitmqPublisherImpl implements LendingEventPublisher {
     @Autowired
     private RabbitTemplate template;
+    @Autowired
     @Qualifier("lendingsExchange")
     private DirectExchange direct;
     private final LendingViewAMQPMapper lendingViewAMQPMapper;
@@ -38,10 +40,14 @@ public class LendingEventsRabbitmqPublisherImpl implements LendingEventPublisher
 
     private void sendLendingEvent(Lending lending, long version, String lendingEventType) {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
             LendingViewAMQP lendingViewAMQP = lendingViewAMQPMapper.toLendingViewAMQP(lending);
             lendingViewAMQP.setVersion(version);
 
-            this.template.convertAndSend(direct.getName(), lendingEventType, lendingViewAMQP);
+            String jsonString = objectMapper.writeValueAsString(lendingViewAMQP);
+
+            this.template.convertAndSend(direct.getName(), lendingEventType, jsonString);
 
             System.out.println(" [x] Sent '" + lendingViewAMQP + "'");
         } catch (Exception ex) {

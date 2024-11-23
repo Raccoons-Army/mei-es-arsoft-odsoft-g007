@@ -4,16 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.mapper.LendingMapper;
-import pt.psoft.g1.psoftg1.lendingmanagement.model.Fine;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @RequiredArgsConstructor
 public class LendingJpaRepoImpl implements LendingRepository {
 
@@ -84,7 +83,7 @@ public class LendingJpaRepoImpl implements LendingRepository {
         // Build the where clause
         query.select(lendingRoot)
                 .where(cb.and(
-                        cb.equal(readerJoin.get("readerNumber").get("readerNumber"), readerNumber), // Adjust path as necessary
+                        cb.equal(readerJoin.get("readerNumber"), readerNumber), // Adjust path as necessary
                         cb.isNull(lendingRoot.get("returnedDate"))
                 ));
 
@@ -179,7 +178,7 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public Lending save(Lending lending) {
         JpaLendingModel jpaLending = lendingMapper.toJpaLendingModel(lending);
-        if (lending.getPk() == null) {
+        if (lending.getVersion() == 0) {
             em.persist(jpaLending);
         } else {
             em.merge(jpaLending);
