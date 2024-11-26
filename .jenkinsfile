@@ -146,7 +146,7 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
 
-            // Publish HTML reports
+            // Publish HTML reports - TODO: publish everything under the same thing (inside the same array)
             publishHTML([
               reportName: 'Failsafe Report',
               reportDir: "${PROJECT_DIR}/target/site",
