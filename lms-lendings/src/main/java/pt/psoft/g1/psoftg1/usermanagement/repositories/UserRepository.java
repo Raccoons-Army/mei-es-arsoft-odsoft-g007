@@ -32,23 +32,8 @@ import java.util.Optional;
  *
  */
 public interface UserRepository {
-
-	<S extends User> List<S> saveAll(Iterable<S> entities);
-
-	<S extends User> User save(S entity);
-
-	Optional<User> findById(Long objectId);
-
-	default User getById(final Long id) {
-		final Optional<User> maybeUser = findById(id);
-		return maybeUser.orElseThrow(() -> new NotFoundException("User not found"));
-	}
-
-	Optional<User> findByUsername(String username);
-
-	List<User> searchUsers(Page page, SearchUsersQuery query);
-
-	List<User> findByNameName(String name);
-	List<User> findByNameNameContains(String name);
-	void delete(User user);
+    <S extends User> User save(S entity);
+    Optional<User> findById(String userId);
+    Optional<User> findByUsername(String username);
+    void delete(User user);
 }

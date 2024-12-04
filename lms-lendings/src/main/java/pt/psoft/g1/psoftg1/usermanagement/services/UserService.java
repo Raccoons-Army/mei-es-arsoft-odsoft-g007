@@ -6,82 +6,56 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pt.psoft.g1.psoftg1.shared.services.Page;
-import pt.psoft.g1.psoftg1.usermanagement.model.Librarian;
-import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserViewAMQP;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class UserService{
+public class UserService {
 
 	private final UserRepository userRepo;
-	private final EditUserMapper userEditMapper;
 
 	@Transactional
-	public void create(final CreateUserRequest request) {
-		if (userRepo.findByUsername(request.getUsername()).isPresent()) {
-			return;
+	public User create(UserViewAMQP userViewAMQP) {
+		String username = userViewAMQP.getUsername();
+		Set<String> authorities = userViewAMQP.getAuthorities();
+
+		if (userRepo.findByUsername(username).isPresent()) {
+			throw new ConflictException("User already exists!");
 		}
 
+		User user = new User(username);
 
-		User user;
-		switch(request.getRole()) {
-			case Role.READER: {
-				user = Reader.newReader(request.getUsername());
-				break;
-			}
-			case Role.LIBRARIAN: {
-				user = Librarian.newLibrarian(request.getUsername());
-				break;
-			}
-			default: {
-				return;
-			}
+		for (String role : authorities) {
+			user.addAuthority(new Role(role));
 		}
-
-		userRepo.save(user);
-	}
-
-	@Transactional
-	public User update(final Long id, final EditUserRequest request) {
-		final User user = userRepo.getById(id);
-		userEditMapper.update(request, user);
 
 		return userRepo.save(user);
 	}
 
 	@Transactional
-	public User delete(final Long id) {
-		final User user = userRepo.getById(id);
-
-		user.setEnabled(false);
-		return userRepo.save(user);
-	}
-
-	public boolean usernameExists(final String username) {
-		return userRepo.findByUsername(username).isPresent();
-	}
-
-	public User getUser(final Long id) {
-		return userRepo.getById(id);
-	}
-
-	public Optional<User> findByUsername(final String username) { return userRepo.findByUsername(username); }
-
-	public List<User> searchUsers(Page page, SearchUsersQuery query) {
-		if (page == null) {
-			page = new Page(1, 10);
+	public void delete(final String userId) {
+		if (userRepo.findById(userId).isEmpty()) {
+			throw new ConflictException("User doesn't exist!");
 		}
-		if (query == null) {
-			query = new SearchUsersQuery("", "");
+
+		User user = userRepo.findById(userId).get();
+
+		userRepo.delete(user);
+	}
+
+	public User findUser(final String userId) {
+		if (userRepo.findById(userId).isEmpty()) {
+			throw new ConflictException("User doesn't exist!");
 		}
-		return userRepo.searchUsers(page, query);
+
+		return userRepo.findById(userId).get();
 	}
 
 	public User getAuthenticatedUser(Authentication authentication) {
@@ -90,13 +64,14 @@ public class UserService{
 		}
 
 		// split is present because jwt is storing the id before the username, separated by a comma
-        String loggedUsername = jwt.getClaimAsString("sub").split(",")[1];
+		String loggedUsername = jwt.getClaimAsString("sub").split(",")[1];
 
-		Optional<User> loggedUser = findByUsername(loggedUsername);
+		Optional<User> loggedUser = userRepo.findByUsername(loggedUsername);
 		if (loggedUser.isEmpty()) {
 			throw new AccessDeniedException("User is not logged in");
 		}
 
 		return loggedUser.get();
 	}
+
 }
