@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>pt.psoft.g1</groupId>
-    <artifactId>LMSBooks</artifactId>
+    <artifactId>LMSRecommendations</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>LMSBooks</name>
-    <description>LMS Books Microservice</description>
+    <description>LMS Recommendations Microservice</description>
 
     <properties>
         <java.version>17</java.version>

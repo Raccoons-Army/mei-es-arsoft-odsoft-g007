@@ -1,8 +1,8 @@
 
 services:
-    lmsbooks_1:
-        image: lmsbooks:latest
-        container_name: books1_in_lms_network
+    lmsrecommendations_1:
+        image: lmsrecommendations:latest
+        container_name: recommendations1_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
@@ -17,9 +17,9 @@ services:
         volumes:
             - "uploaded_files_volume_1:/tmp"
 
-    lmsbooks_2:
-        image: lmsbooks:latest
-        container_name: books2_in_lms_network
+    lmsrecommendations_2:
+        image: lmsrecommendations:latest
+        container_name: recommendations2_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
