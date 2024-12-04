@@ -1,0 +1,40 @@
+services:
+  h2:
+    image: oscarfonts/h2:2.1.210
+    container_name: h2_readers
+    ports:
+      - "81:8082"  # Web console
+      - "1521:1521"  # Database access
+    volumes:
+      - h2-data:/opt/h2-data
+    environment:
+      - H2_OPTIONS=-ifNotExists
+    restart: unless-stopped
+    networks:
+      - lms_network
+
+  rabbitmq_in_lms_network:
+    container_name: rabbitmq_in_lms_readers
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    ports:
+      - "5672:5672" # RabbitMQ main port
+      - "15672:15672" # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - lms_network
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+networks:
+  lms_network:
+    name: lms_network
+
+volumes:
+  h2-data:
+    driver: local
