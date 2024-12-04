@@ -15,6 +15,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.publishers.LendingEventPublisher;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.recommendationmanagement.publishers.RecommendationEventPublisher;
 import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.shared.util.DateUtils;
@@ -37,6 +38,7 @@ public class LendingServiceImpl implements LendingService {
     private final IdGenerationStrategy<String> idGenerationStrategy;
 
     private final LendingEventPublisher lendingEventPublisher;
+    private final RecommendationEventPublisher recommendationEventPublisher;
 
     @Value("${lendingDurationInDays}")
     private int lendingDurationInDays;
@@ -147,6 +149,11 @@ public class LendingServiceImpl implements LendingService {
 
         if (updatedLending != null) {
             lendingEventPublisher.sendLendingUpdated(updatedLending, updatedLending.getVersion());
+            // Send recommendation event
+            recommendationEventPublisher.sendRecommendationCreated(
+                    updatedLending.getReaderDetails().getReaderNumber(),
+                    updatedLending.getBook().getIsbn(),
+                    resource.isPositive());
         }
 
         return updatedLending;
