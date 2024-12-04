@@ -8,6 +8,8 @@ import pt.psoft.g1.psoftg1.readermanagement.api.ReaderEventRabbitMQReceiver;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.model.ReaderEvents;
 import pt.psoft.g1.psoftg1.shared.model.UserEvents;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserEventRabbitMQReceiver;
+import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 @Configuration
 public class RabbitMQClientConfig {
@@ -15,6 +17,11 @@ public class RabbitMQClientConfig {
     @Bean
     public DirectExchange direct() {
         return new DirectExchange("LMS.readers");
+    }
+
+    @Bean
+    public DirectExchange directUsers() {
+        return new DirectExchange("LMS.users");
     }
 
     private static class ReceiverConfig {
@@ -75,8 +82,13 @@ public class RabbitMQClientConfig {
         }
 
         @Bean
-        public ReaderEventRabbitMQReceiver receiver(ReaderService readerService, @Qualifier("autoDeleteQueue_Reader_Created") Queue autoDeleteQueue_Reader_Created) {
+        public ReaderEventRabbitMQReceiver receiver(ReaderService readerService) {
             return new ReaderEventRabbitMQReceiver(readerService);
+        }
+
+        @Bean
+        public UserEventRabbitMQReceiver receiver(UserService userService) {
+            return new UserEventRabbitMQReceiver(userService);
         }
     }
 }

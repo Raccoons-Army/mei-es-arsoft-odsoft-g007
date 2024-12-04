@@ -9,11 +9,14 @@ import pt.psoft.g1.psoftg1.bookmanagement.api.BookEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
-import pt.psoft.g1.psoftg1.readermanagement.api.ReaderDetailsEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.model.BookEvents;
 import pt.psoft.g1.psoftg1.shared.model.LendingEvents;
-import pt.psoft.g1.psoftg1.shared.model.ReaderDetailsEvents;
+import pt.psoft.g1.psoftg1.shared.model.ReaderEvents;
+import pt.psoft.g1.psoftg1.shared.model.UserEvents;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 @Profile("!test")
 @Configuration
@@ -31,10 +34,22 @@ public class RabbitmqClientConfig {
         return new DirectExchange("LMS.books");
     }
 
-    // Readers Details Exchange
+    // Readers  Exchange
     @Bean(name = "readersExchange")
     public DirectExchange readersExchange() {
-        return new DirectExchange("LMS.readersDetails");
+        return new DirectExchange("LMS.readers");
+    }
+
+    // Users Exchange
+    @Bean(name = "usersExchange")
+    public DirectExchange usersExchange() {
+        return new DirectExchange("LMS.users");
+    }
+
+    // Recommendation Exchange
+    @Bean(name = "recommendationsExchange")
+    public DirectExchange recommendationsExchange() {
+        return new DirectExchange("LMS.recommendations");
     }
 
     private static class ReceiverConfig {
@@ -67,14 +82,20 @@ public class RabbitmqClientConfig {
             return new AnonymousQueue();
         }
 
-        // Readers Details Queues
-        @Bean(name = "autoDeleteQueue_ReaderDetails_Created")
-        public Queue autoDeleteQueue_ReaderDetails_Created() {
+        // Readers  Queues
+        @Bean(name = "autoDeleteQueue_Reader_Created")
+        public Queue autoDeleteQueue_Reader_Created() {
             return new AnonymousQueue();
         }
 
-        @Bean(name = "autoDeleteQueue_ReaderDetails_Deleted")
-        public Queue autoDeleteQueue_ReaderDetails_Deleted() {
+        @Bean(name = "autoDeleteQueue_Reader_Deleted")
+        public Queue autoDeleteQueue_Reader_Deleted() {
+            return new AnonymousQueue();
+        }
+
+        // Users Queues
+        @Bean(name = "autoDeleteQueue_User_Created")
+        public Queue autoDeleteQueue_User_Created() {
             return new AnonymousQueue();
         }
 
@@ -120,27 +141,35 @@ public class RabbitmqClientConfig {
                     .with(BookEvents.BOOK_DELETED);
         }
 
-        // Readers Details Bindings
+        // Readers  Bindings
         @Bean
-        public Binding readerDetailsCreatedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
-                                                   @Qualifier("autoDeleteQueue_ReaderDetails_Created") Queue autoDeleteQueue_ReaderDetails_Created) {
-            return BindingBuilder.bind(autoDeleteQueue_ReaderDetails_Created)
+        public Binding readerCreatedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
+                                                   @Qualifier("autoDeleteQueue_Reader_Created") Queue autoDeleteQueue_Reader_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_Reader_Created)
                     .to(readersExchange)
-                    .with(ReaderDetailsEvents.READER_DETAILS_CREATED);
+                    .with(ReaderEvents.READER_CREATED);
         }
 
         @Bean
-        public Binding readerDetailsDeletedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
-                                                   @Qualifier("autoDeleteQueue_ReaderDetails_Deleted") Queue autoDeleteQueue_ReaderDetails_Deleted) {
-            return BindingBuilder.bind(autoDeleteQueue_ReaderDetails_Deleted)
+        public Binding readerDeletedBinding(@Qualifier("readersExchange") DirectExchange readersExchange,
+                                                   @Qualifier("autoDeleteQueue_Reader_Deleted") Queue autoDeleteQueue_Reader_Deleted) {
+            return BindingBuilder.bind(autoDeleteQueue_Reader_Deleted)
                     .to(readersExchange)
-                    .with(ReaderDetailsEvents.READER_DETAILS_DELETED);
+                    .with(ReaderEvents.READER_DELETED);
         }
 
+        // User Bindings
+        @Bean
+        public Binding userCreatedBinding(@Qualifier("usersExchange") DirectExchange usersExchange,
+                                          @Qualifier("autoDeleteQueue_User_Created") Queue autoDeleteQueue_User_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_User_Created)
+                    .to(usersExchange)
+                    .with(UserEvents.USER_CREATED);
+        }
 
         // Receivers
         @Bean
-        public LendingEventRabbitmqReceiver receiver(LendingService lendingService) {
+        public LendingEventRabbitmqReceiver lendingReceiver(LendingService lendingService) {
             return new LendingEventRabbitmqReceiver(lendingService);
         }
 
@@ -150,8 +179,13 @@ public class RabbitmqClientConfig {
         }
 
         @Bean
-        public ReaderDetailsEventRabbitmqReceiver readerDetailsReceiver(ReaderService readerDetailsService) {
-            return new ReaderDetailsEventRabbitmqReceiver(readerDetailsService);
+        public ReaderEventRabbitmqReceiver readerReceiver(ReaderService readerService) {
+            return new ReaderEventRabbitmqReceiver(readerService);
+        }
+
+        @Bean
+        public UserEventRabbitmqReceiver userReceiver(UserService userService) {
+            return new UserEventRabbitmqReceiver(userService);
         }
     }
 }

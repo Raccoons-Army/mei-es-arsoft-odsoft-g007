@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
-public class UserEventRabbitMQReceiver {
+public class UserEventRabbitmqReceiver {
 
     private final UserService userService;
 
