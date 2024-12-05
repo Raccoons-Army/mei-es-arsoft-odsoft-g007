@@ -18,6 +18,4 @@ public interface LendingService {
     List<Lending> getOverdue(Page page);
     Double getAvgLendingDurationByIsbn(String isbn);
     List<Lending> searchLendings(Page page, SearchLendingQuery request);
-
-
 }

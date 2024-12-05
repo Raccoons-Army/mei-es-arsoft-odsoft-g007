@@ -18,48 +18,31 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package pt.psoft.g1.psoftg1.usermanagement.services;
+package pt.psoft.g1.psoftg1.exceptions;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.net.MalformedURLException;
 
 /**
- * Based on https://github.com/Yoh0xFF/java-spring-security-example
+ *
+ * @author pgsousa
  *
  */
-@Data
-@NoArgsConstructor
-public class CreateUserRequest {
-	@NonNull
-	@NotBlank
-	@Email
-	@Setter
-	@Getter
-	private String username;
+@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+public class FailedRecommendationException extends RuntimeException {
 
-	@NonNull
-	@NotBlank
-	@Setter
-	@Getter
-	private String password;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
-	@NonNull
-	@NotBlank
-	private String name;
+	public FailedRecommendationException(final String string) {
+		super(string);
+	}
 
-	@Getter
-	@Setter
-	private String role;
-
-	private Set<String> authorities = new HashSet<>();
-
-	public CreateUserRequest(final String username, final String fullName, final String password) {
-		this.username = username;
-		this.name = fullName;
-		this.password = password;
+	public FailedRecommendationException(final String string, final MalformedURLException ex) {
+		super(string, ex);
 	}
 }

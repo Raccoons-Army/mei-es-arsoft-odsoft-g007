@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Data
 @Schema(description = "A Reader Details form AMQP communication")
-public class ReaderDetailsViewAMQP {
+public class ReaderViewAMQP {
 
     @NotNull
     private String readerUsername;

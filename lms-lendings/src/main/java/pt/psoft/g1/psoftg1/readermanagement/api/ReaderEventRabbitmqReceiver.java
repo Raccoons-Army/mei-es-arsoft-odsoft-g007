@@ -22,11 +22,11 @@ public class ReaderEventRabbitmqReceiver {
             ObjectMapper objectMapper = new ObjectMapper();
 
             String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
-            ReaderDetailsViewAMQP readerDetailsViewAMQP = objectMapper.readValue(jsonReceived, ReaderDetailsViewAMQP.class);
+            ReaderViewAMQP readerViewAMQP = objectMapper.readValue(jsonReceived, ReaderViewAMQP.class);
 
             System.out.println(" [x] Received ReaderDetails Created by AMQP: " + msg + ".");
             try {
-                readerService.create(readerDetailsViewAMQP);
+                readerService.create(readerViewAMQP);
                 System.out.println(" [x] New readerDetails inserted from AMQP: " + msg + ".");
             } catch (Exception e) {
                 System.out.println(" [x] ReaderDetails already exists. No need to store it.");

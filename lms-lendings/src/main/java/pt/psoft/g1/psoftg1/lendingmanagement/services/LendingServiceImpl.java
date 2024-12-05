@@ -6,6 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.exceptions.FailedRecommendationException;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
@@ -15,6 +16,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.publishers.LendingEventPublisher;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationResponse;
 import pt.psoft.g1.psoftg1.recommendationmanagement.publishers.RecommendationEventPublisher;
 import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -24,6 +26,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -145,15 +148,20 @@ public class LendingServiceImpl implements LendingService {
             fineRepository.save(fine);
         }
 
+        // send recommendation event
+        String recommendationCreated = recommendationEventPublisher.sendRecommendationCreated(
+                lending.getReaderDetails().getReaderNumber(),
+                lending.getBook().getIsbn(),
+                resource.isPositive());
+
+        if (Objects.equals(recommendationCreated, RecommendationResponse.RECOMMENDATION_FAILED)) {
+            throw new FailedRecommendationException("Failed to store your recommendation");
+        }
+
         Lending updatedLending = lendingRepository.save(lending);
 
         if (updatedLending != null) {
             lendingEventPublisher.sendLendingUpdated(updatedLending, updatedLending.getVersion());
-            // Send recommendation event
-            recommendationEventPublisher.sendRecommendationCreated(
-                    updatedLending.getReaderDetails().getReaderNumber(),
-                    updatedLending.getBook().getIsbn(),
-                    resource.isPositive());
         }
 
         return updatedLending;

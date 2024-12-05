@@ -12,8 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface LendingRepository extends CRUDRepository<Lending, Long> {
-
-
     Optional<Lending> findByLendingNumber(String lendingNumber);
     List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn);
     int getCountFromCurrentYear();
@@ -22,5 +20,4 @@ public interface LendingRepository extends CRUDRepository<Lending, Long> {
     Double getAvgLendingDurationByIsbn(String isbn);
     List<Lending> getOverdue(Page page);
     List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate);
-
 }
