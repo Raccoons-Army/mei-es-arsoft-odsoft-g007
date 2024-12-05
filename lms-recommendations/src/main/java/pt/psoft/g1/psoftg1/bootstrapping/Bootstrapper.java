@@ -1,34 +1,21 @@
 package pt.psoft.g1.psoftg1.bootstrapping;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.shared.idGenerationStrategy.IdGenerationStrategy;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Profile("bootstrap")
-@PropertySource({"classpath:config/library.properties"})
 @Order(2)
 public class Bootstrapper implements CommandLineRunner {
-    @Value("${lendingDurationInDays}")
-    private int lendingDurationInDays;
-    @Value("${fineValuePerDayInCents}")
-    private int fineValuePerDayInCents;
 
     private final BookRepository bookRepository;
-    private final IdGenerationStrategy<String> idGenerationStrategy;
 
     @Override
     @Transactional

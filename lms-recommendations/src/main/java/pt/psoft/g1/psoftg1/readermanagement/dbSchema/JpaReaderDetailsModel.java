@@ -3,8 +3,6 @@ package pt.psoft.g1.psoftg1.readermanagement.dbSchema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaReaderModel;
-import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
 
 @Getter
 @Setter
@@ -16,15 +14,10 @@ public class JpaReaderDetailsModel {
     @Column(name = "READER_NUMBER", unique = true)
     private String readerNumber;
 
-    @OneToOne
-    @JoinColumn(name = "READER_USER_ID")
-    private JpaUserModel reader;
-
     @Version
     private Long version;
 
-    public JpaReaderDetailsModel(String readerNumber, JpaReaderModel reader) {
-        this.reader = reader;
+    public JpaReaderDetailsModel(String readerNumber) {
         setReaderNumber(readerNumber);
     }
 

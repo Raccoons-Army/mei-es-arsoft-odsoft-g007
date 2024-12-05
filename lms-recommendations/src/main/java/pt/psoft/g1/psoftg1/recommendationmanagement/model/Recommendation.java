@@ -7,6 +7,8 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.FactoryBook;
 import pt.psoft.g1.psoftg1.readermanagement.model.FactoryReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
+import java.time.LocalDate;
+
 @Setter
 @Getter
 public class Recommendation {
@@ -14,14 +16,17 @@ public class Recommendation {
     private String pk;
     private Book book;
     private ReaderDetails readerDetails;
+    private boolean positive;
     private Long version;
+    private LocalDate createdAt;
 
     private FactoryBook _factoryBook;
     private FactoryReaderDetails _factoryReaderDetails;
 
-    public Recommendation(FactoryBook _factoryBook, FactoryReaderDetails _factoryReaderDetails) {
+    public Recommendation(FactoryBook _factoryBook, FactoryReaderDetails _factoryReaderDetails, boolean isPositive) {
         this._factoryBook = _factoryBook;
         this._factoryReaderDetails = _factoryReaderDetails;
+        this.positive = isPositive;
     }
 
     public void defineBook(String isbn) {

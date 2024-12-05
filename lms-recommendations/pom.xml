@@ -11,7 +11,7 @@
     <groupId>pt.psoft.g1</groupId>
     <artifactId>LMSRecommendations</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSBooks</name>
+    <name>LMSRecommendations</name>
     <description>LMS Recommendations Microservice</description>
 
     <properties>
