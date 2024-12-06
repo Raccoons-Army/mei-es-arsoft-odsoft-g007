@@ -14,5 +14,8 @@ public class RecommendationViewAMQP {
     private String readerNumber;
 
     @NotNull
-    private boolean isPositive;
+    private boolean positive;
+
+    @NotNull
+    private Long version;
 }

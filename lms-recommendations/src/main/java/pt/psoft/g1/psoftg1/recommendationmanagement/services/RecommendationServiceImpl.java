@@ -6,12 +6,16 @@ import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.FactoryBook;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.readermanagement.model.FactoryReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationViewAMQP;
 import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
+import pt.psoft.g1.psoftg1.recommendationmanagement.publishers.RecommendationEventPublisher;
 import pt.psoft.g1.psoftg1.recommendationmanagement.repositories.RecommendationRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +27,43 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final FactoryBook factoryBook;
     private final FactoryReaderDetails factoryReaderDetails;
 
-    @Override
-    public boolean create(RecommendationViewAMQP resource) {
-        // TODO: ask to the client if a reader can recommend a book more than once
-//        if (recommendationRepository.findByBookIsbnAndReaderNumber(resource.getIsbn(),
-//                resource.getReaderNumber()).isPresent()) {
-//            throw new ConflictException("Recommendation from reader with number " + resource.getReaderNumber() + " for book with isbn " +
-//                    resource.getIsbn() + " already exists");
-//        }
+    private final RecommendationEventPublisher recommendationEventPublisher;
 
+    /**
+     * we only want to propagate the event if the resource came from a RPC call or else we will have an infinite loop of events
+     * and we only need to return a boolean to the RPC call as well
+     **/
+    @Override
+    public void createThroughRPC(RecommendationViewAMQP resource) {
+        // update recommendation if it already exists
+        Optional<Recommendation> recommendationOptional = recommendationRepository.findByBookIsbnAndReaderNumber(
+                resource.getIsbn(), resource.getReaderNumber());
+        if (recommendationOptional.isPresent()) {
+            Recommendation recommendation = recommendationOptional.get();
+            recommendation.setPositive(resource.isPositive());
+            recommendationRepository.save(recommendation);
+
+            recommendationEventPublisher.sendRecommendationUpdated(recommendation, recommendation.getVersion());
+            return;
+        }
+
+        Recommendation recommendation = createNewRecommendation(resource);
+        recommendationEventPublisher.sendRecommendationCreated(recommendation);
+    }
+
+    @Override
+    public void create(RecommendationViewAMQP resource) {
+        // update recommendation if it already exists
+        Optional<Recommendation> recommendationOptional = recommendationRepository.findByBookIsbnAndReaderNumber(
+                resource.getIsbn(), resource.getReaderNumber());
+        if (recommendationOptional.isPresent()) {
+            throw new ConflictException("Recommendation already exists");
+        }
+
+        createNewRecommendation(resource);
+    }
+
+    private Recommendation createNewRecommendation(RecommendationViewAMQP resource) {
         final Recommendation recommendation = new Recommendation(factoryBook, factoryReaderDetails, resource.isPositive());
         Book b = bookRepository.findByIsbn(resource.getIsbn()).orElseThrow(() -> new ConflictException(
                 "Book with isbn " + resource.getIsbn() + " not found"));
@@ -40,6 +72,19 @@ public class RecommendationServiceImpl implements RecommendationService {
                 new ConflictException("Reader with number " + resource.getReaderNumber() + " not found"));
         recommendation.defineReaderDetails(r);
 
-        return recommendationRepository.save(recommendation) != null;
+        return recommendationRepository.save(recommendation);
+    }
+
+    @Override
+    public void update(RecommendationViewAMQP resource) {
+        // update recommendation if it already exists
+        Optional<Recommendation> recommendationOptional = recommendationRepository.findByBookIsbnAndReaderNumber(
+                resource.getIsbn(), resource.getReaderNumber());
+        if (recommendationOptional.isEmpty()) {
+            throw new NotFoundException("Recommendation not found");
+        }
+        Recommendation recommendation = recommendationOptional.get();
+        recommendation.setPositive(resource.isPositive());
+        recommendationRepository.save(recommendation);
     }
 }

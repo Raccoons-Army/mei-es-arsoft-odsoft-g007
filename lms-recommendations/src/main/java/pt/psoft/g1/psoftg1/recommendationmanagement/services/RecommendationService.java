@@ -3,5 +3,7 @@ package pt.psoft.g1.psoftg1.recommendationmanagement.services;
 import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationViewAMQP;
 
 public interface RecommendationService {
-    boolean create(RecommendationViewAMQP resource);
+    void createThroughRPC(RecommendationViewAMQP resource);
+    void create(RecommendationViewAMQP resource);
+    void update(RecommendationViewAMQP resource);
 }

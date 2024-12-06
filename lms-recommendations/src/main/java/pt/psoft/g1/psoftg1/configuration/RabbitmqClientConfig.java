@@ -66,6 +66,11 @@ public class RabbitmqClientConfig {
             return new AnonymousQueue();
         }
 
+        @Bean(name = "autoDeleteQueue_Recommendation_Updated")
+        public Queue autoDeleteQueue_Recommendation_Updated() {
+            return new AnonymousQueue();
+        }
+
         @Bean(name = "autoDeleteQueue_Recommendation_Rpc")
         public Queue autoDeleteQueue_Recommendation_Rpc() {
             return new AnonymousQueue();
@@ -113,6 +118,14 @@ public class RabbitmqClientConfig {
             return BindingBuilder.bind(autoDeleteQueue_Recommendation_Created)
                     .to(recommendationsExchange)
                     .with(RecommendationEvents.RECOMMENDATION_CREATED);
+        }
+
+        @Bean
+        public Binding recommendationUpdatedBinding(@Qualifier("recommendationsExchange") DirectExchange recommendationsExchange,
+                                            @Qualifier("autoDeleteQueue_Recommendation_Updated") Queue autoDeleteQueue_Recommendation_Updated) {
+            return BindingBuilder.bind(autoDeleteQueue_Recommendation_Updated)
+                    .to(recommendationsExchange)
+                    .with(RecommendationEvents.RECOMMENDATION_UPDATED);
         }
 
         @Bean

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +29,12 @@ public class RecommendationJpaRepoImpl implements RecommendationRepository {
         CriteriaQuery<JpaRecommendationModel> cq = cb.createQuery(JpaRecommendationModel.class);
         Root<JpaRecommendationModel> root = cq.from(JpaRecommendationModel.class);
 
+        Join<Object, Object> bookJoin = root.join("book");
+        Join<Object, Object> readerJoin = root.join("readerDetails");
+
         cq.select(root)
-                .where(cb.equal(root.get("bookIsbn"), bookIsbn),
-                        cb.equal(root.get("readerNumber"), readerNumber));
+                .where(cb.equal(bookJoin.get("isbn"), bookIsbn),
+                        cb.equal(readerJoin.get("readerNumber"), readerNumber));
 
         JpaRecommendationModel result;
         try {
