@@ -178,7 +178,7 @@ public class LendingJpaRepoImpl implements LendingRepository {
     @Override
     public Lending save(Lending lending) {
         JpaLendingModel jpaLending = lendingMapper.toJpaLendingModel(lending);
-        if (lending.getVersion() == 0) {
+        if (lending.getPk() == null) {
             em.persist(jpaLending);
         } else {
             em.merge(jpaLending);

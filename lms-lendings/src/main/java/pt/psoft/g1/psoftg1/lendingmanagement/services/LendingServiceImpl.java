@@ -150,8 +150,8 @@ public class LendingServiceImpl implements LendingService {
 
         // send recommendation event
         String recommendationCreated = recommendationEventPublisher.sendRecommendationCreated(
-                lending.getReaderDetails().getReaderNumber(),
                 lending.getBook().getIsbn(),
+                lending.getReaderDetails().getReaderNumber(),
                 resource.isPositive());
 
         if (Objects.equals(recommendationCreated, RecommendationResponse.RECOMMENDATION_FAILED)) {

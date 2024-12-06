@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 public class JpaRecommendationModel {
 
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @NotNull

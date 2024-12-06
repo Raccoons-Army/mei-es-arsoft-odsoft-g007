@@ -40,7 +40,7 @@ public class Bootstrapper implements CommandLineRunner {
     @Transactional
     public void run(final String... args) throws InstantiationException {
         createBooks();
-        createLendings();
+//        createLendings();
     }
 
     protected void createBooks() {

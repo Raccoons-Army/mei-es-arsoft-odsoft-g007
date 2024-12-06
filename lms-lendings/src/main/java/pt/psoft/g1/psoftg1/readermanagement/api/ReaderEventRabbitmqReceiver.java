@@ -15,7 +15,7 @@ public class ReaderEventRabbitmqReceiver {
 
     private final ReaderService readerService;
 
-    @RabbitListener(queues = "#{autoDeleteQueue_Reader_Created.name}}")
+    @RabbitListener(queues = "#{autoDeleteQueue_Reader_Created.name}")
     public void receiveReaderDetailsCreated(Message msg) {
 
         try {

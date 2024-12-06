@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.recommendationmanagement.dbschema.JpaRecommendationModel;
 import pt.psoft.g1.psoftg1.recommendationmanagement.mapper.RecommendationMapper;
 import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
@@ -41,6 +42,7 @@ public class RecommendationJpaRepoImpl implements RecommendationRepository {
     }
 
     @Override
+    @Transactional
     public Recommendation save(Recommendation entity) {
         JpaRecommendationModel jpaRecommendationModel = recommendationMapper.toJpaRecommendationModel(entity);
         if (entity.getPk() == null) {

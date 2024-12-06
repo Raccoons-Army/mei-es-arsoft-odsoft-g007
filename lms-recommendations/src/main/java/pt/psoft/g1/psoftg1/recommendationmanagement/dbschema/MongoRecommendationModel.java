@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.recommendationmanagement.dbschema;
 import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @Document(collection = "Recommendations")
 public class MongoRecommendationModel {
     @Id
+    @UuidGenerator(style = UuidGenerator.Style.AUTO)
     private String pk;
 
     @DBRef

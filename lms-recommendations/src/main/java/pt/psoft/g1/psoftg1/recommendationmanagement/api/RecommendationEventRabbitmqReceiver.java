@@ -15,7 +15,7 @@ public class RecommendationEventRabbitmqReceiver {
 
     private final RecommendationService recommendationService;
 
-    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Created.name}}")
+    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Created.name}")
     public void receiveRecommendationCreated(Message msg) {
 
         try {
@@ -37,7 +37,7 @@ public class RecommendationEventRabbitmqReceiver {
     }
 
     // rpc listener
-    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Rpc.name}}")
+    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Rpc.name}")
     public String receiveRecommendationRpc(Message msg) {
 
         try {
