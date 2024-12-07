@@ -71,11 +71,11 @@ public class RabbitmqClientConfig {
             return new AnonymousQueue();
         }
 
-        @Bean(name = "autoDeleteQueue_Recommendation_Rpc")
-        public Queue autoDeleteQueue_Recommendation_Rpc() {
-            return new AnonymousQueue();
+        @Bean(name = "recommendationRpcQueue")
+        public Queue recommendationRpcQueue() {
+            return QueueBuilder.durable("recommendation.rpc.requests")
+                    .build();
         }
-
 
         // Books Bindings
         @Bean
@@ -130,8 +130,8 @@ public class RabbitmqClientConfig {
 
         @Bean
         public Binding recommendationRpcBinding(@Qualifier("recommendationsExchange") DirectExchange recommendationsExchange,
-                                            @Qualifier("autoDeleteQueue_Recommendation_Rpc") Queue autoDeleteQueue_Recommendation_Rpc) {
-            return BindingBuilder.bind(autoDeleteQueue_Recommendation_Rpc)
+                                                @Qualifier("recommendationRpcQueue") Queue recommendationRpcQueue) {
+            return BindingBuilder.bind(recommendationRpcQueue)
                     .to(recommendationsExchange)
                     .with(RecommendationEvents.RECOMMENDATION_RPC);
         }

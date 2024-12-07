@@ -126,13 +126,7 @@ public class LendingServiceImpl implements LendingService {
                 .orElseThrow(() -> new NotFoundException("Lending not found"));
         l.setReturned(resource.getVersion(), resource.getCommentary());
 
-        Lending updatedLending = lendingRepository.save(l);
-
-        if (updatedLending != null) {
-            lendingEventPublisher.sendLendingUpdated(updatedLending, updatedLending.getVersion());
-        }
-
-        return updatedLending;
+        return lendingRepository.save(l);
     }
 
     @Override

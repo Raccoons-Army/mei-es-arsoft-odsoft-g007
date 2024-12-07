@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.configuration;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,13 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 @Profile("!test")
 @Configuration
 public class RabbitmqClientConfig {
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setReplyTimeout(10000); // reply timeout to 10 seconds
+        return rabbitTemplate;
+    }
 
     // Lendings exchange
     @Bean(name = "lendingsExchange")

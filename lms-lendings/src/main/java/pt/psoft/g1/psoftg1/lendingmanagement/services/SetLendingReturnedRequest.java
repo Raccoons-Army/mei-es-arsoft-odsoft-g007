@@ -14,6 +14,5 @@ public class SetLendingReturnedRequest {
     @Size(max = 1024)
     private String commentary;
 
-    private boolean isPositive;
-
+    private boolean positive;
 }

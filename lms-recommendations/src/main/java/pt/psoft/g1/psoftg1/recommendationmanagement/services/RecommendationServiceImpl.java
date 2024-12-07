@@ -53,7 +53,6 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public void create(RecommendationViewAMQP resource) {
-        // update recommendation if it already exists
         Optional<Recommendation> recommendationOptional = recommendationRepository.findByBookIsbnAndReaderNumber(
                 resource.getIsbn(), resource.getReaderNumber());
         if (recommendationOptional.isPresent()) {

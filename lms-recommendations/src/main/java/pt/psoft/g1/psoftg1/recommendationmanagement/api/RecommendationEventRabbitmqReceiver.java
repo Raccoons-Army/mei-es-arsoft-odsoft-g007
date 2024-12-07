@@ -58,7 +58,7 @@ public class RecommendationEventRabbitmqReceiver {
     }
 
     // rpc listener
-    @RabbitListener(queues = "#{autoDeleteQueue_Recommendation_Rpc.name}")
+    @RabbitListener(queues = "#{recommendationRpcQueue.name}")
     public String receiveRecommendationRpc(Message msg) {
 
         try {
