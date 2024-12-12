@@ -11,38 +11,65 @@ pipeline {
     }
 
     environment {
-        PROJECT_DIR = "lms/"
+        PROJECT_DIR = "lms-legacy/"
     }
 
     stages {
         stage('Build') {
             steps {
                 dir(PROJECT_DIR) {
-                    // Clean and package without running tests
-                    sh 'mvn clean package -DskipTests'
+                    sh 'mvn clean compile -DskipTests'
                 }
             }
         }
 
         stage('Static Code Analysis') {
-            steps {
-                dir(PROJECT_DIR) {
-                    sh 'mvn pmd:pmd'
-                    sh 'mvn spotbugs:spotbugs'
+            parallel {
+                stage('PMD') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn pmd:pmd'
+                        }
+                    }
                 }
-            }
-        }
-       
-        stage('Run Unit Tests') {
-            steps {
-                dir(PROJECT_DIR) {
-                    // Run tests while ignoring failures
-                    sh "mvn test -Dmaven.test.failure.ignore=true"
+                stage('SpotBugs') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn spotbugs:spotbugs'
+                        }
+                    }
                 }
             }
         }
 
-         stage('Generate Coverage Report') {
+        stage('Tests') {
+            parallel {
+                stage('Run Unit Tests') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh "mvn test -Dmaven.test.failure.ignore=true"
+                        }
+                    }
+                }
+                stage('Mutation Testing') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn pitest:mutationCoverage'
+                        }
+                    }
+                }
+                stage('Run Integration Tests') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn failsafe:integration-test'
+                            sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Generate Coverage Report') {
             steps {
                 dir(PROJECT_DIR) {
                     sh 'mvn jacoco:report'
@@ -50,19 +77,10 @@ pipeline {
             }
         }
 
-        stage('Mutation Testing') {
+        stage('Package') {
             steps {
                 dir(PROJECT_DIR) {
-                    sh 'mvn pitest:mutationCoverage'
-                }
-            }
-        }
-
-        stage('Run Integration Tests') {
-            steps {
-                dir(PROJECT_DIR) {
-                    sh 'mvn failsafe:integration-test'
-                    sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
+                    sh 'mvn package -DskipTests'
                 }
             }
         }
@@ -70,18 +88,11 @@ pipeline {
         stage('Prepare to Deploy') {
             steps {
                 script {
-
-                    // clear the deploy directory
                     sh "rm -rf deploy/*"
-                    
                     dir(PROJECT_DIR) {
-                        // ensure the deployment directory exists
                         sh "mkdir -p ../deploy"
-
-                        // copy the .jar file to the deploy directory (root of the workspace)
                         sh "cp target/*.jar ../deploy"
                     }
-
                 }
             }
         }
@@ -89,7 +100,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Set DEPLOY_TARGET based on the branch name
                     def serverConfigName = ''
                     switch (env.GIT_BRANCH) {
                         case 'origin/dev':
@@ -107,24 +117,17 @@ pipeline {
                         sshPublisherDesc(
                             configName: serverConfigName,
                             transfers: [
-                                 // Clear the remote deploy directory
                                 sshTransfer(
                                     sourceFiles: "",
                                     remoteDirectory: "",
                                     execCommand: "rm -rf /deploy/* || true"
                                 ),
-                                // transfer the .jar file to the deploy directory > kill the existing process > start the new process
                                 sshTransfer(
                                     sourceFiles: "deploy/*.jar",
                                     remoteDirectory: "",
                                     execCommand: """
-                                        # Kill the existing application process
                                         fuser -k 2224/tcp || true
-                                        
-                                        # load the environment variables
                                         export \$(grep -v '^#' /cfg/myCfg.env | xargs)
-
-                                        # boot the new application
                                         nohup /usr/local/openjdk-17/bin/java -jar \$(find /deploy -name "*.jar" -print -quit) --server.port=2224 --spring.config.location="/cfg/" > /deploy/app.log 2>&1 &
                                     """
                                 )
@@ -146,7 +149,6 @@ pipeline {
             archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
             archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
 
-            // Publish HTML reports - TODO: publish everything under the same thing (inside the same array)
             publishHTML([
               reportName: 'Failsafe Report',
               reportDir: "${PROJECT_DIR}/target/site",
