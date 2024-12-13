@@ -75,7 +75,7 @@ Pros and cons of this infrastructure:
     - responsible and full control over the performance of the infrastructure
     - responsible and full control over our data
     - scaling vertically is possible
-    - having the environments running on LXD containers allows us have better isolation between them and to allocate them in the same server
+    - having the environments running on LXD containers allows us have better isolation between them and to allocate them in the same serve
 - Cons:
     - can only scale horizontally since we only have a single server handling all of our infrastructure
     - single point of failure for the same reason as above
