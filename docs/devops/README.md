@@ -13,19 +13,23 @@ Each microservice has its own 3 pipelines, one per each branch and environment: 
 
 ### Pipeline 
 Every microservice has the same pipeline structure, it is divided in 8 stages:
-1. Checkout
-2. Clean & Compile
-3. Static Code Analysis
-    3.1. PMD: best practices, design, error prone and performance
-    3.2. SpotBugs
-4. Tests
-    4.1. Unit Tests
-    4.2. Integration Tests
-    4.3. Mutation Tests
-5. Generate Coverage Report
-6. Packaging
-7. Prepare to Deploy
-8. Deploy
+ 1. Checkout
+ 2. Clean & Compile
+ 3. Static Code Analysis
+     1. PMD
+         1. best practices
+         2. design
+         3. error prone
+         4. performance
+     3. SpotBugs
+ 4. Tests
+     1. Unit Tests
+     2. Integration Tests
+     3. Mutation Tests
+ 5. Generate Coverage Report
+ 6. Packaging
+ 7. Prepare to Deploy
+ 8. Deploy
 
 Now, we will explain some of the stages in more detail.
 
