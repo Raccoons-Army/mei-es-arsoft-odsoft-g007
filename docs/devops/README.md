@@ -30,6 +30,7 @@ Every microservice has the same pipeline structure, it is divided in 8 stages:
  6. Packaging
  7. Prepare to Deploy
  8. Deploy
+ 9. Runnig in parallel
 
 Now, we will explain some of the stages in more detail.
 
@@ -52,6 +53,9 @@ We are running 3 types of tests: unit tests, integration tests and mutation test
 ##### Deloyment TODO
 - ...
 - ...
+
+##### Running in parallel
+As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4 minutes to finish, now it takes around 2,5 minutes. 
 
 <br>
 
