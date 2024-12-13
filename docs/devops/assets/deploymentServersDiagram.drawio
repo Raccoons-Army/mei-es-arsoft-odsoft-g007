@@ -1,59 +1,59 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.8.0">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" version="24.9.2">
   <diagram name="Page-1" id="z4IRjw-mQ5JawZEsQGvU">
-    <mxGraphModel dx="733" dy="433" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="489" dy="288" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="j08LXCHKpt1RA3xScYxN-1" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-1" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" parent="1" vertex="1">
           <mxGeometry x="240" y="64.29" width="118" height="210.71" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-8" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="80" y="330" width="92.8" height="145.5" as="geometry" />
+        <mxCell id="j08LXCHKpt1RA3xScYxN-8" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="80" y="330" width="186" height="243" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-3" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-8">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-3" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" parent="j08LXCHKpt1RA3xScYxN-8" vertex="1">
           <mxGeometry width="81.48" height="145.5" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-2" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Docker.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-8">
-          <mxGeometry x="33.24175824175822" y="72.19038461538462" width="40.95265384615385" height="33.57692307692308" as="geometry" />
+        <mxCell id="jm4OSwpv67HSEI6JkgQJ-2" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://linuxcontainers.org/static/img/containers.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-8">
+          <mxGeometry x="33" y="68" width="41.48" height="38.23" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-16" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="j08LXCHKpt1RA3xScYxN-3" target="j08LXCHKpt1RA3xScYxN-1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-16" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" source="j08LXCHKpt1RA3xScYxN-3" target="j08LXCHKpt1RA3xScYxN-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="220" y="260" as="sourcePoint" />
             <mxPoint x="270" y="210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-17" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" target="j08LXCHKpt1RA3xScYxN-1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-17" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" target="j08LXCHKpt1RA3xScYxN-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="290.86401756796624" y="358.6789155884037" as="sourcePoint" />
             <mxPoint x="270" y="250" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-18" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" target="j08LXCHKpt1RA3xScYxN-1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-18" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" target="j08LXCHKpt1RA3xScYxN-1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="444.8640175679607" y="358.6789155883938" as="sourcePoint" />
             <mxPoint x="290" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-19" value="&lt;b&gt;rac-server&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-19" value="&lt;b&gt;rac-server&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="280" y="160" width="77.2" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-20" value="" style="group" vertex="1" connectable="0" parent="1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-20" value="" style="group" parent="1" vertex="1" connectable="0">
           <mxGeometry x="250" y="340" width="92.8" height="145.5" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-21" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-20">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-21" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" parent="j08LXCHKpt1RA3xScYxN-20" vertex="1">
           <mxGeometry width="81.48" height="145.5" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-22" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Docker.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-20">
-          <mxGeometry x="33.24175824175822" y="72.19038461538462" width="40.95265384615385" height="33.57692307692308" as="geometry" />
+        <mxCell id="jm4OSwpv67HSEI6JkgQJ-3" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://linuxcontainers.org/static/img/containers.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-20">
+          <mxGeometry x="34" y="64" width="41.48" height="38.23" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-23" value="" style="group" vertex="1" connectable="0" parent="1">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-23" value="" style="group" parent="1" vertex="1" connectable="0">
           <mxGeometry x="400" y="330" width="92.8" height="145.5" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-24" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-23">
+        <mxCell id="j08LXCHKpt1RA3xScYxN-24" value="" style="image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/generic_server.svg;" parent="j08LXCHKpt1RA3xScYxN-23" vertex="1">
           <mxGeometry width="81.48" height="145.5" as="geometry" />
         </mxCell>
-        <mxCell id="j08LXCHKpt1RA3xScYxN-25" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Docker.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-23">
-          <mxGeometry x="33.24175824175822" y="72.19038461538462" width="40.95265384615385" height="33.57692307692308" as="geometry" />
+        <mxCell id="jm4OSwpv67HSEI6JkgQJ-4" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://linuxcontainers.org/static/img/containers.svg;" vertex="1" parent="j08LXCHKpt1RA3xScYxN-23">
+          <mxGeometry x="34" y="64.63999999999999" width="41.48" height="38.23" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
