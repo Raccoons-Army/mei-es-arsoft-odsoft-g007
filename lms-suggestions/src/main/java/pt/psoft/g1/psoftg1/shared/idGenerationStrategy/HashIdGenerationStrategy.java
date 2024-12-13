@@ -7,9 +7,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-@PropertySource({"classpath:config/library.properties"})
 public class HashIdGenerationStrategy implements IdGenerationStrategy<String> {
-    @Value("${charactersSize}")
+
+    @Value("${characters.size}")
     private int idSize;
 
     @Override

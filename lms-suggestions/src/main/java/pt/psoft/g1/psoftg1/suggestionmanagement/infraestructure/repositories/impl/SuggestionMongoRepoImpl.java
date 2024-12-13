@@ -51,7 +51,7 @@ public class SuggestionMongoRepoImpl implements SuggestionRepository {
     @Override
     public Optional<Suggestion> findByIsbn(String isbn) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("suggestedBook").is(isbn));
+        query.addCriteria(Criteria.where("isbn").is(isbn));
         MongoSuggestionModel mongoSuggestion = mt.findOne(query, MongoSuggestionModel.class);
 
         return Optional.ofNullable(mongoSuggestion).map(suggestionMapper::fromMongoSuggestionModel);

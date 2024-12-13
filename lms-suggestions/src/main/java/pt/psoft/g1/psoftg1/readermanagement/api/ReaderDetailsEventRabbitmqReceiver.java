@@ -15,7 +15,7 @@ public class ReaderDetailsEventRabbitmqReceiver {
 
     private final ReaderService readerService;
 
-    @RabbitListener(queues = "#{autoDeleteQueue_ReaderDetails_Created.name}")
+    @RabbitListener(queues = "#{autoDeleteQueue_Reader_Created.name}")
     public void receiveReaderDetailsCreated(Message msg) {
 
         try {
@@ -37,7 +37,7 @@ public class ReaderDetailsEventRabbitmqReceiver {
         }
     }
 
-    @RabbitListener(queues = "#{autoDeleteQueue_ReaderDetails_Deleted.name}")
+    @RabbitListener(queues = "#{autoDeleteQueue_Reader_Deleted.name}")
     public void receiveReaderDetailsDeleted(String in) {
         System.out.println(" [x] Received ReaderDetails Deleted '" + in + "'");
     }

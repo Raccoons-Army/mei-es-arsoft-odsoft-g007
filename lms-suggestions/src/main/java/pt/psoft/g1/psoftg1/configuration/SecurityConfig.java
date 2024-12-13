@@ -73,16 +73,6 @@ public class SecurityConfig {
     private String swaggerPath;
 
     @Bean
-    public AuthenticationManager authenticationManager(final UserDetailsService userDetailsService,
-                                                       final PasswordEncoder passwordEncoder) {
-        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        return new ProviderManager(authenticationProvider);
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Enable CORS and disable CSRF
         http = http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable());
@@ -103,6 +93,7 @@ public class SecurityConfig {
                 // Our public endpoints
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
                 // Our private endpoints
+                .requestMatchers("/api/suggestions").hasRole(Role.READER)
                 // Admin has access to all endpoints
                 .requestMatchers("/**").hasRole(Role.ADMIN)
                 .anyRequest().authenticated()

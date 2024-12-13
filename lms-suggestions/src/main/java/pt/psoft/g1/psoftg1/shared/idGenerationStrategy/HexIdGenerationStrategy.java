@@ -5,11 +5,10 @@ import org.springframework.context.annotation.PropertySource;
 
 import java.security.SecureRandom;
 
-@PropertySource({"classpath:config/library.properties"})
 public class HexIdGenerationStrategy implements IdGenerationStrategy<String> {
     private static final SecureRandom random = new SecureRandom();
 
-    @Value("${charactersSize}")
+    @Value("${characters.size}")
     private int idSize;
 
     @Override

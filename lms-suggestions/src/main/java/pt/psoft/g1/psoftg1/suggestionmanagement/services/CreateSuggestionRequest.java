@@ -21,6 +21,5 @@ public class CreateSuggestionRequest {
 
     @NotNull
     @NotBlank
-    @Size(min = 6, max = 16)
     private String readerNumber;
 }

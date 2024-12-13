@@ -18,8 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SuggestionJpaRepoImpl implements SuggestionRepository {
 
-    private final SuggestionMapper suggestionMapper;
     private final EntityManager em;
+    private final SuggestionMapper suggestionMapper;
 
     @Override
     public Suggestion save(Suggestion suggestion) {
@@ -63,7 +63,7 @@ public class SuggestionJpaRepoImpl implements SuggestionRepository {
     @Override
     public Optional<Suggestion> findByIsbn(String isbn) {
         TypedQuery<JpaSuggestionModel> query = em.createQuery(
-                "SELECT s FROM JpaSuggestionModel s WHERE s.suggestedBook = :isbn", JpaSuggestionModel.class);
+                "SELECT s FROM JpaSuggestionModel s WHERE s.isbn = :isbn", JpaSuggestionModel.class);
         query.setParameter("isbn", isbn);
 
         Optional<JpaSuggestionModel> jpaSuggestion = query.getResultStream().findFirst();
