@@ -17,20 +17,20 @@ public class MongoSuggestionModel {
     @Id
     private String pk;
 
-    private String suggestedBook;
+    private String isbn;
 
-    private LocalDate suggestionDate;
+    private LocalDate createdAt;
 
     @DBRef
     private MongoReaderDetailsModel readerDetails;
 
     private Long version;
 
-    public MongoSuggestionModel(String pk, String suggestedBook, MongoReaderDetailsModel readerDetails, LocalDate suggestionDate) {
+    public MongoSuggestionModel(String pk, String isbn, MongoReaderDetailsModel readerDetails, LocalDate createdAt) {
         this.pk = pk;
-        this.suggestedBook = suggestedBook;
+        this.isbn = isbn;
         this.readerDetails = readerDetails;
-        this.suggestionDate = suggestionDate;
+        this.createdAt = createdAt;
     }
 
     protected MongoSuggestionModel() {}

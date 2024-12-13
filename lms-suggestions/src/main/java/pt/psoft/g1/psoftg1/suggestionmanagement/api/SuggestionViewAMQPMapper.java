@@ -13,9 +13,9 @@ import java.util.List;
 public abstract class SuggestionViewAMQPMapper extends MapperInterface {
 
     @Mapping(target = "suggestionId", source = "pk")
-    @Mapping(target = "bookIsbn", expression = "java(lending.getBook().getIsbn())")
-    @Mapping(target = "readerNumber", expression = "java(lending.getReaderDetails().getReaderNumber())")
-    @Mapping(target = "suggestionDate", expression = "java(formatLocalDate(suggestion.get()))")
+    @Mapping(target = "isbn", source = "isbn")
+    @Mapping(target = "readerNumber", expression = "java(suggestion.getReaderDetails().getReaderNumber())")
+    @Mapping(target = "createdAt", expression = "java(formatLocalDate(suggestion.getCreatedAt()))")
     @Mapping(target = "version", source = "version")
     public abstract SuggestionViewAMQP toSuggestionViewAMQP(Suggestion suggestion);
     public abstract List<SuggestionViewAMQP> toSuggestionViewAMQP(List<Suggestion> suggestionList);

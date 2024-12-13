@@ -64,17 +64,4 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
         Optional<JpaReaderDetailsModel> jpaReaderDetails = Optional.ofNullable(em.find(JpaReaderDetailsModel.class, readerDetailsId));  // Use find method to get Author by ID
         return jpaReaderDetails.map(readerDetailsMapper::fromJpaReaderDetailsModel);
     }
-
-    @Override
-    public Optional<ReaderDetails> findByUsername(String username) {
-        Optional<JpaReaderDetailsModel> m = em.createQuery(
-                        "SELECT r FROM JpaReaderDetailsModel r WHERE r.reader.username = :username",
-                        JpaReaderDetailsModel.class)
-                .setParameter("username", username)
-                .getResultList()
-                .stream()
-                .findFirst();
-
-        return m.map(readerDetailsMapper::fromJpaReaderDetailsModel);
-    }
 }

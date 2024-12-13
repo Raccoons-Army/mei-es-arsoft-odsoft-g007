@@ -20,7 +20,7 @@ public class JpaSuggestionModel {
 
     @Size(min = 10, max = 13)
     @Column(name = "ISBN", length = 16)
-    private String suggestedBook;
+    private String isbn;
 
     /**
      * Date of this {@code Suggestion}'s creation.
@@ -28,7 +28,7 @@ public class JpaSuggestionModel {
     @NotNull
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.DATE)
-    private LocalDate suggestionDate;
+    private LocalDate createdAt;
 
     /**
      * {@code Reader} associated with this {@code Suggestion}.
@@ -40,9 +40,9 @@ public class JpaSuggestionModel {
     @Version
     private long version;
 
-    public JpaSuggestionModel(String suggestedBook, LocalDate suggestionDate, JpaReaderDetailsModel readerDetails) {
-        this.suggestedBook = suggestedBook;
-        this.suggestionDate = suggestionDate;
+    public JpaSuggestionModel(String isbn, LocalDate createdAt, JpaReaderDetailsModel readerDetails) {
+        this.isbn = isbn;
+        this.createdAt = createdAt;
         this.readerDetails = readerDetails;
     }
 

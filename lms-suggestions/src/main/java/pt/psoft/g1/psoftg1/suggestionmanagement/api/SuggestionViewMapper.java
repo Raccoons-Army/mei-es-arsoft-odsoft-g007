@@ -11,7 +11,8 @@ import java.util.List;
 public abstract class SuggestionViewMapper extends MapperInterface {
 
     @Mapping(target = "suggestionId", source = "pk")
-    @Mapping(target = "bookIsbn", expression = "java(suggestion.getSuggestedBook())")
+    @Mapping(target = "isbn", source = "isbn")
+    @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "readerNumber", expression = "java(suggestion.getReaderDetails().getReaderNumber())")
     public abstract SuggestionView toSuggestionView(Suggestion suggestion);
     public abstract List<SuggestionView> toSuggestionView(List<Suggestion> suggestionList);

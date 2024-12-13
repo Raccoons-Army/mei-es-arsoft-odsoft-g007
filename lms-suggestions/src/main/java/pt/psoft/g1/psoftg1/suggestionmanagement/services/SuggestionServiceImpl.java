@@ -47,15 +47,15 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion createSuggestion(SuggestionViewAMQP resource) {
-        Optional<Suggestion> existsSuggestion = suggestionRepository.findByIsbn(resource.getBookIsbn());
+        Optional<Suggestion> existsSuggestion = suggestionRepository.findByIsbn(resource.getIsbn());
         if (existsSuggestion.isPresent()) {
-            throw new ConflictException("Suggestion for Book with ISBN " + resource.getBookIsbn() + " already exists");
+            throw new ConflictException("Suggestion for Book with ISBN " + resource.getIsbn() + " already exists");
         }
 
         final var reader = readerRepository.findByReaderNumber(resource.getReaderNumber())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
 
-        final Suggestion suggestion = new Suggestion(idGenerationStrategy.generateId(), resource.getBookIsbn(), LocalDate.now(), reader);
+        final Suggestion suggestion = new Suggestion(idGenerationStrategy.generateId(), resource.getIsbn(), LocalDate.now(), reader);
 
         return suggestionRepository.save(suggestion);
     }

@@ -12,22 +12,26 @@ public class Suggestion {
 
     private String pk;
 
-    private Isbn suggestedBook;
+    private Isbn isbn;
 
-    private LocalDate instantDate;
+    private LocalDate createdAt;
 
-    private ReaderDetails reader;
+    private ReaderDetails readerDetails;
 
     private long version;
 
     public Suggestion(String id, String isbn, LocalDate instantDate, ReaderDetails reader) {
         this.pk = id;
         setIsbn(isbn);
-        this.instantDate = instantDate;
-        this.reader = reader;
+        this.createdAt = instantDate;
+        this.readerDetails = reader;
     }
 
     public void setIsbn(String isbn) {
-        this.suggestedBook = new Isbn(isbn);
+        this.isbn = new Isbn(isbn);
+    }
+
+    public String getIsbn(){
+        return this.isbn.toString();
     }
 }

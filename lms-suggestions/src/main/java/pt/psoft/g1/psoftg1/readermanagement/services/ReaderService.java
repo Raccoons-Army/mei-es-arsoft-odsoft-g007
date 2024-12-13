@@ -14,5 +14,4 @@ import pt.psoft.g1.psoftg1.shared.services.Page;
 public interface ReaderService {
 
     void create(ReaderDetailsViewAMQP request);
-    Optional<ReaderDetails> findByUsername(final String username);
 }

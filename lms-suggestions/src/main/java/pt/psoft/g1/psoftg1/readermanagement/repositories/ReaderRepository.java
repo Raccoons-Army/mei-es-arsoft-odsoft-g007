@@ -13,5 +13,4 @@ import java.util.Optional;
 public interface ReaderRepository extends CRUDRepository<ReaderDetails, String> {
 
     Optional<ReaderDetails> findByReaderNumber(@Param("readerNumber") @NotNull String readerNumber);
-    Optional<ReaderDetails> findByUsername(@Param("username") @NotNull String username);
 }

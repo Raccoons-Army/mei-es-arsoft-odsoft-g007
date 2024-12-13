@@ -12,13 +12,13 @@ public class SuggestionViewAMQP {
     private String suggestionId;
 
     @NotNull
-    private String bookIsbn;
+    private String isbn;
 
     @NotNull
     private String readerNumber;
 
     @NotNull
-    private String suggestionDate;
+    private String createdAt;
 
     @NotNull
     private Long version;

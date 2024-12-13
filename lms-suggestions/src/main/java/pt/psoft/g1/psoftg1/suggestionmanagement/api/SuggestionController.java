@@ -12,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.suggestionmanagement.services.CreateSuggestionRequest;
 import pt.psoft.g1.psoftg1.suggestionmanagement.services.SuggestionService;
-import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 @Tag(name = "Suggestion", description = "Endpoints for managing Book Suggestions")
 @RestController
@@ -21,8 +20,6 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 public class SuggestionController {
 
     private final SuggestionService suggestionService;
-    private final UserService userService;
-    private final ConcurrencyService concurrencyService;
     private final SuggestionViewMapper suggestionViewMapper;
 
     @Operation(summary = "Creates a new Suggestion")
