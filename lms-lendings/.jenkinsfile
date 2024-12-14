@@ -1,0 +1,172 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    tools {
+        maven 'Maven 3.9.9'
+        jdk 'JDK 17'
+    }
+
+    environment {
+        PROJECT_DIR = "lms-lendings/"
+        REPO = 'raccoonsarmy/lms-lendings'
+    }
+
+    stages {
+        stage('Clean & Compile') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn clean compile -DskipTests'
+                }
+            }
+        }
+
+        stage('Static Code Analysis') {
+            parallel {
+                stage('PMD') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn pmd:pmd'
+                        }
+                    }
+                }
+                stage('SpotBugs') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn spotbugs:spotbugs'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn test -Dmaven.test.failure.ignore=true'
+                }
+            }
+        }
+
+        stage('Mutation Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pitest:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn failsafe:integration-test'
+                }
+            }
+        }
+
+        stage('Generate Reports') {
+            parallel {
+                stage('Tests Reports') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
+                        }
+                    }
+                }
+                stage('Jacoco Report') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn jacoco:report'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Packaging') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                dir(PROJECT_DIR) {
+                    script {
+                        def tag = ''
+                        switch (env.GIT_BRANCH) {
+                            case 'origin/dev':
+                                tag = 'dev'
+                                break
+                            case 'origin/main':
+                                tag = 'latest'
+                                break
+                            default:
+                                tag = 'test'
+                                break
+                        }
+                        docker.withRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v2/') {
+                            def docker_image = docker.build("${REPO}:${tag}")
+                            docker_image.push("${tag}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            publishHTML([
+              reportName: 'Failsafe Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'failsafe-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'Surefire Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'surefire-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'PIT Report',
+              reportDir: "${PROJECT_DIR}/target/pit-reports",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'Jacoco Report',
+              reportDir: "${PROJECT_DIR}/target/site/jacoco",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            
+            junit '**/target/surefire-reports/*.xml'
+            junit '**/target/failsafe-reports/*.xml'
+
+            recordCoverage(tools: [
+                    [parser: 'PIT', pattern: '**/target/pit-reports/**/*'],
+                    [parser: 'JACOCO']
+                ])
+
+            recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [
+                    pmdParser(pattern: '**/target/pmd/**/*'), 
+                    spotBugs(pattern: '**/target/spotbugs/**/*', useRankAsPriority: true)
+                ]
+        }
+    }
+}

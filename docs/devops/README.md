@@ -55,19 +55,21 @@ We are running 3 types of tests: unit tests, integration tests and mutation test
 
 ##### Generate Reports
 In this stage we are generating the reports of the tests we ran in the previous stage. We are using Surefire and Failsafe to generate the reports of the unit and integration tests, and Jacoco to generate the coverage report. To obtain better performance and because they aren't dependent on each other, we are running them in parallel as well.
+For a plus, we also publish the HTML of the reports for the old school guys that like to see the reports in a more simple way.
 
 ##### Deloyment TODO
 - ...
 - ...
 
 ##### Running in parallel
-As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4 minutes to finish, now it takes around X minutes. 
+As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4.5 minutes to finish, now it takes around 3.5 minutes. The static code analysis was a big part of the time it took to the pipeline finish, so it was expected to have a better performance after running them in parallel. 
 
 ##### Plugins used
 This were the plugins we used to implement the pipeline:
 
 Deployment:
 - [Publish Over SSH](https://plugins.jenkins.io/publish-over-ssh/)
+- [Docker Pipeline](https://plugins.jenkins.io/docker-workflow/)
 
 Reports:
 - [Coverage](https://plugins.jenkins.io/coverage/)
