@@ -110,7 +110,8 @@ pipeline {
                                 tag = 'test'
                                 break
                         }
-                        docker.withRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v2/') {
+                        
+                        docker.withRegistry('dockerhub', 'https://index.docker.io/v2/') {
                             def docker_image = docker.build("${REPO}:${tag}")
                             docker_image.push("${tag}")
                         }
