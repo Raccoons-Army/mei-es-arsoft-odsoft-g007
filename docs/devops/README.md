@@ -26,11 +26,14 @@ Every microservice has the same pipeline structure, it is divided in 8 stages:
      1. Unit Tests
      2. Integration Tests
      3. Mutation Tests
- 5. Generate Coverage Report
+ 5. Generate Reposrts
+     1. Surefire and Failsafe
+     2. Jacoco
  6. Packaging
  7. Prepare to Deploy
  8. Deploy
  9. Runnig in parallel
+ 10. Plugins used
 
 Now, we will explain some of the stages in more detail.
 
@@ -48,14 +51,29 @@ SpotBugs uses static analysis to look for bugs and vulnerabilities in our code.
 Finally, so we can have better pipeline performance, and since they aren't dependent of each other, we are running both of them in parallel.
 
 ##### Tests
-We are running 3 types of tests: unit tests, integration tests and mutation tests. To have better pipeline performance and since they aren't dependent of each other we are running them in parallel.
+We are running 3 types of tests: unit tests, integration tests and mutation tests. Even tho they aren't all dependent of each other, we are running them in sequence because it doen't make sense to run the integration tests before the unit tests, and the mutation tests are dependent of the unit tests. Without forgeting that we must run them in sequence because of the generation of the reports.
+
+##### Generate Reports
+In this stage we are generating the reports of the tests we ran in the previous stage. We are using Surefire and Failsafe to generate the reports of the unit and integration tests, and Jacoco to generate the coverage report. To obtain better performance and because they aren't dependent on each other, we are running them in parallel as well.
 
 ##### Deloyment TODO
 - ...
 - ...
 
 ##### Running in parallel
-As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4 minutes to finish, now it takes around 2,5 minutes. 
+As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4 minutes to finish, now it takes around X minutes. 
+
+##### Plugins used
+This were the plugins we used to implement the pipeline:
+
+Deployment:
+- [Publish Over SSH](https://plugins.jenkins.io/publish-over-ssh/)
+
+Reports:
+- [Coverage](https://plugins.jenkins.io/coverage/)
+- [JUnit](https://plugins.jenkins.io/junit/)
+- [Warnings](https://plugins.jenkins.io/warnings-ng/)
+- [HTML Publisher](https://plugins.jenkins.io/htmlpublisher/)
 
 <br>
 
@@ -75,7 +93,7 @@ Pros and cons of this infrastructure:
     - responsible and full control over the performance of the infrastructure
     - responsible and full control over our data
     - scaling vertically is possible
-    - having the environments running on LXD containers allows us have better isolation between them and to allocate them in the same serve
+    - having the environments running on LXD containers allows us have better isolation between them and to allocate them in the same server
 - Cons:
     - can only scale horizontally since we only have a single server handling all of our infrastructure
     - single point of failure for the same reason as above

@@ -42,37 +42,45 @@ pipeline {
             }
         }
 
-        stage('Tests') {
-            parallel {
-                stage('Unit Tests') {
-                    steps {
-                        dir(PROJECT_DIR) {
-                            sh "mvn test -Dmaven.test.failure.ignore=true"
-                        }
-                    }
-                }
-                stage('Mutation Tests') {
-                    steps {
-                        dir(PROJECT_DIR) {
-                            sh 'mvn pitest:mutationCoverage'
-                        }
-                    }
-                }
-                stage('Integration Tests') {
-                    steps {
-                        dir(PROJECT_DIR) {
-                            sh 'mvn failsafe:integration-test'
-                            sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
-                        }
-                    }
+        stage('Unit Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn test -Dmaven.test.failure.ignore=true'
                 }
             }
         }
 
-        stage('Generate Coverage Report') {
+        stage('Mutation Tests') {
             steps {
                 dir(PROJECT_DIR) {
-                    sh 'mvn jacoco:report'
+                    sh 'mvn pitest:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn failsafe:integration-test'
+                }
+            }
+        }
+
+        stage('Generate Reports') {
+            parallel {
+                stage('Tests Reports') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
+                        }
+                    }
+                }
+                stage('Jacoco Report') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn jacoco:report'
+                        }
+                    }
                 }
             }
         }
@@ -143,12 +151,6 @@ pipeline {
     
     post {
         always {
-            archiveArtifacts artifacts: "${PROJECT_DIR}/target/failsafe-reports/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "${PROJECT_DIR}/target/surefire-reports/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "${PROJECT_DIR}/target/pit-reports/**/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "${PROJECT_DIR}/target/site/jacoco/**/*", allowEmptyArchive: true
-            archiveArtifacts artifacts: "deploy/**/*", allowEmptyArchive: true
-
             publishHTML([
               reportName: 'Failsafe Report',
               reportDir: "${PROJECT_DIR}/target/site",
@@ -165,6 +167,35 @@ pipeline {
               keepAll: true,
               alwaysLinkToLastBuild: true
             ])
+            publishHTML([
+              reportName: 'PIT Report',
+              reportDir: "${PROJECT_DIR}/target/pit-reports",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'Jacoco Report',
+              reportDir: "${PROJECT_DIR}/target/site/jacoco",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            
+            junit '**/target/surefire-reports/*.xml'
+            junit '**/target/failsafe-reports/*.xml'
+
+            recordCoverage(tools: [
+                    [parser: 'PIT', pattern: '**/target/pit-reports/**/*'],
+                    [parser: 'JACOCO']
+                ])
+
+            recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [
+                    pmdParser(pattern: '**/target/pmd/**/*'), 
+                    spotBugs(pattern: '**/target/spotbugs/**/*', useRankAsPriority: true)
+                ]
         }
     }
 }
