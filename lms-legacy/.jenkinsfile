@@ -111,13 +111,13 @@ pipeline {
                     def serverConfigName = ''
                     switch (env.GIT_BRANCH) {
                         case 'origin/dev':
-                            serverConfigName = 'RAC_DEV'
+                            serverConfigName = 'rac_legacy_dev'
                             break
                         case 'origin/main':
-                            serverConfigName = 'RAC_PROD'
+                            serverConfigName = 'rac_legacy_prod'
                             break
                         default:
-                            serverConfigName = 'RAC_TEST'
+                            serverConfigName = 'rac_legacy_test'
                             break
                     }
 

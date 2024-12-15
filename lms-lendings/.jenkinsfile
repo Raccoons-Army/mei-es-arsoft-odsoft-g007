@@ -16,16 +16,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout SCM') {
-            steps {
-                script {
-                    dir(PROJECT_DIR) {
-                        checkout scm
-                    }
-                }
-            }
-        }
-
         stage('Clean & Compile') {
             steps {
                 dir(PROJECT_DIR) {
