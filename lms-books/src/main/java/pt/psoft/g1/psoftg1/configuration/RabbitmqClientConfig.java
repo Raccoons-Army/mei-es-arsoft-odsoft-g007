@@ -14,6 +14,9 @@ import pt.psoft.g1.psoftg1.genremanagement.services.GenreService;
 import pt.psoft.g1.psoftg1.shared.model.AuthorEvents;
 import pt.psoft.g1.psoftg1.shared.model.BookEvents;
 import pt.psoft.g1.psoftg1.shared.model.GenreEvents;
+import pt.psoft.g1.psoftg1.shared.model.SuggestionEvents;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.api.SuggestionEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.service.SuggestedBookService;
 
 @Profile("!test")
 @Configuration
@@ -32,6 +35,11 @@ public class RabbitmqClientConfig {
     @Bean(name = "genresExchange")
     public DirectExchange genresExchange() {
         return new DirectExchange("LMS.genres");
+    }
+
+    @Bean(name = "suggestionsExchange")
+    public DirectExchange suggestionsExchange() {
+        return new DirectExchange("LMS.suggestions");
     }
 
     private static class ReceiverConfig {
@@ -74,6 +82,13 @@ public class RabbitmqClientConfig {
         @Bean(name = "autoDeleteQueue_Genre_Created")
         public Queue autoDeleteQueue_Genre_Created() {
             System.out.println("autoDeleteQueue_Genre_Created created!");
+            return new AnonymousQueue();
+        }
+
+        // Suggestions Queues
+        @Bean(name = "autoDeleteQueue_Suggestion_Created")
+        public Queue autoDeleteQueue_Suggestion_Created() {
+            System.out.println("autoDeleteQueue_Suggestion_Created created!");
             return new AnonymousQueue();
         }
 
@@ -136,6 +151,17 @@ public class RabbitmqClientConfig {
                     .with(GenreEvents.GENRE_CREATED);
         }
 
+        //  Suggestion bindings
+        @Bean
+        public Binding suggestionCreatedBinding(@Qualifier("suggestionsExchange") DirectExchange direct,
+                                           @Qualifier("autoDeleteQueue_Suggestion_Created") Queue autoDeleteQueue_Suggestion_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_Suggestion_Created)
+                    .to(direct)
+                    .with(SuggestionEvents.SUGGESTION_CREATED);
+        }
+
+
+
         //  Receivers
         @Bean
         public BookEventRabbitmqReceiver receiver(BookService bookService) {
@@ -150,6 +176,11 @@ public class RabbitmqClientConfig {
         @Bean
         public GenreEventRabbitmqReceiver genreReceiver(GenreService genreService) {
             return new GenreEventRabbitmqReceiver(genreService);
+        }
+
+        @Bean
+        public SuggestionEventRabbitmqReceiver receiver(SuggestedBookService suggestedBookService) {
+            return new SuggestionEventRabbitmqReceiver(suggestedBookService);
         }
     }
 }
