@@ -111,7 +111,7 @@ pipeline {
                                 break
                         }
                         
-                        docker.withRegistry('https://index.docker.io/v2/', 'dockerhub') {
+                        docker.withRegistry('', 'dockerhub') {
                             def docker_image = docker.build("${REPO}:${tag}")
                             docker_image.push("${tag}")
                         }
