@@ -157,8 +157,8 @@ pipeline {
             ])
             
             junit '**/target/surefire-reports/*.xml'
-            junit '**/target/failsafe-reports/*.xml', allowEmptyResults: true
-
+            junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+            
             recordCoverage(tools: [
                     [parser: 'PIT', pattern: '**/target/pit-reports/**/*'],
                     [parser: 'JACOCO']
