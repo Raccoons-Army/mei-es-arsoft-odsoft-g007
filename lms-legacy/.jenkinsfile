@@ -11,7 +11,7 @@ pipeline {
     }
 
     environment {
-        PROJECT_DIR = "lms-legacy/",
+        PROJECT_DIR = "lms-legacy/"
         DEPLOYED_SERVICE_URL = ""
     }
 
