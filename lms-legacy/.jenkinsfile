@@ -154,15 +154,16 @@ pipeline {
 
         stage('Send Email') {
             steps {
+                def committerEmail = sh(script: 'git log -1 --pretty=format:"%h %s"', returnStdout: true).trim()
                 emailext (
-                subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
-                body: """
-                            <p>The service has been deployed to the following URL:</p>
-                            <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
-                            <p>Please review the deployment and choose an action:</p>
-                            <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
-                        """,
-                recipientProviders: [developers()]
+                    to: committerEmail,
+                    subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
+                    body: """
+                                <p>The service has been deployed to the following URL:</p>
+                                <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
+                                <p>Please review the deployment and choose an action:</p>
+                                <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
+                            """
                 )
             }
         }
