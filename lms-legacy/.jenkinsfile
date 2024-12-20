@@ -154,7 +154,7 @@ pipeline {
 
         stage('Send Email') {
             steps {
-                def committerEmail = sh(script: 'git log -1 --pretty=format:"%h %s"', returnStdout: true).trim()
+                def committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
                 emailext (
                     to: committerEmail,
                     subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
