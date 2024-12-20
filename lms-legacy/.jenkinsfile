@@ -11,7 +11,8 @@ pipeline {
     }
 
     environment {
-        PROJECT_DIR = "lms-legacy/"
+        PROJECT_DIR = "lms-legacy/",
+        DEPLOYED_SERVICE_URL = ""
     }
 
     stages {
@@ -112,12 +113,15 @@ pipeline {
                     switch (env.GIT_BRANCH) {
                         case 'origin/dev':
                             serverConfigName = 'rac_legacy_dev'
+                            DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:4224/'
                             break
                         case 'origin/main':
                             serverConfigName = 'rac_legacy_prod'
+                            DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:2224/'
                             break
                         default:
                             serverConfigName = 'rac_legacy_test'
+                            DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:3224/'
                             break
                     }
 
@@ -146,6 +150,29 @@ pipeline {
                     ])
                 }
             }
+        }
+
+        stage('Send Email') {
+            steps {
+                emailext (
+                subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
+                body: """
+                            <p>The service has been deployed to the following URL:</p>
+                            <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
+                            <p>Please review the deployment and choose an action:</p>
+                            <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
+                        """,
+                recipientProviders: [developers(),buildUser()]
+                )
+            }
+        }
+
+        stage("Wait for Approval") {
+            steps {
+                script {
+                        input(id: 'Proceed', message: 'Do you want to proceed with this build?')
+                }    
+            }  
         }
     }
     
