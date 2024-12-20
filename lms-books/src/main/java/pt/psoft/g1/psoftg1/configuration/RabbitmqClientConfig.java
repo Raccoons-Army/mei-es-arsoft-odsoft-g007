@@ -161,7 +161,6 @@ public class RabbitmqClientConfig {
         }
 
 
-
         //  Receivers
         @Bean
         public BookEventRabbitmqReceiver receiver(BookService bookService) {
@@ -179,7 +178,7 @@ public class RabbitmqClientConfig {
         }
 
         @Bean
-        public SuggestionEventRabbitmqReceiver receiver(SuggestedBookService suggestedBookService) {
+        public SuggestionEventRabbitmqReceiver suggestionReceiver(SuggestedBookService suggestedBookService) {
             return new SuggestionEventRabbitmqReceiver(suggestedBookService);
         }
     }
