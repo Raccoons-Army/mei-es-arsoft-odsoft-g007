@@ -14,7 +14,6 @@ public abstract class LendingViewAMQPMapper extends MapperInterface {
 
     @Mapping(target = "lendingNumber", source = "lendingNumber")
     @Mapping(target = "bookIsbn", expression = "java(lending.getBook().getIsbn())")
-    @Mapping(target = "readerNumber", expression = "java(lending.getReaderDetails().getReaderNumber())")
     @Mapping(target = "startDate", expression = "java(formatLocalDate(lending.getStartDate()))")
     @Mapping(target = "limitDate", expression = "java(formatLocalDate(lending.getLimitDate()))")
     @Mapping(target = "version", source = "version")

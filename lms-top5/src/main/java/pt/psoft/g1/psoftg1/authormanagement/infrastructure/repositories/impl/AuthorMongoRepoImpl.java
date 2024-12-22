@@ -1,9 +1,16 @@
 package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorCountView;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.MongoAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
@@ -50,6 +57,28 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
 
         List<MongoAuthorModel> list = mt.find(query, MongoAuthorModel.class);
         return authorMapper.fromMongoAuthor(list);
+    }
+
+    @Override
+    public Page<AuthorCountView> findTopXAuthorByLendings(Pageable pageable) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.lookup("book", "authors", "_id", "books"),
+                Aggregation.unwind("books"),
+                Aggregation.lookup("lending", "books._id", "bookId", "lendings"),
+                Aggregation.unwind("lendings"),
+                Aggregation.group("authors.name")
+                        .count().as("lendingCount")
+                        .first("authors.name").as("authorName"),
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount")),
+                Aggregation.skip(pageable.getOffset()),
+                Aggregation.limit(pageable.getPageSize())
+        );
+
+        AggregationResults<AuthorCountView> results = mt.aggregate(aggregation, "author", AuthorCountView.class);
+        List<AuthorCountView> authorCountViews = results.getMappedResults();
+        long total = authorCountViews.size(); // Consider calculating total count separately if needed
+
+        return new PageImpl<>(authorCountViews, pageable, total);
     }
 
     @Override

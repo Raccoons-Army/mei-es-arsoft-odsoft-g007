@@ -5,25 +5,11 @@ import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.model.FactoryBook;
-import pt.psoft.g1.psoftg1.readermanagement.model.FactoryReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
-
-/**
- * The {@code Lending} class associates a {@code Reader} and a {@code Book}.
- * <p>It stores the date it was registered, the date it is supposed to
- * be returned, and the date it actually was returned.
- * It also stores an optional reader {@code commentary} (submitted at the time of the return) and
- * the {@code Fine}, if applicable.
- * <p>It is identified in the system by an auto-generated {@code id}, and has a unique-constrained
- * natural key ({@code LendingNumber}) with its own business rules.
- *
- * @author rmfranca
- */
 
 public class Lending {
 
@@ -40,13 +26,6 @@ public class Lending {
     @Getter
     @Setter
     private Book book;
-
-    /**
-     * {@code Reader} associated with this {@code Lending}.
-     **/
-    @Getter
-    @Setter
-    private ReaderDetails readerDetails;
 
     /**
      * Date of this {@code Lending}'s creation.
@@ -84,13 +63,11 @@ public class Lending {
     private Integer daysOverdue;
 
     private FactoryBook _factoryBook;
-    private FactoryReaderDetails _factoryReaderDetails;
 
 
-    public Lending(String id, Book book, ReaderDetails readerDetails, int seq, int lendingDuration) {
+    public Lending(String id, Book book, int seq, int lendingDuration) {
         try {
             this.book = Objects.requireNonNull(book);
-            this.readerDetails = Objects.requireNonNull(readerDetails);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("Null objects passed to lending");
         }
@@ -103,11 +80,10 @@ public class Lending {
         setDaysOverdue();
     }
 
-    public Lending(String id, Book book, ReaderDetails readerDetails, String lendingNumber, LocalDate startDate,
+    public Lending(String id, Book book, String lendingNumber, LocalDate startDate,
                    LocalDate limitDate) {
         try {
             this.book = Objects.requireNonNull(book);
-            this.readerDetails = Objects.requireNonNull(readerDetails);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("Null objects passed to lending");
         }
@@ -120,7 +96,7 @@ public class Lending {
         setDaysOverdue();
     }
 
-    public Lending(String id, int seq, int lendingDuration, FactoryBook factoryBook, FactoryReaderDetails factoryReaderDetails) {
+    public Lending(String id, int seq, int lendingDuration, FactoryBook factoryBook) {
         this.pk = id;
         this.lendingNumber = new LendingNumber(seq);
         this.startDate = LocalDate.now();
@@ -129,17 +105,11 @@ public class Lending {
         setDaysUntilReturn();
         setDaysOverdue();
         _factoryBook = factoryBook;
-        _factoryReaderDetails = factoryReaderDetails;
     }
 
     public Book defineBook(String isbn, String title, String description) {
         this.book = _factoryBook.newBook(isbn, title, description);
         return this.book;
-    }
-
-    public ReaderDetails defineReaderDetails(String readerNumber, String username) {
-        this.readerDetails = _factoryReaderDetails.newReaderDetails(readerNumber, username);
-        return this.readerDetails;
     }
 
     /**
@@ -219,7 +189,6 @@ public class Lending {
      * Factory method meant to be only used in bootstrapping.
      */
     public static Lending newBootstrappingLending(String id, Book book,
-                                                  ReaderDetails readerDetails,
                                                   int year,
                                                   int seq,
                                                   LocalDate startDate,
@@ -229,7 +198,6 @@ public class Lending {
 
         try {
             lending.book = Objects.requireNonNull(book);
-            lending.readerDetails = Objects.requireNonNull(readerDetails);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException("Null objects passed to lending");
         }

@@ -64,10 +64,7 @@ public class BookMongoRepoImpl implements BookRepository {
     }
 
     @Override
-    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
-        // Step 1: Match lendings with a start date greater than one year ago
-        MatchOperation matchByDate = Aggregation.match(Criteria.where("startDate").gt(oneYearAgo));
-
+    public Page<BookCountDTO> findTopXBooksLent(Pageable pageable) {
         // Step 2: Group by book ID and count the number of lendings
         AggregationOperation groupByBookAndCount = Aggregation.group("bookId")
                 .count().as("lendingCount");
@@ -75,12 +72,11 @@ public class BookMongoRepoImpl implements BookRepository {
         // Step 3: Sort by lending count in descending order
         SortOperation sortByLendingCountDesc = Aggregation.sort(Sort.by(Sort.Direction.DESC, "lendingCount"));
 
-        // Step 4: Limit the results to the top 5 books
-        AggregationOperation limit = Aggregation.limit(5);
+        // Step 4: Limit the results to the top X books
+        AggregationOperation limit = Aggregation.limit(pageable.getPageSize());
 
         // Combine all operations into an aggregation pipeline
         Aggregation aggregation = Aggregation.newAggregation(
-                matchByDate,
                 groupByBookAndCount,
                 sortByLendingCountDesc,
                 limit

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
-import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 
 import java.time.LocalDate;
 
@@ -30,15 +29,6 @@ public class JpaLendingModel {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private JpaBookModel book;
-
-
-    /**
-     * {@code Reader} associated with this {@code Lending}.
-     **/
-    @NotNull
-    @Getter
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    private JpaReaderDetailsModel readerDetails;
 
     /**
      * Date of this {@code Lending}'s creation.
@@ -76,11 +66,9 @@ public class JpaLendingModel {
     private long version;
 
 
-    public JpaLendingModel(JpaBookModel book, JpaReaderDetailsModel readerDetails, String lendingNumber,
+    public JpaLendingModel(JpaBookModel book, String lendingNumber,
                            LocalDate startDate, LocalDate limitDate, LocalDate returnedDate) {
-
         this.book = book;
-        this.readerDetails = readerDetails;
         this.lendingNumber = lendingNumber;
         this.returnedDate = returnedDate;
         this.limitDate = limitDate;

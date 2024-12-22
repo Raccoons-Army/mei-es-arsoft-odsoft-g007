@@ -1,14 +1,21 @@
 package pt.psoft.g1.psoftg1.authormanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorCountView;
 import pt.psoft.g1.psoftg1.authormanagement.dbSchema.JpaAuthorModel;
 import pt.psoft.g1.psoftg1.authormanagement.mapper.AuthorMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +95,37 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     }
 
     @Override
+
+    public Page<AuthorCountView> findTopXAuthorByLendings(Pageable pageable) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        Root<JpaLendingModel> lendingRoot = query.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
+        Join<JpaBookModel, JpaAuthorModel> authorJoin = bookJoin.join("authors");
+
+        Expression<Long> countExpression = cb.count(lendingRoot);
+
+        query.select(cb.tuple(authorJoin.get("name"), countExpression))
+                .groupBy(authorJoin.get("name"))
+                .orderBy(cb.desc(countExpression));
+
+        TypedQuery<Tuple> typedQuery = em.createQuery(query);
+        typedQuery.setFirstResult((int) pageable.getOffset());
+        typedQuery.setMaxResults(pageable.getPageSize());
+
+        List<Tuple> resultTuples = typedQuery.getResultList();
+
+        List<AuthorCountView> results = resultTuples.stream()
+                .map(tuple -> new AuthorCountView(
+                        tuple.get(0, String.class),
+                        tuple.get(1, Long.class)))
+                .toList();
+
+        return new PageImpl<>(results, pageable, results.size());
+    }
+
+
+    @Override
     public Author save(Author author) {
         JpaAuthorModel jpaAuthor = authorMapper.toJpaAuthor(author);
 
@@ -98,7 +136,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
             // Save new entity
             em.persist(jpaAuthor);
         }
-       return authorMapper.fromJpaAuthor(jpaAuthor);
+        return authorMapper.fromJpaAuthor(jpaAuthor);
     }
 
     @Override

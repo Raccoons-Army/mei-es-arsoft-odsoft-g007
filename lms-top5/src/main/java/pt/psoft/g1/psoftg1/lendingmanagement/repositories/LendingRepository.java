@@ -12,8 +12,4 @@ import java.util.Optional;
 @Repository
 public interface LendingRepository extends CRUDRepository<Lending, Long> {
     Optional<Lending> findByLendingNumber(String lendingNumber);
-    List<Lending> listByReaderNumberAndIsbn(String readerNumber, String isbn);
-    Double getAverageDuration();
-    Double getAvgLendingDurationByIsbn(String isbn);
-    List<Lending> getOverdue(Page page);
 }

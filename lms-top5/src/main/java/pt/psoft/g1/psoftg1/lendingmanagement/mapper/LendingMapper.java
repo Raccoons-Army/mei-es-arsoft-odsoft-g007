@@ -8,17 +8,15 @@ import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.MongoLendingModel;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.LendingNumber;
-import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {BookMapper.class, ReaderDetailsMapper.class})
+@Mapper(componentModel = "spring", uses = {BookMapper.class})
 public abstract class LendingMapper {
 
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "lendingNumber", source = "lendingNumber")
     @Mapping(target = "book", source = "book")
-    @Mapping(target = "readerDetails", source = "readerDetails")
     @Mapping(target = "startDate", source = "startDate")
     @Mapping(target = "limitDate", source = "limitDate")
     @Mapping(target = "returnedDate", source = "returnedDate")
@@ -28,7 +26,6 @@ public abstract class LendingMapper {
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "lendingNumber", source = "lendingNumber")
     @Mapping(target = "book", source = "book")
-    @Mapping(target = "readerDetails", source = "readerDetails")
     @Mapping(target = "startDate", source = "startDate")
     @Mapping(target = "limitDate", source = "limitDate")
     @Mapping(target = "returnedDate", source = "returnedDate")
@@ -39,7 +36,6 @@ public abstract class LendingMapper {
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "lendingNumber", source = "lendingNumber")
     @Mapping(target = "book", source = "book")
-    @Mapping(target = "readerDetails", source = "readerDetails")
     @Mapping(target = "startDate", source = "startDate")
     @Mapping(target = "limitDate", source = "limitDate")
     @Mapping(target = "returnedDate", source = "returnedDate")
@@ -49,7 +45,6 @@ public abstract class LendingMapper {
     @Mapping(target = "pk", source = "pk")
     @Mapping(target = "lendingNumber", source = "lendingNumber")
     @Mapping(target = "book", source = "book")
-    @Mapping(target = "readerDetails", source = "readerDetails")
     @Mapping(target = "startDate", source = "startDate")
     @Mapping(target = "limitDate", source = "limitDate")
     @Mapping(target = "returnedDate", source = "returnedDate")

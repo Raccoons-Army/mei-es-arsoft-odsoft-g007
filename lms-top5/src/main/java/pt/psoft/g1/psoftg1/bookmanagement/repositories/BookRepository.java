@@ -16,5 +16,5 @@ public interface BookRepository extends CRUDRepository<Book, String> {
     List<Book> findByGenre(String genre);
     Optional<Book> findByIsbn(String isbn);
     List<Book> findBooksByAuthorNumber(String authorNumber);
-    Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable);
+    Page<BookCountDTO> findTopXBooksLent(Pageable pageable);
 }

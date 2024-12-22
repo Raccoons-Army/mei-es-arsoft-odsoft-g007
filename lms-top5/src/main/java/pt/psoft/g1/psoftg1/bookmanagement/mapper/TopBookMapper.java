@@ -17,10 +17,8 @@ public abstract class TopBookMapper {
     @Mapping(target = "authors", source = "authors") 
     @Mapping(target = "description", source = "description")
     @Mapping(target = "lendingCount", source = "lendingCount")
-    @Mapping(target = "version", source = "version")
     public abstract MongoTopBookModel toMongoTopBookModel(TopBook book);
 
-    @Mapping(target = "version", source = "version")
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "title", source = "title")
     @Mapping(target = "genre", source = "genre")
@@ -29,7 +27,6 @@ public abstract class TopBookMapper {
     @Mapping(target = "description", source = "description")
     public abstract JpaTopBookModel toJpaTopBookModel(TopBook book);
 
-    @Mapping(target = "version", source = "version")
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "title", source = "title")
     @Mapping(target = "genre", source = "genre")
@@ -39,7 +36,6 @@ public abstract class TopBookMapper {
     public abstract TopBook fromMongoTopBookModel(MongoTopBookModel mongoTopBookModel);
     public abstract List<TopBook> fromMongoTopBookModel(List<MongoTopBookModel> mongoTopBookModel);
 
-    @Mapping(target = "version", source = "version")
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "title", source = "title")
     @Mapping(target = "genre", source = "genre")

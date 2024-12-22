@@ -6,7 +6,6 @@ import org.mapstruct.Named;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.TopBook;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.shared.api.MapperInterface;
 
 import java.util.HashMap;
@@ -22,7 +21,7 @@ public abstract class BookViewMapper extends MapperInterface {
     @Mapping(target = "title", source = "title")
     @Mapping(target = "authors", source = "authors")
     @Mapping(target = "lendingCount", source = "lendingCount")
-    @Mapping(target = "_links", expression = "java(mapLinks(isbn, authors))")
+    @Mapping(target = "_links", expression = "java(mapLinks(book.getIsbn(), book.getAuthors()))")
     public abstract BookView toBookView(TopBook book);
     public abstract List<BookView> toBookView(List<TopBook> bookList);
 

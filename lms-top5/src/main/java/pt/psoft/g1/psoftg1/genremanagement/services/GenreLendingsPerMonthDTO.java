@@ -10,6 +10,6 @@ import java.util.List;
 public class GenreLendingsPerMonthDTO {
     private int year;
     private int month;
-    List<GenreLendingsDTO> values;
+    List<GenreCountDTO> values;
 
 }

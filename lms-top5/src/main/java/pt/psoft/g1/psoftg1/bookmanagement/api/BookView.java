@@ -28,7 +28,7 @@ public class BookView {
     private String isbn;
 
     @NotNull
-    private long lendingCount;
+    private Long lendingCount;
 
     @Setter
     @Getter

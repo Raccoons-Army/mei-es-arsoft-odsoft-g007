@@ -19,6 +19,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @RequiredArgsConstructor
@@ -61,21 +62,27 @@ public class BookJpaRepoImpl implements BookRepository {
     }
 
     @Override
-    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
+    public Page<BookCountDTO> findTopXBooksLent(Pageable pageable) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<BookCountDTO> query = cb.createQuery(BookCountDTO.class);
-        Root<JpaBookModel> bookRoot = query.from(JpaBookModel.class);
-        Join<JpaBookModel, JpaLendingModel> lendingJoin = bookRoot.join("lendings");
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<JpaLendingModel> lendingRoot = query.from(JpaLendingModel.class);
+        Join<JpaLendingModel, JpaBookModel> bookJoin = lendingRoot.join("book");
 
-        query.select(cb.construct(BookCountDTO.class, bookRoot, cb.count(lendingJoin)))
-                .where(cb.greaterThan(lendingJoin.get("startDate"), oneYearAgo))
-                .groupBy(bookRoot)
-                .orderBy(cb.desc(cb.count(lendingJoin)));
+        query.select(cb.array(bookJoin, cb.count(lendingRoot)))
+                .groupBy(bookJoin)
+                .orderBy(cb.desc(cb.count(lendingRoot)));
 
-        TypedQuery<BookCountDTO> typedQuery = em.createQuery(query);
-        typedQuery.setMaxResults(5);
-        List<BookCountDTO> topBooks = typedQuery.getResultList();
+        TypedQuery<Object[]> typedQuery = em.createQuery(query);
+        typedQuery.setMaxResults(pageable.getPageSize());
+        List<Object[]> results = typedQuery.getResultList();
+
+        // Map results to DTO
+        List<BookCountDTO> topBooks = results.stream()
+                .map(result -> new BookCountDTO(bookMapper.fromJpaBookModel((JpaBookModel) result[0]), (Long) result[1]))
+                .collect(Collectors.toList());
+
         return new PageImpl<>(topBooks, pageable, topBooks.size());
+
     }
 
     @Override

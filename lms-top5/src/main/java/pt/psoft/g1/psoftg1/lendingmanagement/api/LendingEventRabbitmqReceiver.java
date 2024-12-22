@@ -6,7 +6,9 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pt.psoft.g1.psoftg1.bookmanagement.services.Top5BookService;
+import pt.psoft.g1.psoftg1.authormanagement.services.TopAuthorService;
+import pt.psoft.g1.psoftg1.bookmanagement.services.TopBookService;
+import pt.psoft.g1.psoftg1.genremanagement.services.TopGenreService;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 public class LendingEventRabbitmqReceiver {
 
     private final LendingService lendingService;
-    private final Top5BookService top5BookService;
+    private final TopBookService topBookService;
+    private final TopGenreService topGenreService;
+    private final TopAuthorService topAuthorService;
 
     @Transactional
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Created.name}")
@@ -28,12 +32,13 @@ public class LendingEventRabbitmqReceiver {
             String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
             LendingViewAMQP lendingViewAMQP = objectMapper.readValue(jsonReceived, LendingViewAMQP.class);
 
-            // update top 5 books lent
-            top5BookService.updateTop5BooksLent();
-
             System.out.println(" [x] Received Lending Created by AMQP: " + msg + ".");
             try {
                 lendingService.create(lendingViewAMQP);
+
+                topBookService.updateTopX(); // update top 5 books lent
+                topGenreService.updateTopX(); // update top 5 genres lent
+                topAuthorService.updateTopX(); // update top 5 authors lent
                 System.out.println(" [x] New lending inserted from AMQP: " + msg + ".");
             } catch (Exception e) {
                 System.out.println(" [x] Lending already exists. No need to store it.");
