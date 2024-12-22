@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>pt.psoft.g1</groupId>
-    <artifactId>LMSMisc</artifactId>
+    <artifactId>LMSTop5</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>LMSMisc</name>
-    <description>LMS Misc Microservice</description>
+    <name>LMSTop5</name>
+    <description>LMS Top5 Microservice</description>
 
     <properties>
         <java.version>17</java.version>

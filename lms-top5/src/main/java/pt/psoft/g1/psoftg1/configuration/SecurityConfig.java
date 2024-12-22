@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -89,7 +90,10 @@ public class SecurityConfig {
                 // Our public endpoints
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
                 // Our private endpoints
-
+                // books
+                .requestMatchers(HttpMethod.GET,"/api/books/top5").hasAnyRole(Role.LIBRARIAN, Role.READER)
+                // genres
+                .requestMatchers(HttpMethod.GET,"/api/genres/top5").hasAnyRole(Role.LIBRARIAN, Role.READER)
                 // Admin has access to all endpoints
                 .requestMatchers("/**").hasRole(Role.ADMIN)
                 .anyRequest().authenticated()
