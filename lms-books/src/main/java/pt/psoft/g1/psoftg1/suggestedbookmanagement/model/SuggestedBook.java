@@ -12,6 +12,8 @@ public class SuggestedBook {
 
     private Isbn isbn;
 
+    private Long version;
+
     public SuggestedBook(String isbn) {
         setIsbn(isbn);
     }

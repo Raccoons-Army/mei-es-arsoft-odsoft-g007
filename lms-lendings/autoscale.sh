@@ -8,16 +8,16 @@ MEM_DOWN_THRESHOLD=30  # Memory usage percentage to scale down
 
 # Minimum and Maximum number of replicas to prevent over-scaling or under-scaling
 MIN_REPLICAS=2
-MAX_REPLICAS=8
+MAX_REPLICAS=10
 
 # Function to get the current CPU usage of the service
 get_cpu_usage() {
-  docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=suggestions_stack_lmssuggestions") | sed 's/%//'
+  docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//'
 }
 
 # Function to get the current memory usage of the service
 get_mem_usage() {
-  docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=suggestions_stack_lmssuggestions") | sed 's/%//'
+  docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//'
 }
 
 # Function to get the current number of replicas for a service
@@ -30,14 +30,14 @@ get_replicas() {
 scale_db() {
   local replicas=$1
   echo "Scaling H2 Database to $replicas replicas..."
-  docker service scale suggestions_stack_h2=$replicas
+  docker service scale lendings_stack_h2=$replicas
 }
 
 # Function to scale the MS application service up or down
 scale_service() {
   local replicas=$1
-  echo "Scaling Microservice LMS-Suggestions to $replicas replicas..."
-  docker service scale suggestions_stack_lmssuggestions=$replicas
+  echo "Scaling Microservice LMS-Lendings to $replicas replicas..."
+  docker service scale lendings_stack_lmslendings=$replicas
 }
 
 # Get current CPU and memory usage
@@ -48,7 +48,7 @@ echo "Current CPU Usage: $CPU_USAGE%"
 echo "Current Memory Usage: $MEM_USAGE%"
 
 # Get current number of replicas
-CURRENT_REPLICAS=$(get_replicas suggestions_stack_lmssuggestions)
+CURRENT_REPLICAS=$(get_replicas lendings_stack_lmslendings)
 
 # Initialize desired replicas with the current count
 DESIRED_REPLICAS=$CURRENT_REPLICAS
