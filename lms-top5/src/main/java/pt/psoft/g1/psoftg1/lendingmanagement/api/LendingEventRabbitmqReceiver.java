@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pt.psoft.g1.psoftg1.bookmanagement.services.Top5BookService;
 import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
 
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class LendingEventRabbitmqReceiver {
 
     private final LendingService lendingService;
+    private final Top5BookService top5BookService;
 
     @Transactional
     @RabbitListener(queues = "#{autoDeleteQueue_Lending_Created.name}")
@@ -26,6 +28,9 @@ public class LendingEventRabbitmqReceiver {
             String jsonReceived = new String(msg.getBody(), StandardCharsets.UTF_8);
             LendingViewAMQP lendingViewAMQP = objectMapper.readValue(jsonReceived, LendingViewAMQP.class);
 
+            // update top 5 books lent
+            top5BookService.updateTop5BooksLent();
+
             System.out.println(" [x] Received Lending Created by AMQP: " + msg + ".");
             try {
                 lendingService.create(lendingViewAMQP);
@@ -33,8 +38,7 @@ public class LendingEventRabbitmqReceiver {
             } catch (Exception e) {
                 System.out.println(" [x] Lending already exists. No need to store it.");
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             System.out.println(" [x] Exception receiving lending event from AMQP: '" + ex.getMessage() + "'");
         }
     }
@@ -55,8 +59,7 @@ public class LendingEventRabbitmqReceiver {
             } catch (Exception e) {
                 System.out.println(" [x] Lending does not exists or wrong version. Nothing stored.");
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             System.out.println(" [x] Exception receiving lending event from AMQP: '" + ex.getMessage() + "'");
         }
     }

@@ -11,6 +11,8 @@ import pt.psoft.g1.psoftg1.bookmanagement.api.BookEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.genremanagement.api.GenreEventRabbitmqReceiver;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreService;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
 import pt.psoft.g1.psoftg1.readermanagement.api.ReaderEventRabbitMQReceiver;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.model.*;
@@ -44,6 +46,11 @@ public class RabbitmqClientConfig {
     @Bean(name = "usersExchange")
     public DirectExchange usersExchange() {
         return new DirectExchange("LMS.users");
+    }
+
+    @Bean(name = "lendingsExchange")
+    public DirectExchange lendingsExchange() {
+        return new DirectExchange("LMS.lendings");
     }
 
 
@@ -107,6 +114,23 @@ public class RabbitmqClientConfig {
         public Queue autoDeleteQueue_User_Created() {
 
             System.out.println("autoDeleteQueue_User_Created created!");
+            return new AnonymousQueue();
+        }
+
+        // Lending Queues
+        @Bean(name = "autoDeleteQueue_Lending_Created")
+        public Queue autoDeleteQueue_Lending_Created() {
+            System.out.println("autoDeleteQueue_Lending_Created created!");
+            return new AnonymousQueue();
+        }
+
+        @Bean(name = "autoDeleteQueue_Lending_Updated")
+        public Queue autoDeleteQueue_Lending_Updated() {
+            return new AnonymousQueue();
+        }
+
+        @Bean(name = "autoDeleteQueue_Lending_Deleted")
+        public Queue autoDeleteQueue_Lending_Deleted() {
             return new AnonymousQueue();
         }
 
@@ -195,6 +219,31 @@ public class RabbitmqClientConfig {
                     .with(UserEvents.USER_CREATED);
         }
 
+        // Lending Bindings
+        @Bean
+        public Binding lendingCreatedBinding(@Qualifier("lendingsExchange") DirectExchange direct,
+                                             @Qualifier("autoDeleteQueue_Lending_Created") Queue autoDeleteQueue_Lending_Created) {
+            return BindingBuilder.bind(autoDeleteQueue_Lending_Created)
+                    .to(direct)
+                    .with(LendingEvents.LENDING_CREATED);
+        }
+
+        @Bean
+        public Binding lendingUpdatedBinding(@Qualifier("lendingsExchange") DirectExchange lendingExchange,
+                                             @Qualifier("autoDeleteQueue_Lending_Updated") Queue autoDeleteQueue_Lending_Updated) {
+            return BindingBuilder.bind(autoDeleteQueue_Lending_Updated)
+                    .to(lendingExchange)
+                    .with(LendingEvents.LENDING_UPDATED);
+        }
+
+        @Bean
+        public Binding lendingDeletedBinding(@Qualifier("lendingsExchange") DirectExchange lendingExchange,
+                                             @Qualifier("autoDeleteQueue_Lending_Deleted") Queue autoDeleteQueue_Lending_Deleted) {
+            return BindingBuilder.bind(autoDeleteQueue_Lending_Deleted)
+                    .to(lendingExchange)
+                    .with(LendingEvents.LENDING_DELETED);
+        }
+
 
         //  Receivers
         @Bean
@@ -220,6 +269,11 @@ public class RabbitmqClientConfig {
         @Bean
         public UserEventRabbitMQReceiver userReceiver(UserService userService) {
             return new UserEventRabbitMQReceiver(userService);
+        }
+
+        @Bean
+        public LendingEventRabbitmqReceiver lendingReceiver(LendingService lendingService) {
+            return new LendingEventRabbitmqReceiver(lendingService);
         }
 
     }

@@ -90,10 +90,10 @@ public class SecurityConfig {
                 // Our public endpoints
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
                 // Our private endpoints
-                // books
+                // top5
                 .requestMatchers(HttpMethod.GET,"/api/books/top5").hasAnyRole(Role.LIBRARIAN, Role.READER)
-                // genres
                 .requestMatchers(HttpMethod.GET,"/api/genres/top5").hasAnyRole(Role.LIBRARIAN, Role.READER)
+                .requestMatchers(HttpMethod.GET,"/api/authors/top5").hasAnyRole(Role.LIBRARIAN, Role.READER)
                 // Admin has access to all endpoints
                 .requestMatchers("/**").hasRole(Role.ADMIN)
                 .anyRequest().authenticated()

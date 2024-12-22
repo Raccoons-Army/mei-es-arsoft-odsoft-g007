@@ -2,14 +2,21 @@ package pt.psoft.g1.psoftg1.bookmanagement.infrastructure.repositories.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import pt.psoft.g1.psoftg1.bookmanagement.dbSchema.JpaBookModel;
 import pt.psoft.g1.psoftg1.bookmanagement.mapper.BookMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
+import pt.psoft.g1.psoftg1.lendingmanagement.dbSchema.JpaLendingModel;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +58,24 @@ public class BookJpaRepoImpl implements BookRepository {
                 .getResultList();
 
         return bookMapper.fromJpaBookModel(m);
+    }
+
+    @Override
+    public Page<BookCountDTO> findTop5BooksLent(LocalDate oneYearAgo, Pageable pageable) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<BookCountDTO> query = cb.createQuery(BookCountDTO.class);
+        Root<JpaBookModel> bookRoot = query.from(JpaBookModel.class);
+        Join<JpaBookModel, JpaLendingModel> lendingJoin = bookRoot.join("lendings");
+
+        query.select(cb.construct(BookCountDTO.class, bookRoot, cb.count(lendingJoin)))
+                .where(cb.greaterThan(lendingJoin.get("startDate"), oneYearAgo))
+                .groupBy(bookRoot)
+                .orderBy(cb.desc(cb.count(lendingJoin)));
+
+        TypedQuery<BookCountDTO> typedQuery = em.createQuery(query);
+        typedQuery.setMaxResults(5);
+        List<BookCountDTO> topBooks = typedQuery.getResultList();
+        return new PageImpl<>(topBooks, pageable, topBooks.size());
     }
 
     @Override
