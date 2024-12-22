@@ -1,0 +1,35 @@
+
+services:
+    lmstop5_1:
+        image: lmstop5:latest
+        container_name: top51_in_lms_network
+        build:
+            context: ..
+            dockerfile: Dockerfile
+        ports:
+            - "8089:8083"
+        env_file:
+            - MY_ENV_VARS.env
+        environment:
+            SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
+        networks:
+            - lms_network
+
+    lmstop5_2:
+        image: lmstop5:latest
+        container_name: top52_in_lms_network
+        build:
+            context: ..
+            dockerfile: Dockerfile
+        ports:
+            - "8090:8083"
+        env_file:
+            - MY_ENV_VARS2.env
+        environment:
+            SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
+        networks:
+            - lms_network
+
+networks:
+    lms_network:
+        external: true

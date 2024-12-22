@@ -77,7 +77,10 @@ public class ReaderServiceImpl implements ReaderService {
             request.setPhoto(null);
         }
 
-        ReaderDetails savedReader = create(email, birthDate, phoneNumber,
+        int count = readerRepo.getCountFromCurrentYear();
+        int number = count + 1;
+
+        ReaderDetails savedReader = create(String.valueOf(number), email, birthDate, phoneNumber,
                 null, gdprConsent, marketingConsent, thirdPartySharingConsent, interestList);
 
         if( savedReader != null ) {
@@ -90,6 +93,7 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public ReaderDetails create(ReaderViewAMQP readerViewAMQP) {
 
+        String readerNumber = readerViewAMQP.getReaderNumber();
         String email = readerViewAMQP.getUsername();
         String birthDate = readerViewAMQP.getBirthDate();
         String phoneNumber = readerViewAMQP.getPhoneNumber();
@@ -99,20 +103,17 @@ public class ReaderServiceImpl implements ReaderService {
         boolean thirdPartySharingConsent = readerViewAMQP.isThirdPartySharingConsent();
         List<String> interestList = readerViewAMQP.getInterestList();
 
-        return create(email, birthDate, phoneNumber,
+        return create(readerNumber, email, birthDate, phoneNumber,
                 photo, gdprConsent, marketingConsent, thirdPartySharingConsent, interestList);
     }
 
-    private ReaderDetails create(String email, String birthDate, String phoneNumber, String photo,
+    private ReaderDetails create(String readerNumber, String email, String birthDate, String phoneNumber, String photo,
                                  boolean gdprConsent, boolean marketingConsent, boolean thirdPartySharingConsent, List<String> interestList) {
         if (readerRepo.findByUsername(email).isPresent()) {
             throw new ConflictException("Username already exists!");
         }
 
-        int count = readerRepo.getCountFromCurrentYear();
-        int number = count + 1;
-
-        ReaderDetails rd = new ReaderDetails(String.valueOf(number), birthDate, phoneNumber,
+        ReaderDetails rd = new ReaderDetails(readerNumber, birthDate, phoneNumber,
                 gdprConsent, marketingConsent, thirdPartySharingConsent, photo, email, interestList);
 
         return readerRepo.save(rd);

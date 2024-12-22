@@ -1,0 +1,114 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs, core dumps, and heap dumps
+hs_err_pid*
+
+# Ignore Mac-specific files
+.DS_Store
+
+# Eclipse/STS/IntelliJ IDEA
+.project
+.classpath
+.settings/
+.idea/
+*.iml
+*.ipr
+*.iws
+target/
+out/
+
+# Maven
+.mvn/
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Gradle
+.gradle/
+build/
+!gradle-wrapper.jar
+gradle-app.setting
+
+# Lombok generated files
+.lombok/
+
+# Spring Boot specific files
+spring.log
+
+# Node modules if applicable
+node_modules/
+
+# OS-specific files
+Thumbs.db
+ehthumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*~
+
+# Environment and other configuration files
+*.env
+.env
+.env.local
+.env.*.local
+
+# Application.properties for Spring Boot
+# application.properties
+# application.yml
+# Ignore all profile-specific application.properties and application.yml files
+# application-*.properties
+# application-*.yml
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Visual Paradigm temporary files and directories
+.vpp.lock
+*.bak
+*.backup
+*.log
+*.tmp
+
+# Ignoring specific temporary folders Visual Paradigm uses
+*.vpp~   # Temporary file backup
+*.vpp.bak   # Backup file
+*.vpp.log   # Log files
+*.vpp.vbak
+*.vpp.bak*
+*.vpp.lck
+
+# Ignore workspace and user settings
+.vpworkspace/
+.vpuserrepository/
+
