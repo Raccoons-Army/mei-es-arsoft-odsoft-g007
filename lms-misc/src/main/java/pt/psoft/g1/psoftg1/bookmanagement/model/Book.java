@@ -75,14 +75,14 @@ public class Book {
         this.genre = _factoryGenre.newGenre(name);
     }
 
-    public Author addAuthor(String authorNumber) throws InstantiationException {
-        Author author = _factoryAuthor.newAuthor(authorNumber);
+    public Author addAuthor(String authorNumber, String name)  {
+        Author author = _factoryAuthor.newAuthor(authorNumber, name);
         this.authors.add(author);
         return author;
     }
 
-    public Author addAuthor(String authorNumber, long version) throws InstantiationException {
-        Author author = _factoryAuthor.newAuthor(authorNumber, version);
+    public Author addAuthor(String authorNumber, String name, long version) {
+        Author author = _factoryAuthor.newAuthor(authorNumber, name, version);
         this.authors.add(author);
         return author;
     }

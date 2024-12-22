@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface AuthorService {
     Optional<Author> findByAuthorNumber(String authorNumber);
+    List<Author> findByName(String name);
     Author create(AuthorViewAMQP resource);
     Author update(AuthorViewAMQP resource);
-    List<Book> findBooksByAuthorNumber(String authorNumber);
     List<Author> findCoAuthorsByAuthorNumber(String authorNumber);
 }

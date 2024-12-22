@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface AuthorRepository extends CRUDRepository<Author, String> {
+    List<Author> searchByNameNameStartsWith(String name);
+    List<Author> searchByNameName(String name);
     List<Author> findCoAuthorsByAuthorNumber(String authorNumber);
     Optional<Author> findByAuthorNumber(String authorNumber);
 }

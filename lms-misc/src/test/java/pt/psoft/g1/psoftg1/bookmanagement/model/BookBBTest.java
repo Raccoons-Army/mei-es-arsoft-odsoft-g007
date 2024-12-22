@@ -52,11 +52,11 @@ class BookBBTest {
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
         String expectedMessage = "Invalid arguments";
-        when(factoryGenreDouble.newGenre(null)).thenThrow(new InstantiationException(expectedMessage));
+        when(factoryGenreDouble.newGenre(null, "aaaa")).thenThrow(new InstantiationException(expectedMessage));
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
 
-        assertThrows(InstantiationException.class, () -> book.defineGenre(null));
+        assertThrows(InstantiationException.class, () -> book.defineGenre(null, "aaaa"));
     }
 
     @Test
@@ -79,11 +79,11 @@ class BookBBTest {
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
         String expectedMessage = "Invalid arguments";
-        when(factoryAuthorDouble.newAuthor(null)).thenThrow(new InstantiationException(expectedMessage));
+        when(factoryAuthorDouble.newAuthor(null, "aaaa")).thenThrow(new InstantiationException(expectedMessage));
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
 
-        assertThrows(InstantiationException.class, () -> book.addAuthor(null));
+        assertThrows(InstantiationException.class, () -> book.addAuthor(null, "aaaa"));
         assertEquals(book.getAuthors().size(), 0);
     }
 
@@ -93,8 +93,8 @@ class BookBBTest {
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
-        book.addAuthor("aaa1");
-        book.addAuthor("aaa2");
+        book.addAuthor("aaa1", "A1");
+        book.addAuthor("aaa2", "A2");
 
         assertEquals(book.getAuthors().size(), 2);
     }
@@ -106,11 +106,11 @@ class BookBBTest {
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        when(factoryAuthorDouble.newAuthor("aaa1"))
+        when(factoryAuthorDouble.newAuthor("aaa1", "A1"))
                 .thenReturn(authorDouble);
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
-        book.addAuthor("aaa1");
+        book.addAuthor("aaa1", "A1");
 
         // assert
         assertEquals(book.getAuthors().size(), 1);

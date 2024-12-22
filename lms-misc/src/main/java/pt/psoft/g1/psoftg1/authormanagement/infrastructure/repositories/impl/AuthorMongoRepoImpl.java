@@ -21,6 +21,24 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     private final AuthorMapper authorMapper;
 
     @Override
+    public List<Author> searchByNameNameStartsWith(String name) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").regex("^" + name));
+        List<MongoAuthorModel> mongoAuthors =  mt.find(query, MongoAuthorModel.class);
+        return authorMapper.fromMongoAuthor(mongoAuthors);
+    }
+
+    @Override
+    public List<Author> searchByNameName(String name) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("name").is(name));
+
+        List<MongoAuthorModel> mongoAuthors = mt.find(query, MongoAuthorModel.class);
+
+        return authorMapper.fromMongoAuthor(mongoAuthors);
+    }
+
+    @Override
     public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         Query subquery = new Query();
         subquery.addCriteria(Criteria.where("authors.authorNumber").is(authorNumber));
@@ -37,6 +55,7 @@ public class AuthorMongoRepoImpl implements AuthorRepository {
     @Override
     public Author save(Author author) {
         MongoAuthorModel mongoAuthor = authorMapper.toMongoAuthor(author);
+
         MongoAuthorModel savedAuthor = mt.save(mongoAuthor);
         return authorMapper.fromMongoAuthor(savedAuthor);
     }

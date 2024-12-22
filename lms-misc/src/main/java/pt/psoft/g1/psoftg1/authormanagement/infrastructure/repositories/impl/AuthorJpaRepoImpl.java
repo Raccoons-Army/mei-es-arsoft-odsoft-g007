@@ -21,6 +21,33 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     private final AuthorMapper authorMapper;
 
     @Override
+    public List<Author> searchByNameNameStartsWith(String name) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaAuthorModel> root = query.from(JpaAuthorModel.class);
+
+        query.select(root)
+                .where(cb.like(root.get("name"), name + "%"));  // Uses SQL LIKE for prefix matching
+
+        List<JpaAuthorModel> m = em.createQuery(query).getResultList();
+        return authorMapper.fromJpaAuthor(m);
+    }
+
+    @Override
+    public List<Author> searchByNameName(String name) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);
+        Root<JpaAuthorModel> root = query.from(JpaAuthorModel.class);
+
+        Predicate namePredicate = cb.equal(root.get("name"), name); // Accessing the 'name' property of the embedded 'Name' object
+
+        query.select(root).where(namePredicate);
+
+        List<JpaAuthorModel> jpaAuthors = em.createQuery(query).getResultList();
+        return authorMapper.fromJpaAuthor(jpaAuthors);
+    }
+
+    @Override
     public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JpaAuthorModel> query = cb.createQuery(JpaAuthorModel.class);

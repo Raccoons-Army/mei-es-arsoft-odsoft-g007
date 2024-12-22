@@ -45,51 +45,51 @@ public class Bootstrapper implements CommandLineRunner {
     private void createAuthors() {
 
         if (authorRepository.findByAuthorNumber("MAP").isEmpty()) {
-            final Author author = new Author("MAP");
+            final Author author = new Author("MAP", "Manuel Antonio Pina");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("ASE").isEmpty()) {
-            final Author author = new Author("ASE");
+            final Author author = new Author("ASE", "Antoine de Saint Exupéry");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("AP").isEmpty()) {
-            final Author author = new Author("AP");
+            final Author author = new Author("AP", "Alexandre Pereira");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("FP").isEmpty()) {
-            final Author author = new Author("FP");
+            final Author author = new Author("FP", "Filipe Portela");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("RQ").isEmpty()) {
-            final Author author = new Author("RQ");
+            final Author author = new Author("RQ", "Ricardo Queirós");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("FM").isEmpty()) {
-            final Author author = new Author("FM");
+            final Author author = new Author("FM", "Freida Mcfadden");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("JRRT").isEmpty()) {
-            final Author author = new Author("JRRT");
+            final Author author = new Author("JRRT", "J R R Tolkien");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("GD").isEmpty()) {
-            final Author author = new Author("GD");
+            final Author author = new Author("GD", "Gardner Dozois");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("LT").isEmpty()) {
-            final Author author = new Author("LT");
+            final Author author = new Author("LT", "Lisa Tuttle");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("MZ").isEmpty()) {
-            final Author author = new Author("");
+            final Author author = new Author("MZ", "Markus Zusak");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("JKR").isEmpty()) {
-            final Author author = new Author("JKR");
+            final Author author = new Author("JKR", "J K Rowling");
             authorRepository.save(author);
         }
         if (authorRepository.findByAuthorNumber("RR").isEmpty()) {
-            final Author author = new Author("RR");
+            final Author author = new Author("RR", "Rick Riordan");
             authorRepository.save(author);
         }
     }

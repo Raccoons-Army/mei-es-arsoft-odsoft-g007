@@ -19,14 +19,14 @@ public class BookWBTest {
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        when(factoryAuthorDouble.newAuthor("aaa1"))
+        when(factoryAuthorDouble.newAuthor("aaa1", "A1"))
                 .thenReturn(authorDouble);
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
-        book.addAuthor("aaa1");
+        book.addAuthor("aaa1", "A1");
 
         // verify
-        verify(factoryAuthorDouble, times(1)).newAuthor("aaa1");
+        verify(factoryAuthorDouble, times(1)).newAuthor("aaa1", "A1");
 
     }
 
@@ -39,16 +39,16 @@ public class BookWBTest {
         FactoryGenre factoryGenreDouble = mock(FactoryGenre.class);
         FactoryAuthor factoryAuthorDouble = mock(FactoryAuthor.class);
 
-        when(factoryAuthorDouble.newAuthor("aaa1"))
+        when(factoryAuthorDouble.newAuthor("aaa1", "A1"))
                 .thenReturn(authorDouble);
 
         Book book = new Book(validIsbn, validTitle, null, factoryGenreDouble, factoryAuthorDouble);
 
         for (int i = 0; i< n; i++) {
-            book.addAuthor("aaa1");
+            book.addAuthor("aaa1", "A1");
         }
 
         // verify
-        verify(factoryAuthorDouble, times(n)).newAuthor("aaa1");
+        verify(factoryAuthorDouble, times(n)).newAuthor("aaa1", "A1");
     }
 }

@@ -14,14 +14,17 @@ public class MongoAuthorModel {
     @Id
     private String authorNumber;
 
+    private String name;
+
     @Version
     private long version;
 
     protected MongoAuthorModel() {
     }
 
-    public MongoAuthorModel(String authorNumber, long version) {
+    public MongoAuthorModel(String authorNumber, String name, long version) {
         this.authorNumber = authorNumber;
+        this.name = name;
         this.version = version;
     }
 }

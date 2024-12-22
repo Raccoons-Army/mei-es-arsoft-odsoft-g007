@@ -3,7 +3,6 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 
 
@@ -13,72 +12,32 @@ class AuthorTest {
     private final String validName = "João Alberto";
     private final String validBio = "O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.";
 
-    private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
+    private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName);
 
-    private static class EntityWithPhotoImpl extends EntityWithPhoto { }
     @BeforeEach
     void setUp() {
     }
     @Test
     void ensureNameNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author("aa1",null,validBio, null));
+        assertThrows(IllegalArgumentException.class, () -> new Author("aa1",null));
     }
 
     @Test
     void ensureBioNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author("aa1",validName,null, null));
+        assertThrows(IllegalArgumentException.class, () -> new Author("aa1",validName));
     }
 
     @Test
     void whenVersionIsStaleItIsNotPossibleToPatch() {
-        final var subject = new Author("aa1",validName,validBio, null);
+        final var subject = new Author("aa1",validName);
 
         assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
     }
 
     @Test
     void testCreateAuthorWithoutPhoto() {
-        Author author = new Author("aa1",validName, validBio, null);
+        Author author = new Author("aa1",validName);
         assertNotNull(author);
-        assertNull(author.getPhoto());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithPhoto() {
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, "photoTest.jpg");
-        Author author = new Author("aa1",request.getName(), request.getBio(), "photoTest.jpg");
-        assertNotNull(author);
-        assertEquals(request.getPhotoURI(), author.getPhoto().getPhotoFile());
-    }
-
-    @Test
-    void testCreateAuthorRequestWithoutPhoto() {
-        CreateAuthorRequest request = new CreateAuthorRequest(validName, validBio, null, null);
-        Author author = new Author("aa1",request.getName(), request.getBio(), null);
-        assertNotNull(author);
-        assertNull(author.getPhoto());
-    }
-
-    @Test
-    void testEntityWithPhotoSetPhotoInternalWithValidURI() {
-        EntityWithPhoto entity = new EntityWithPhotoImpl();
-        String validPhotoURI = "photoTest.jpg";
-        entity.setPhoto(validPhotoURI);
-        assertNotNull(entity.getPhoto());
-    }
-
-    @Test
-    void ensurePhotoCanBeNull_AkaOptional() {
-        Author author = new Author("aa1",validName, validBio, null);
-        assertNull(author.getPhoto());
-    }
-
-    @Test
-    void ensureValidPhoto() {
-        Author author = new Author("aa1",validName, validBio, "photoTest.jpg");
-        Photo photo = author.getPhoto();
-        assertNotNull(photo);
-        assertEquals("photoTest.jpg", photo.getPhotoFile());
     }
 }
 

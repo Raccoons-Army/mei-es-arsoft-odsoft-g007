@@ -1,8 +1,8 @@
 
 services:
-    lmsmiscs_1:
-        image: lmsmiscs:latest
-        container_name: miscs1_in_lms_network
+    lmsmisc_1:
+        image: lmsmisc:latest
+        container_name: misc1_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
@@ -14,12 +14,10 @@ services:
             SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
         networks:
             - lms_network
-        volumes:
-            - "uploaded_files_volume_1:/tmp"
 
-    lmsmiscs_2:
-        image: lmsmiscs:latest
-        container_name: miscs2_in_lms_network
+    lmsmisc_2:
+        image: lmsmisc:latest
+        container_name: misc2_in_lms_network
         build:
             context: ..
             dockerfile: Dockerfile
@@ -31,13 +29,7 @@ services:
             SPRING_PROFILES_ACTIVE: bootstrap,jpa,google,hash,genre_based
         networks:
             - lms_network
-        volumes:
-            - "uploaded_files_volume_2:/tmp"
 
 networks:
     lms_network:
         external: true
-
-volumes:
-    uploaded_files_volume_1:
-    uploaded_files_volume_2:
