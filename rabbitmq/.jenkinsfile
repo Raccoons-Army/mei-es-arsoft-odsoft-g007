@@ -50,7 +50,7 @@ pipeline {
                                     ),
                                     sshTransfer(
                                         sourceFiles: "${DOCKER_COMPOSE_FILE}",
-                                        remoteDirectory: "rabbitmq",
+                                        remoteDirectory: "./rabbitmq",
                                         execCommand: """
                                             docker stack deploy -c ${DOCKER_COMPOSE_FILE} rabbit_stack
                                         """
