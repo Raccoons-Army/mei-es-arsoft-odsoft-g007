@@ -17,13 +17,7 @@ public class SuggestedBookServiceImpl implements SuggestedBookService {
 
     @Override
     public SuggestedBook createSuggestedBook(SuggestionViewAMQP resource) {
-        Optional<SuggestedBook> existsSuggestedBook = suggestedBookRepository.findByIsbn(resource.getBookIsbn());
-        if (existsSuggestedBook.isPresent()) {
-            throw new ConflictException("Suggestion for Book with ISBN " + resource.getBookIsbn() + " already exists");
-        }
-
-        final SuggestedBook suggestedBook = new SuggestedBook(resource.getBookIsbn());
-
+        final SuggestedBook suggestedBook = new SuggestedBook(resource.getIsbn());
         return suggestedBookRepository.save(suggestedBook);
     }
 }

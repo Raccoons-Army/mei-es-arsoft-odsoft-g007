@@ -12,12 +12,12 @@ MAX_REPLICAS=10
 
 # Function to get the current CPU usage of the service
 get_cpu_usage() {
-  docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=suggestions_stack_lmssuggestions") | sed 's/%//'
+  docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=top5_stack_lmstop5") | sed 's/%//'
 }
 
 # Function to get the current memory usage of the service
 get_mem_usage() {
-  docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=suggestions_stack_lmssuggestions") | sed 's/%//'
+  docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=top5_stack_lmstop5") | sed 's/%//'
 }
 
 # Function to get the current number of replicas for a service
@@ -30,14 +30,14 @@ get_replicas() {
 scale_db() {
   local replicas=$1
   echo "Scaling H2 Database to $replicas replicas..."
-  docker service scale suggestions_stack_h2=$replicas
+  docker service scale top5_stack_h2=$replicas
 }
 
 # Function to scale the MS application service up or down
 scale_service() {
   local replicas=$1
-  echo "Scaling Microservice LMS-Suggestions to $replicas replicas..."
-  docker service scale suggestions_stack_lmssuggestions=$replicas
+  echo "Scaling Microservice LMS-Top5 to $replicas replicas..."
+  docker service scale top5_stack_lmstop5=$replicas
 }
 
 # Get current CPU and memory usage
@@ -48,7 +48,7 @@ echo "Current CPU Usage: $CPU_USAGE%"
 echo "Current Memory Usage: $MEM_USAGE%"
 
 # Get current number of replicas
-CURRENT_REPLICAS=$(get_replicas suggestions_stack_lmssuggestions)
+CURRENT_REPLICAS=$(get_replicas top5_stack_lmstop5)
 
 # Initialize desired replicas with the current count
 DESIRED_REPLICAS=$CURRENT_REPLICAS

@@ -9,9 +9,7 @@ import org.hibernate.annotations.UuidGenerator;
 @Getter
 @Setter
 @Entity
-@Table(name = " SuggestedBook", uniqueConstraints = {
-        @UniqueConstraint(name = "uc_book_isbn", columnNames = {"ISBN"})
-})
+@Table(name = " SuggestedBook")
 public class JpaSuggestedBookModel {
 
     @Id

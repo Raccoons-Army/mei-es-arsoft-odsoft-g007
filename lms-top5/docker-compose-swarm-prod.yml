@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  lmstop5:
+    image: raccoonsarmy/lmstop5:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=bootstrap,jpa,google,hash,genre_based
+      - spring.datasource.url=jdbc:h2://h2_${HOSTNAME}:1521/h2
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.datasource.username=lof
+      - spring.datasource.password=
+      - file.upload-dir=/tmp/uploads-psoft-g1-instance1
+      - spring.rabbitmq.host=rabbitmq
+    volumes:
+      - "uploaded_files_volume_1:/tmp"
+    deploy:
+      replicas: 2
+    ports:
+      - "8093:8083"
+    networks:
+      - lms_network
+
+  h2:
+    image: oscarfonts/h2:2.1.210
+    environment:
+      - H2_OPTIONS=-ifNotExists
+      - H2_USER=lof
+      - H2_PASSWORD=
+    deploy:
+      replicas: 2
+    ports:
+      - "87:8082"
+      - "1587-1597:1521"
+    networks:
+      - lms_network
+
+networks:
+  lms_network:
+    driver: overlay
+    attachable: true
+    external: true
+
+volumes:
+  uploaded_files_volume_1:
+  uploaded_files_volume_2:

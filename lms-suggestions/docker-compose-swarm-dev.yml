@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  lmssuggestions:
+    image: raccoonsarmy/lmssuggestions:dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=bootstrap,jpa,google,hash,genre_based
+      - spring.datasource.url=jdbc:h2://h2_${HOSTNAME}:1521/h2  # Unique DB URL for each instance using the task slot
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.datasource.username=lof
+      - spring.datasource.password=
+      - file.upload-dir=/tmp/uploads-psoft-g1-instance1  # Unique upload folder for each instance
+      - spring.rabbitmq.host=rabbitmq
+    volumes:
+      - "uploaded_files_volume_1:/tmp"  # Unique volume for each instance
+    deploy:
+      replicas: 2  # 2 instances of the app
+    ports:
+      - "8087:8083"  # Map port 8087 of the host to port 8083 of the container
+    networks:
+      - lms_network
+
+  h2:
+    image: oscarfonts/h2:2.1.210
+    environment:
+      - H2_OPTIONS=-ifNotExists
+      - H2_USER=lof
+      - H2_PASSWORD=
+    deploy:
+      replicas: 2  # 2 instances of the H2 database
+    ports:
+      - "81:8082"  # Expose H2 web console
+      - "1521-1531:1521"  # Expose H2 database ports (dynamic range)
+    networks:
+      - lms_network
+
+networks:
+  lms_network:
+    driver: overlay
+    attachable: true
+    external: true
+
+volumes:
+  uploaded_files_volume_1:  # Volume for app instance 1
+  uploaded_files_volume_2:  # Volume for app instance 2
