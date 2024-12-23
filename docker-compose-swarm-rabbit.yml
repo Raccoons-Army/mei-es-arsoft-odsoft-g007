@@ -5,6 +5,10 @@ services:
     container_name: rabbitmq
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1  # update 1 instance at a time
+        delay: 2s  # wait 2 seconds between updates
+        order: start-first # start the new task before stopping the old one
     ports:
       - "5672:5672"  # RabbitMQ messaging port
       - "15672:15672"  # RabbitMQ management console

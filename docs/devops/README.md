@@ -84,7 +84,7 @@ Our enviroments are running on LXD containers on a on-premise server named **rac
 
 ![Deployment Servers](./assets/deploymentServers.svg)
 
-Each server runs k3s ? ...
+Each server runs docker swarm TODO ...
 ...
 ![Other diagram](./assets/otherdiagram.svg)
 
@@ -99,3 +99,6 @@ Pros and cons of this infrastructure:
 - Cons:
     - can only scale horizontally since we only have a single server handling all of our infrastructure
     - single point of failure for the same reason as above
+
+Check the [README](../../serversConfig/README.md) for more information on the servers configuration.
+```

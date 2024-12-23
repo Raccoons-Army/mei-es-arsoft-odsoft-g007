@@ -16,6 +16,10 @@ services:
       - "uploaded_files_volume_1:/tmp"  # Unique volume for each instance
     deploy:
       replicas: 2  # 2 instances of the app
+      update_config:
+        parallelism: 1  # update 1 instances at a time
+        delay: 10s  # wait 10 seconds between updates
+        order: stop-first # stop the old container before starting the new one
     ports:
       - "8088:8083"  # Map port 8087 of the host to port 8083 of the container
     networks:
@@ -29,6 +33,10 @@ services:
       - H2_PASSWORD=
     deploy:
       replicas: 2  # 2 instances of the H2 database
+      update_config:
+        parallelism: 1  # update 1 instances at a time
+        delay: 10s  # wait 10 seconds between updates
+        order: stop-first # stop the old container before starting the new one
     ports:
       - "82:8082"  # Expose H2 web console
       - "1532-1542:1521"  # Expose H2 database ports (dynamic range)
