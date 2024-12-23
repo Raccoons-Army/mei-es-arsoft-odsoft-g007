@@ -2,6 +2,8 @@ version: "3.8"
 services:
   lmsbooks:
     image: raccoonsarmy/lmsbooks:dev
+    env_file:
+      - MY_ENV_VARS.env
     environment:
       - SPRING_PROFILES_ACTIVE=bootstrap,jpa,google,hash,genre_based
       - spring.datasource.url=jdbc:h2://h2_${HOSTNAME}:1521/h2  # Unique DB URL for each instance using the task slot
