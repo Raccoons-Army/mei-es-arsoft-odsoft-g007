@@ -12,8 +12,11 @@ pipeline {
 
     environment {
         PROJECT_DIR = "lms-lendings/"
-        REPO = 'raccoonsarmy/lms-lendings'
+        REPO = 'raccoonsarmy/lmslendings'
         DEPLOYED_SERVICE_URL = ""
+        DOCKER_COMPOSE_FILE = ""
+        TAG = ""
+        SERVER_CONFIG = ''
     }
 
     stages {
@@ -95,31 +98,110 @@ pipeline {
             }
         }
 
+        stage('Verify environment to deploy') {
+            steps {
+                script {
+                        switch (env.GIT_BRANCH) {
+                            case 'origin/dev':
+                                TAG = 'dev'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-dev'
+                                SERVER_CONFIG = 'rac_dev'
+                                break
+                            case 'origin/main':
+                                TAG = 'latest'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-prod'
+                                SERVER_CONFIG = 'rac_prod'
+                                break
+                            default:
+                                TAG = 'test'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-test'
+                                SERVER_CONFIG = 'rac_test'
+                                break
+                        }
+                }
+            }
+        }
+
         stage('Docker Build and Push') {
             steps {
                 dir(PROJECT_DIR) {
-                    script {
-                        def tag = ''
-                        switch (env.GIT_BRANCH) {
-                            case 'origin/dev':
-                                tag = 'dev'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:4224/api/lendings'
-                                break
-                            case 'origin/main':
-                                tag = 'latest'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:2224/api/lendings'
-                                break
-                            default:
-                                tag = 'test'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:3224/api/lendings'
-                                break
-                        }
-                        
+                    script {                        
                         docker.withRegistry('', 'dockerhub') {
-                            def docker_image = docker.build("${REPO}:${tag}")
+                            def docker_image = docker.build("${REPO}:${TAG}")
                             docker_image.push("${tag}")
                         }
                     }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'env_lms_lendings', variable: 'ENV_FILE')]) {
+                        dir(PROJECT_DIR) {
+                            writeFile file: 'MY_ENV_VARS.env', text: readFile(ENV_FILE)
+                            sshPublisher(publishers: [
+                                sshPublisherDesc(
+                                    configName: SERVER_CONFIG,
+                                    transfers: [
+                                        // create the directory for the service if it doesn't exist
+                                        sshTransfer(
+                                            sourceFiles: "",
+                                            remoteDirectory: "",
+                                            execCommand: """
+                                                mkdir -p lms-lendings 
+                                            """
+                                        ),
+                                        // Copy the .env file to the server
+                                        sshTransfer(
+                                            remoteDirectory: "./lms-lendings",
+                                            sourceFiles: "MY_ENV_VARS.env",
+                                            execCommand: ""
+                                        ),
+                                        // copy the docker-compose file to the server and run it
+                                        sshTransfer(
+                                            sourceFiles: "${DOCKER_COMPOSE_FILE}",
+                                            remoteDirectory: "./lms-lendings",
+                                            execCommand: """
+                                                docker stack deploy -c ${DOCKER_COMPOSE_FILE} lms-lendings
+                                            """
+                                        ),
+                                        // copy the autoscale script to the server and run it as a cron job
+                                        sshTransfer(
+                                            sourceFiles: "autoscale.sh",
+                                            remoteDirectory: "./lms-lendings",
+                                            execCommand: """
+                                                chmod +x autoscale.sh 
+
+                                                CRON_JOB="* * * * * autoscale.sh >> autoscale.log 2>&1"
+
+                                                (crontab -l 2>/dev/null | grep -q "$CRON_JOB") || {
+                                                    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+                                                }
+
+                                                nohup ./autoscale.sh >> autoscale.log 2>&1 &
+                                            """
+                                        )
+                                    ],
+                                    usePromotionTimestamp: false,
+                                    useWorkspaceInPromotion: false,
+                                )
+                            ])
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Smoke Test') {
+            steps {
+                script {
+                    // run the smoke test
+                    sh 'curl -s -o /dev/null -w "%{http_code}" ${DEPLOYED_SERVICE_URL} -m 10'
                 }
             }
         }

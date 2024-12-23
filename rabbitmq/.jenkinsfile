@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    environment {
+        PROJECT_DIR = "rabbitmq/"
+        DOCKER_COMPOSE_FILE = "docker-compose-swarm-rabbit.yml"
+        SERVER_CONFIG = ''
+    }
+
+    stages {
+        stage('Verify environment to deploy') {
+            steps {
+                script {
+                        switch (env.GIT_BRANCH) {
+                            case 'origin/dev':
+                                SERVER_CONFIG = 'rac_dev'
+                                break
+                            case 'origin/main':
+                                TAG = 'latest'
+                                SERVER_CONFIG = 'rac_prod'
+                                break
+                            default:
+                                TAG = 'test'
+                                SERVER_CONFIG = 'rac_test'
+                                break
+                        }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    dir(PROJECT_DIR) {
+                        // copy the docker-compose file to the deploy server and start the microservice and the autoscaler
+                        sshPublisher(publishers: [
+                            sshPublisherDesc(
+                                configName: SERVER_CONFIG,
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: "",
+                                        remoteDirectory: "",
+                                        execCommand: """
+                                            mkdir -p rabbitmq 
+                                        """
+                                    ),
+                                    sshTransfer(
+                                        sourceFiles: "${DOCKER_COMPOSE_FILE}",
+                                        remoteDirectory: "rabbitmq",
+                                        execCommand: """
+                                            docker stack deploy -c ${DOCKER_COMPOSE_FILE} rabbit_stack
+                                        """
+                                    )
+                                ],
+                                usePromotionTimestamp: false,
+                                useWorkspaceInPromotion: false,
+                            )
+                        ])
+                    }
+                }
+            }
+        }
+    }
+}
