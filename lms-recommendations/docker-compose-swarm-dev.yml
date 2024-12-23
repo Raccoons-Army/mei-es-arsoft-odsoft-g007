@@ -8,8 +8,6 @@ services:
       - SPRING_PROFILES_ACTIVE=bootstrap,jpa,google,hash,genre_based
       - spring.datasource.url=jdbc:h2://h2_${HOSTNAME}:1521/h2  # Unique DB URL for each instance using the task slot
       - spring.jpa.hibernate.ddl-auto=update
-      - spring.datasource.username=lof
-      - spring.datasource.password=
       - file.upload-dir=/tmp/uploads-psoft-g1-instance1  # Unique upload folder for each instance
       - spring.rabbitmq.host=rabbitmq
     volumes:
@@ -29,8 +27,6 @@ services:
     image: oscarfonts/h2:2.1.210
     environment:
       - H2_OPTIONS=-ifNotExists
-      - H2_USER=lof
-      - H2_PASSWORD=
     deploy:
       replicas: 2  # 2 instances of the H2 database
       update_config:
