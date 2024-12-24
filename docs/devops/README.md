@@ -60,7 +60,6 @@ For a plus, we also publish the HTML of the reports for the old school guys that
 ##### Deloyment TODO
 - ...
 - ...
-- ,,,
 All the docker image were published to [here](https://hub.docker.com/repositories/raccoonsarmy)
 
 ##### Running in parallel
