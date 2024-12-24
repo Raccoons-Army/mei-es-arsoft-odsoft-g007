@@ -131,7 +131,7 @@ pipeline {
                     script {                        
                         docker.withRegistry('', 'dockerhub') {
                             def docker_image = docker.build("${REPO}:${TAG}")
-                            docker_image.push("${tag}")
+                            docker_image.push("${TAG}")
                         }
                     }
                 }
@@ -167,7 +167,7 @@ pipeline {
                                             sourceFiles: "${DOCKER_COMPOSE_FILE}",
                                             remoteDirectory: "./lms-lendings",
                                             execCommand: """
-                                                docker stack deploy -c ${DOCKER_COMPOSE_FILE} lms-lendings
+                                                docker stack deploy -c /lms-lendings/${DOCKER_COMPOSE_FILE} lendings_stack >> /tmp/lendings_deploy.log 2>&1
                                             """
                                         ),
                                         // copy the autoscale script to the server and run it as a cron job
