@@ -9,7 +9,7 @@ services:
       - spring.datasource.url=jdbc:h2://h2_${HOSTNAME}:1521/h2
       - spring.jpa.hibernate.ddl-auto=update
       - file.upload-dir=/tmp/uploads-psoft-g1-instance1
-      - spring.rabbitmq.host=rabbitmq
+      - spring.rabbitmq.host=tasks.rabbitmq
     volumes:
       - "uploaded_files_volume_1:/tmp"
     deploy:

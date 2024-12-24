@@ -48,4 +48,4 @@ systemctl start docker
 docker swarm init
 
 # create our network
-docker network create --driver overlay --scope swarm --attachable lms_network
+docker network create --driver overlay --attachable lms_network
