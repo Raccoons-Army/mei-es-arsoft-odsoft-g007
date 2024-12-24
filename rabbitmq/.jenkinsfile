@@ -52,7 +52,7 @@ pipeline {
                                         sourceFiles: "${DOCKER_COMPOSE_FILE}",
                                         remoteDirectory: "./rabbitmq",
                                         execCommand: """
-                                            docker stack deploy -c ${DOCKER_COMPOSE_FILE} rabbit_stack
+                                            docker stack deploy -c ${DOCKER_COMPOSE_FILE} rabbit_stack >> deploy.log
                                         """
                                     )
                                 ],
