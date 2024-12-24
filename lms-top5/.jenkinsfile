@@ -1,0 +1,286 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    tools {
+        maven 'Maven 3.9.9'
+        jdk 'JDK 17'
+    }
+
+    environment {
+        PROJECT_DIR = "lms-top5/"
+        REPO = 'raccoonsarmy/lmstop5'
+        DEPLOYED_SERVICE_URL = ""
+        DOCKER_COMPOSE_FILE = ""
+        TAG = ""
+        SERVER_CONFIG = ''
+    }
+
+    stages {
+        stage('Clean & Compile') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn clean compile -DskipTests'
+                }
+            }
+        }
+
+        stage('Static Code Analysis') {
+            parallel {
+                stage('PMD') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn pmd:pmd'
+                        }
+                    }
+                }
+                stage('SpotBugs') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn spotbugs:spotbugs'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn test -Dmaven.test.failure.ignore=true'
+                }
+            }
+        }
+
+        stage('Mutation Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn pitest:mutationCoverage'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn failsafe:integration-test'
+                }
+            }
+        }
+
+        stage('Generate Reports') {
+            parallel {
+                stage('Tests Reports') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn surefire-report:failsafe-report-only -DreportsDirectory=target/failsafe-reports -DoutputDirectory=target/site'
+                        }
+                    }
+                }
+                stage('Jacoco Report') {
+                    steps {
+                        dir(PROJECT_DIR) {
+                            sh 'mvn jacoco:report'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Packaging') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Verify environment to deploy') {
+            steps {
+                script {
+                        switch (env.GIT_BRANCH) {
+                            case 'origin/dev':
+                                TAG = 'dev'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/top5'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-dev.yml'
+                                SERVER_CONFIG = 'rac_dev'
+                                break
+                            case 'origin/main':
+                                TAG = 'latest'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/top5'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-prod.yml'
+                                SERVER_CONFIG = 'rac_prod'
+                                break
+                            default:
+                                TAG = 'test'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/top5'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-test.yml'
+                                SERVER_CONFIG = 'rac_test'
+                                break
+                        }
+                }
+            }
+        }
+
+        stage('Docker Build and Push') {
+            steps {
+                dir(PROJECT_DIR) {
+                    script {                        
+                        docker.withRegistry('', 'dockerhub') {
+                            def docker_image = docker.build("${REPO}:${TAG}")
+                            docker_image.push("${TAG}")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'env_lms_top5', variable: 'ENV_FILE')]) {
+                        dir(PROJECT_DIR) {
+                            writeFile file: 'MY_ENV_VARS.env', text: readFile(ENV_FILE)
+                            sshPublisher(publishers: [
+                                sshPublisherDesc(
+                                    configName: SERVER_CONFIG,
+                                    transfers: [
+                                        // create the directory for the service if it doesn't exist
+                                        sshTransfer(
+                                            sourceFiles: "",
+                                            remoteDirectory: "",
+                                            execCommand: """
+                                                mkdir -p lms-top5 
+                                            """
+                                        ),
+                                        // Copy the .env file to the server
+                                        sshTransfer(
+                                            remoteDirectory: "./lms-top5",
+                                            sourceFiles: "MY_ENV_VARS.env",
+                                            execCommand: ""
+                                        ),
+                                        // copy the docker-compose file to the server and run it
+                                        sshTransfer(
+                                            sourceFiles: "${DOCKER_COMPOSE_FILE}",
+                                            remoteDirectory: "./lms-top5",
+                                            execCommand: """
+                                                docker stack deploy -c ./lms-top5/${DOCKER_COMPOSE_FILE} top5_stack >> /tmp/top5_deploy.log 2>&1
+                                            """
+                                        ),
+                                        // copy the autoscale script to the server and run it as a cron job
+                                        sshTransfer(
+                                            sourceFiles: "autoscale.sh",
+                                            remoteDirectory: "./lms-top5",
+                                            execCommand: """
+                                                chmod +x ./lms-top5/autoscale.sh 
+
+                                                CRON_JOB="* * * * * ./lms-top5/autoscale.sh >> /tmp/top5_autoscale.log 2>&1"
+
+                                                (crontab -l 2>/dev/null | grep -q "\$CRON_JOB") || {
+                                                    (crontab -l 2>/dev/null; echo "\$CRON_JOB") | crontab -
+                                                }
+
+                                                nohup ./lms-top5/autoscale.sh >>  /tmp/top5_autoscale.log 2>&1 &
+                                            """
+                                        )
+                                    ],
+                                    usePromotionTimestamp: false,
+                                    useWorkspaceInPromotion: false,
+                                )
+                            ])
+                        }
+                    }
+                }
+            }
+        }
+
+        // stage('Smoke Test') {
+        //     steps {
+        //         script {
+        //             // run the smoke test
+        //             sh 'curl -s -o /dev/null -w "%{http_code}" ${DEPLOYED_SERVICE_URL} -m 10'
+        //         }
+        //     }
+        // }
+
+        stage('Send Email') {
+            steps {
+                script{
+                    def committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
+                    emailext (
+                        to: committerEmail,
+                        subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
+                        body: """
+                                    <p>The service has been deployed to the following URL:</p>
+                                    <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
+                                    <p>Please review the deployment and choose an action:</p>
+                                    <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
+                                """,
+                        recipientProviders: [buildUser()] // in case of manual trigger, send email to the user who triggered the build
+                    )
+                }
+            }
+        }
+
+        stage("Wait for Approval") {
+            steps {
+                script {
+                        input(id: 'Proceed', message: 'Do you want to proceed with this build?')
+                }    
+            }  
+        }
+    }
+    
+    post {
+        always {
+            publishHTML([
+              reportName: 'Failsafe Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'failsafe-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'Surefire Report',
+              reportDir: "${PROJECT_DIR}/target/site",
+              reportFiles: 'surefire-report.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'PIT Report',
+              reportDir: "${PROJECT_DIR}/target/pit-reports",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            publishHTML([
+              reportName: 'Jacoco Report',
+              reportDir: "${PROJECT_DIR}/target/site/jacoco",
+              reportFiles: 'index.html',
+              allowMissing: true,
+              keepAll: true,
+              alwaysLinkToLastBuild: true
+            ])
+            
+            junit '**/target/surefire-reports/*.xml'
+            junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+            
+            recordCoverage(tools: [
+                    [parser: 'PIT', pattern: '**/target/pit-reports/**/*'],
+                    [parser: 'JACOCO']
+                ])
+
+            recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [
+                    pmdParser(pattern: '**/target/pmd/**/*'), 
+                    spotBugs(pattern: '**/target/spotbugs/**/*', useRankAsPriority: true)
+                ]
+        }
+    }
+}
