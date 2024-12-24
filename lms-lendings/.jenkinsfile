@@ -175,7 +175,7 @@ pipeline {
                                             sourceFiles: "autoscale.sh",
                                             remoteDirectory: "./lms-lendings",
                                             execCommand: """
-                                                chmod +x autoscale.sh 
+                                                chmod +x ./lms-lendings/autoscale.sh 
 
                                                 CRON_JOB="* * * * * ./lms-lendings/autoscale.sh >> /tmp/lendings_autoscale.log 2>&1"
 
