@@ -105,19 +105,19 @@ pipeline {
                             case 'origin/dev':
                                 TAG = 'dev'
                                 DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
-                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-dev'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-dev.yml'
                                 SERVER_CONFIG = 'rac_dev'
                                 break
                             case 'origin/main':
                                 TAG = 'latest'
                                 DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
-                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-prod'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-prod.yml'
                                 SERVER_CONFIG = 'rac_prod'
                                 break
                             default:
                                 TAG = 'test'
                                 DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/lendings'
-                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-test'
+                                DOCKER_COMPOSE_FILE = 'docker-compose-swarm-test.yml'
                                 SERVER_CONFIG = 'rac_test'
                                 break
                         }
