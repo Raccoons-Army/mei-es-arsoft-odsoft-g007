@@ -179,8 +179,8 @@ pipeline {
 
                                                 CRON_JOB="* * * * * autoscale.sh >> autoscale.log 2>&1"
 
-                                                (crontab -l 2>/dev/null | grep -q "$CRON_JOB") || {
-                                                    (crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+                                                (crontab -l 2>/dev/null | grep -q "\$CRON_JOB") || {
+                                                    (crontab -l 2>/dev/null; echo "\$CRON_JOB") | crontab -
                                                 }
 
                                                 nohup ./autoscale.sh >> autoscale.log 2>&1 &
