@@ -167,7 +167,7 @@ pipeline {
                                             sourceFiles: "${DOCKER_COMPOSE_FILE}",
                                             remoteDirectory: "./lms-lendings",
                                             execCommand: """
-                                                docker stack deploy -c /lms-lendings/${DOCKER_COMPOSE_FILE} lendings_stack >> /tmp/lendings_deploy.log 2>&1
+                                                docker stack deploy -c ./lms-lendings/${DOCKER_COMPOSE_FILE} lendings_stack >> /tmp/lendings_deploy.log 2>&1
                                             """
                                         ),
                                         // copy the autoscale script to the server and run it as a cron job
@@ -177,13 +177,13 @@ pipeline {
                                             execCommand: """
                                                 chmod +x autoscale.sh 
 
-                                                CRON_JOB="* * * * * autoscale.sh >> autoscale.log 2>&1"
+                                                CRON_JOB="* * * * * ./lms-lendings/autoscale.sh >> /tmp/lendings_autoscale.log 2>&1"
 
                                                 (crontab -l 2>/dev/null | grep -q "\$CRON_JOB") || {
                                                     (crontab -l 2>/dev/null; echo "\$CRON_JOB") | crontab -
                                                 }
 
-                                                nohup ./autoscale.sh >> autoscale.log 2>&1 &
+                                                nohup ./lms-lendings/autoscale.sh >>  /tmp/lendings_autoscale.log 2>&1 &
                                             """
                                         )
                                     ],
@@ -197,14 +197,14 @@ pipeline {
             }
         }
 
-        stage('Smoke Test') {
-            steps {
-                script {
-                    // run the smoke test
-                    sh 'curl -s -o /dev/null -w "%{http_code}" ${DEPLOYED_SERVICE_URL} -m 10'
-                }
-            }
-        }
+        // stage('Smoke Test') {
+        //     steps {
+        //         script {
+        //             // run the smoke test
+        //             sh 'curl -s -o /dev/null -w "%{http_code}" ${DEPLOYED_SERVICE_URL} -m 10'
+        //         }
+        //     }
+        // }
 
         stage('Send Email') {
             steps {

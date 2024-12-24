@@ -61,6 +61,7 @@ For a plus, we also publish the HTML of the reports for the old school guys that
 - ...
 - ...
 - ,,,
+All the docker image were published to [here](https://hub.docker.com/repositories/raccoonsarmy)
 
 ##### Running in parallel
 As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4.5 minutes to finish, now it takes around 3.5 minutes. The static code analysis was a big part of the time it took to the pipeline finish, so it was expected to have a better performance after running them in parallel. 
