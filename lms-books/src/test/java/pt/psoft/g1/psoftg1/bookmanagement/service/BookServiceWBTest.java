@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.publishers.BookEventsPublisher;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.*;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
@@ -41,6 +42,8 @@ public class BookServiceWBTest {
     private FactoryGenre factoryGenre;
     @Mock
     private FactoryAuthor factoryAuthor;
+    @Mock
+    private BookEventsPublisher bookEventsPublisher;
 
     @InjectMocks
     private BookServiceImpl bookService;
@@ -56,6 +59,7 @@ public class BookServiceWBTest {
     @Test
     public void testCreateBook_Success() {
         Genre genreMock = mock(Genre.class);
+        Book savedBookMock = mock(Book.class);
 
         when(request.getTitle()).thenReturn("Test Book Title");
         when(request.getGenre()).thenReturn("Fiction");
@@ -64,7 +68,7 @@ public class BookServiceWBTest {
         when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.empty());
         when(genreRepository.findByString(request.getGenre())).thenReturn(Optional.of(genreMock));
 
-        when(bookRepository.save(any(Book.class))).thenReturn(any(Book.class));
+        when(bookRepository.save(any(Book.class))).thenReturn(savedBookMock);
 
         // Act
         bookService.create(request, isbn);

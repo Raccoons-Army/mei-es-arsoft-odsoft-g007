@@ -75,7 +75,7 @@ public class Book {
         this.genre = _factoryGenre.newGenre(name);
     }
 
-    public Author addAuthor(String authorNumber, String name)  {
+    public Author addAuthor(String authorNumber, String name) throws InstantiationException {
         Author author = _factoryAuthor.newAuthor(authorNumber, name);
         this.authors.add(author);
         return author;

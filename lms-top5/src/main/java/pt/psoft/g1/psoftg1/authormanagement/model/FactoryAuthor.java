@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FactoryAuthor {
 
-    public Author newAuthor(String authorNumber, String name) {
+    public Author newAuthor(String authorNumber, String name) throws InstantiationException {
         return new Author(authorNumber, name);
     }
 

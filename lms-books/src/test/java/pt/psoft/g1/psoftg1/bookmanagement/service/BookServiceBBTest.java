@@ -10,6 +10,7 @@ import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.model.FactoryAuthor;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.publishers.BookEventsPublisher;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookServiceImpl;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
@@ -38,6 +39,8 @@ public class BookServiceBBTest {
     private FactoryGenre factoryGenre;
     @Mock
     private FactoryAuthor factoryAuthor;
+    @Mock
+    private BookEventsPublisher bookEventsPublisher;
 
     @InjectMocks
     private BookServiceImpl bookService;
@@ -67,6 +70,7 @@ public class BookServiceBBTest {
         when(genreRepository.findByString(request.getGenre())).thenReturn(Optional.of(genreMock));
         when(authorRepository.findByAuthorNumber("Author One")).thenReturn(Optional.of(authorMock));
         when(authorRepository.findByAuthorNumber("Author Two")).thenReturn(Optional.of(authorMock));
+
 
         // Simulate saving the book to return it after save
         when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
