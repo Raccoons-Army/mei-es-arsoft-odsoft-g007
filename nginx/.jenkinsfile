@@ -47,6 +47,11 @@ pipeline {
                                         """
                                     ),
                                     sshTransfer(
+                                        sourceFiles: "nginx.conf",
+                                        remoteDirectory: "./nginx",
+                                        execCommand: ""
+                                    ),
+                                    sshTransfer(
                                         sourceFiles: "${DOCKER_COMPOSE_FILE}",
                                         remoteDirectory: "./nginx",
                                         execCommand: """

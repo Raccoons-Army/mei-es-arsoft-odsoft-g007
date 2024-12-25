@@ -12,7 +12,7 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - 9080:9080
+      - 9080:80
     networks:
       - lms_network
     volumes:
