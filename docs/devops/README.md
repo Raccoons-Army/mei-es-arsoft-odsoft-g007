@@ -86,8 +86,6 @@ Our enviroments are running on LXD containers on a on-premise server named **rac
 ![Deployment Servers](./assets/deploymentServers.svg)
 
 Each server runs docker swarm TODO ...
-...
-![Other diagram](./assets/otherdiagram.svg)
 
 Pros and cons of this infrastructure:
 - Pros:
@@ -102,4 +100,16 @@ Pros and cons of this infrastructure:
     - single point of failure for the same reason as above
 
 Check the [README](../../serversConfig/README.md) for more information on the servers configuration.
-```
+
+
+### Routing & Load Balancing
+We are using a reverse proxy to route the requests to the correct microservice. We are using Nginx as the reverse proxy and we use the same configuration file for each environment for simplicity.
+We are using docker swarm so by itself it already has a load balancing mechanism. We are using the round-robin strategy to balance the requests between the replicas of the services.
+Extra: we also created a simple pipeline to deploy RabbitMQ and Nginx in the dev, test and prod servers.
+
+![Routing & Load Balacing](./assets/routingAndTraffic.svg)
+
+
+### Auto Scaling TODO
+falar acerca do que faz auto scaling, como esta configurado, etc
+falar sobre q no deployment ativamos o auto scaling e criamos um cron job que corre a cada minuto
