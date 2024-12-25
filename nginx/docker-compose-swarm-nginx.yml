@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:latest
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1  # update 1 instance at a time
+        delay: 2s  # wait 2 seconds between updates
+        order: start-first # start the new task before stopping the old one
+      restart_policy:
+        condition: on-failure
+    ports:
+      - 9080:9080
+    networks:
+      - lms_network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      
+networks:
+  lms_network:
+    driver: overlay
+    attachable: true
+    external: true
