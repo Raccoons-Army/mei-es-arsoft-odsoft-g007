@@ -34,6 +34,9 @@ apt install openssh-server -y
 # install cronjob
 apt-get update && apt-get install -y cron
 
+# start and enable cron
+systemctl enable cron
+
 # install docker ###
 echo "Installing Docker in the LXD container..."
 apt install apt-transport-https ca-certificates curl software-properties-common -y
