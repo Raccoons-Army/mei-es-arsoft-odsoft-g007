@@ -16,6 +16,14 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 @Configuration
 public class RabbitMQClientConfig {
 
+
+    public static final String DB_SYNC_QUEUE = "readers_db_sync_queue";
+
+    @Bean
+    public Queue authDbSyncQueue() {
+        return new Queue(DB_SYNC_QUEUE, false);
+    }
+
     @Bean(name = "readersExchange")
     public DirectExchange direct() {
         return new DirectExchange("LMS.readers");

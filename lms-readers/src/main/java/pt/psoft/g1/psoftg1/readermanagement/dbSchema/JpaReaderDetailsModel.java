@@ -43,7 +43,7 @@ public class JpaReaderDetailsModel extends JpaEntityWithPhotoModel {
     @Version
     private Long version;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> interestList;
 
     public JpaReaderDetailsModel(String readerNumber, String reader, LocalDate birthDate, String phoneNumber,

@@ -11,7 +11,5 @@ import java.util.Set;
 public class UserViewAMQP {
     private Long version;
     private String username;
-    private String password;
-    private String name;
     private Set<String> authorities = new HashSet<>();
 }

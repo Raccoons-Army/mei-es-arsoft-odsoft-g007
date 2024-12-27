@@ -125,4 +125,11 @@ public class UserMongoRepoImpl implements UserRepository {
     public void delete(User user) {
         mt.remove(user);
     }
+
+    @Override
+    public List<User> findAll() {
+        List<MongoUserModel> mongoUsers = mt.findAll(MongoUserModel.class);
+
+        return userMapper.fromMongoUserModel(mongoUsers);
+    }
 }

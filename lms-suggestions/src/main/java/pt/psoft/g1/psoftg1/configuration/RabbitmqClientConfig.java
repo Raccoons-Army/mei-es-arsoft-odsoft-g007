@@ -16,6 +16,14 @@ import pt.psoft.g1.psoftg1.suggestionmanagement.services.SuggestionService;
 @Configuration
 public class RabbitmqClientConfig {
 
+
+    public static final String DB_SYNC_QUEUE = "suggestions_db_sync_queue";
+
+    @Bean
+    public Queue suggestionDbSyncQueue() {
+        return new Queue(DB_SYNC_QUEUE, false);
+    }
+
     // Readers  Exchange
     @Bean(name = "readersExchange")
     public DirectExchange readersExchange() {

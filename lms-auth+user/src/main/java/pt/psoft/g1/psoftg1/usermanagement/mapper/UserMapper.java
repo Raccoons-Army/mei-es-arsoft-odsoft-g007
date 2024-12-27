@@ -6,9 +6,13 @@ import org.mapstruct.Named;
 import pt.psoft.g1.psoftg1.shared.model.Name;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.MongoUserModel;
+import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
+import pt.psoft.g1.psoftg1.usermanagement.services.UserDTO;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
@@ -63,4 +67,39 @@ public abstract class UserMapper {
         return new Name(name);
     }
 
+    // Mapping User to UserDTO
+    public UserDTO toDto(User user) {
+        return new UserDTO(user.getUsername(), user.getName().getName(), mapRolesToStrings(user.getAuthorities()), user.getPassword());
+    }
+
+    // Mapping UserDTO to User
+    public User toEntity(UserDTO userDTO){
+        User user = new User(userDTO.getUsername(), userDTO.getName());
+        user.setPasswordWithoutHashing(userDTO.getPassword());
+        for(String role : userDTO.getRoles()) {
+            user.addAuthority(new Role(role));
+        }
+        return user;
+    }
+
+    // Mapping List<User> to List<UserDTO>
+    public List<UserDTO> toDtoList(List<User> users) {
+        return users.stream()
+                .map(this::toDto) // Map each User to UserDTO
+                .collect(Collectors.toList());
+    }
+
+    // Mapping List<UserDTO> to List<User>
+    public List<User> toEntityList(List<UserDTO> userDTOs) {
+        return userDTOs.stream()
+                .map(this::toEntity) // Map each UserDTO to User
+                .collect(Collectors.toList());
+    }
+
+    // Default method to handle Set<Role> -> Set<String>
+    public Set<String> mapRolesToStrings(Set<Role> roles) {
+        return roles.stream()
+                .map(Role::getAuthority)
+                .collect(Collectors.toSet());
+    }
 }

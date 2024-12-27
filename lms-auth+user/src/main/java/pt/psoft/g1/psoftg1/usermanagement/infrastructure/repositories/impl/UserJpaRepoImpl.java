@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.dbSchema.JpaUserModel;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @RequiredArgsConstructor
 public class UserJpaRepoImpl implements UserRepository {
 
@@ -146,5 +148,15 @@ public class UserJpaRepoImpl implements UserRepository {
             JpaUserModel managedUser = em.merge(jpaUser);  // Merge the detached entity to get it managed
             em.remove(managedUser);  // Then remove it
         }
+    }
+
+    @Override
+    public List<User> findAll() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JpaUserModel> query = cb.createQuery(JpaUserModel.class);
+        query.from(JpaUserModel.class);
+
+        List<JpaUserModel> jpaUsers = em.createQuery(query).getResultList();
+        return userMapper.fromJpaUserModel(jpaUsers);
     }
 }
