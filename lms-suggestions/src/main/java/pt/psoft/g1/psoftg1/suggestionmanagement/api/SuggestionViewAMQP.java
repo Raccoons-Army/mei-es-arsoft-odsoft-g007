@@ -8,7 +8,6 @@ import lombok.Data;
 @Schema(description = "A Suggestion form AMQP communication")
 public class SuggestionViewAMQP {
 
-    @NotNull
     private String suggestionId;
 
     @NotNull

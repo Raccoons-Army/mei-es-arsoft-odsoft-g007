@@ -22,6 +22,8 @@
 
         <!-- automatically run annotation processors within the incremental compilation -->
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <spring-cloud-contract.version>4.1.4</spring-cloud-contract.version>
+        <PACT_FOLDER>./target/pacts</PACT_FOLDER>
     </properties>
 
     <dependencies>

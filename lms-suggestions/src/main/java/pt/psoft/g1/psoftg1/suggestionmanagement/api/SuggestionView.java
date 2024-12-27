@@ -8,7 +8,6 @@ import lombok.Data;
 @Schema(description = "A Suggestion")
 public class SuggestionView {
 
-    @NotNull
     private String suggestionId;
 
     @NotNull

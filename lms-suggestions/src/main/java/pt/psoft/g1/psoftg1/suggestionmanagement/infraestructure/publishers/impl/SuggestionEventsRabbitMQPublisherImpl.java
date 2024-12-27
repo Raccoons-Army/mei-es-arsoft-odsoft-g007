@@ -28,21 +28,21 @@ public class SuggestionEventsRabbitMQPublisherImpl implements SuggestionEventPub
     private final SuggestionViewAMQPMapper suggestionViewAMQPMapper;
 
     @Override
-    public void sendSuggestionCreated(Suggestion suggestion) {
-        sendSuggestionEvent(suggestion, suggestion.getVersion(), SuggestionEvents.SUGGESTION_CREATED);
+    public SuggestionViewAMQP sendSuggestionCreated(Suggestion suggestion) {
+        return sendSuggestionEvent(suggestion, suggestion.getVersion(), SuggestionEvents.SUGGESTION_CREATED);
     }
 
     @Override
-    public void sendSuggestionUpdated(Suggestion suggestion, Long currentVersion) {
-        sendSuggestionEvent(suggestion, currentVersion, SuggestionEvents.SUGGESTION_UPDATED);
+    public SuggestionViewAMQP sendSuggestionUpdated(Suggestion suggestion, Long currentVersion) {
+        return sendSuggestionEvent(suggestion, currentVersion, SuggestionEvents.SUGGESTION_UPDATED);
     }
 
     @Override
-    public void sendSuggestionDeleted(Suggestion suggestion, Long currentVersion) {
-        sendSuggestionEvent(suggestion, currentVersion, SuggestionEvents.SUGGESTION_DELETED);
+    public SuggestionViewAMQP sendSuggestionDeleted(Suggestion suggestion, Long currentVersion) {
+        return sendSuggestionEvent(suggestion, currentVersion, SuggestionEvents.SUGGESTION_DELETED);
     }
 
-    private void sendSuggestionEvent(Suggestion suggestion, long version, String suggestionEventType) {
+    private SuggestionViewAMQP sendSuggestionEvent(Suggestion suggestion, long version, String suggestionEventType) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,8 +54,10 @@ public class SuggestionEventsRabbitMQPublisherImpl implements SuggestionEventPub
             this.template.convertAndSend(direct.getName(), suggestionEventType, jsonString);
 
             System.out.println(" [x] Sent '" + suggestionViewAMQP + "'");
+            return suggestionViewAMQP;
         } catch (Exception ex) {
             System.out.println(" [x] Exception sending suggestion event: '" + ex.getMessage() + "'");
+            return null;
         }
     }
 }

@@ -71,7 +71,7 @@ public class RabbitmqClientConfig {
                                             @Qualifier("autoDeleteQueue_Reader_Created") Queue autoDeleteQueue_Reader_Created) {
             return BindingBuilder.bind(autoDeleteQueue_Reader_Created)
                     .to(readersExchange)
-                    .with(ReaderDetailsEvents.READER_DETAILS_CREATED);
+                    .with(ReaderDetailsEvents.READER_CREATED);
         }
 
         @Bean
@@ -79,7 +79,7 @@ public class RabbitmqClientConfig {
                                             @Qualifier("autoDeleteQueue_Reader_Deleted") Queue autoDeleteQueue_Reader_Deleted) {
             return BindingBuilder.bind(autoDeleteQueue_Reader_Deleted)
                     .to(readersExchange)
-                    .with(ReaderDetailsEvents.READER_DETAILS_DELETED);
+                    .with(ReaderDetailsEvents.READER_DELETED);
         }
 
         // Suggestions Bindings

@@ -15,7 +15,7 @@ import java.util.Map;
 public class ReaderDetailsViewAMQP {
 
     @NotNull
-    private String readerUsername;
+    private String username;
 
     @NotNull
     private String readerNumber;
@@ -37,6 +37,8 @@ public class ReaderDetailsViewAMQP {
 
     @NotNull
     private List<String> interestList;
+
+    private String photo;
 
     @NotNull
     private Long version;

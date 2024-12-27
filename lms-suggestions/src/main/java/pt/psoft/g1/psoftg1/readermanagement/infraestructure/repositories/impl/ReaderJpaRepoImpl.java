@@ -33,7 +33,7 @@ public class ReaderJpaRepoImpl implements ReaderRepository {
     @Override
     public ReaderDetails save(ReaderDetails readerDetails) {
         JpaReaderDetailsModel jpaReaderDetails = readerDetailsMapper.toJpaReaderDetailsModel(readerDetails);
-        em.merge(jpaReaderDetails);
+        em.persist(jpaReaderDetails);
         return readerDetailsMapper.fromJpaReaderDetailsModel(jpaReaderDetails);
     }
 
