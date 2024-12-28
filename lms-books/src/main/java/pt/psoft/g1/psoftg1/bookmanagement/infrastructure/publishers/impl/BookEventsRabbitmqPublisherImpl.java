@@ -19,27 +19,28 @@ public class BookEventsRabbitmqPublisherImpl implements BookEventsPublisher {
 
     @Autowired
     private RabbitTemplate template;
+
     @Autowired
     @Qualifier("booksExchange")
     private DirectExchange direct;
     private final BookViewAMQPMapper bookViewAMQPMapper;
 
     @Override
-    public void sendBookCreated(Book book) {
-        sendBookEvent(book, book.getVersion(), BookEvents.BOOK_CREATED);
+    public BookViewAMQP sendBookCreated(Book book) {
+        return sendBookEvent(book, book.getVersion(), BookEvents.BOOK_CREATED);
     }
 
     @Override
-    public void sendBookUpdated(Book book, Long currentVersion) {
-        sendBookEvent(book, currentVersion, BookEvents.BOOK_UPDATED);
+    public BookViewAMQP sendBookUpdated(Book book, Long currentVersion) {
+        return sendBookEvent(book, currentVersion, BookEvents.BOOK_UPDATED);
     }
 
     @Override
-    public void sendBookDeleted(Book book, Long currentVersion) {
-        sendBookEvent(book, currentVersion, BookEvents.BOOK_DELETED);
+    public BookViewAMQP sendBookDeleted(Book book, Long currentVersion) {
+        return sendBookEvent(book, currentVersion, BookEvents.BOOK_DELETED);
     }
 
-    public void sendBookEvent(Book book, Long currentVersion, String bookEventType) {
+    public BookViewAMQP sendBookEvent(Book book, Long currentVersion, String bookEventType) {
 
         try {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -52,9 +53,12 @@ public class BookEventsRabbitmqPublisherImpl implements BookEventsPublisher {
             this.template.convertAndSend(direct.getName(), bookEventType, jsonString);
 
             System.out.println(" [x] Sent '" + jsonString + "'");
+
+            return bookViewAMQP;
         }
         catch( Exception ex ) {
             System.out.println(" [x] Exception sending book event: '" + ex.getMessage() + "'");
+            return null;
         }
     }
 }

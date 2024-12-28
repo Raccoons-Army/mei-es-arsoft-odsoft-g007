@@ -27,21 +27,21 @@ public class ReaderEventsRabbitMQPublisherImpl implements ReaderEventsPublisher 
     private final ReaderViewAMQPMapper readerViewAMQPMapper;
 
     @Override
-    public void sendReaderCreated(ReaderDetails readerDetails) {
-        sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_CREATED);
+    public ReaderViewAMQP sendReaderCreated(ReaderDetails readerDetails) {
+        return sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_CREATED);
     }
 
     @Override
-    public void sendReaderUpdated(ReaderDetails readerDetails, Long currentVersion) {
-        sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_UPDATED);
+    public ReaderViewAMQP sendReaderUpdated(ReaderDetails readerDetails, Long currentVersion) {
+        return sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_UPDATED);
     }
 
     @Override
-    public void sendReaderDeleted(ReaderDetails readerDetails, Long currentVersion) {
-        sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_DELETED);
+    public ReaderViewAMQP sendReaderDeleted(ReaderDetails readerDetails, Long currentVersion) {
+        return sendReaderEvent(readerDetails, readerDetails.getVersion(), ReaderEvents.READER_DELETED);
     }
 
-    public void sendReaderEvent(ReaderDetails readerDetails, Long currentVersion, String userEventType) {
+    public ReaderViewAMQP sendReaderEvent(ReaderDetails readerDetails, Long currentVersion, String userEventType) {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -54,9 +54,12 @@ public class ReaderEventsRabbitMQPublisherImpl implements ReaderEventsPublisher 
             this.template.convertAndSend(direct.getName(), userEventType, jsonString);
 
             System.out.println(" [x] Sent '" + jsonString + "'");
+
+            return readerViewAMQP;
         }
         catch( Exception ex ) {
             System.out.println(" [x] Exception sending reader event: '" + ex.getMessage() + "'");
+            return null;
         }
     }
 
