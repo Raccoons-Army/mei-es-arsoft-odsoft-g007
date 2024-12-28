@@ -104,19 +104,19 @@ pipeline {
                         switch (env.GIT_BRANCH) {
                             case 'origin/dev':
                                 TAG = 'dev'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/books'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:9080/api/books'
                                 DOCKER_COMPOSE_FILE = 'docker-compose-swarm-dev.yml'
                                 SERVER_CONFIG = 'rac_dev'
                                 break
                             case 'origin/main':
                                 TAG = 'latest'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/books'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:9081/api/books'
                                 DOCKER_COMPOSE_FILE = 'docker-compose-swarm-prod.yml'
                                 SERVER_CONFIG = 'rac_prod'
                                 break
                             default:
                                 TAG = 'test'
-                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:8090/api/books'
+                                DEPLOYED_SERVICE_URL = 'http://raccoonsarmy.ddns.net:9082/api/books'
                                 DOCKER_COMPOSE_FILE = 'docker-compose-swarm-test.yml'
                                 SERVER_CONFIG = 'rac_test'
                                 break
