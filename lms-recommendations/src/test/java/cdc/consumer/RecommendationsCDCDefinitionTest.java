@@ -15,8 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import pt.psoft.g1.psoftg1.suggestionmanagement.api.SuggestionEventRabbitMQReceiver;
-import pt.psoft.g1.psoftg1.suggestionmanagement.services.SuggestionService;
+import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationEventRabbitmqReceiver;
+import pt.psoft.g1.psoftg1.recommendationmanagement.services.RecommendationService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,30 +25,30 @@ import java.util.Map;
 @ExtendWith(PactConsumerTestExt.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE,
-        classes = {SuggestionEventRabbitMQReceiver.class, SuggestionService.class}
+        classes = {RecommendationEventRabbitmqReceiver.class, RecommendationService.class}
 )
 @PactConsumerTest
-@PactTestFor(providerName = "suggestion_event-producer", providerType = ProviderType.ASYNCH, pactVersion = PactSpecVersion.V4)
-public class SuggestionsCDCDefinitionTest {
+@PactTestFor(providerName = "recommendation_event-producer", providerType = ProviderType.ASYNCH, pactVersion = PactSpecVersion.V4)
+public class RecommendationsCDCDefinitionTest {
 
     @MockBean
-    SuggestionService suggestionService;
+    RecommendationService recommendationService;
 
     @Autowired
-    SuggestionEventRabbitMQReceiver listener;
+    RecommendationEventRabbitmqReceiver listener;
 
-    @Pact(consumer = "suggestion_created-consumer")
-    V4Pact createSuggestionCreatedPact(MessagePactBuilder builder) {
+    @Pact(consumer = "recommendation_created-consumer")
+    V4Pact createRecommendationCreatedPact(MessagePactBuilder builder) {
         PactDslJsonBody body = new PactDslJsonBody();
-        body.stringType("isbn", "6475803429671");
+        body.stringType("isbn", "9798669441685");
         body.stringType("readerNumber", "2024/10");
-        body.stringType("createdAt", "17-12-2024");
+        body.booleanType("positive", true);
         body.stringMatcher("version", "[0-9]+", "1");
 
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("Content-Type", "application/json");
 
-        V4Pact pact = builder.expectsToReceive("a suggestion created event")
+        V4Pact pact = builder.expectsToReceive("a recommendation created event")
                 .withMetadata(metadata)
                 .withContent(body)
                 .toPact();
@@ -64,8 +64,8 @@ public class SuggestionsCDCDefinitionTest {
 // Yet, while the body of the tests can be elsewhere, the method signature must be defined here so the contract is generated.
 //
     @Test
-    @PactTestFor(pactMethod = "createSuggestionCreatedPact")
-    void testSuggestionCreated(List<V4Interaction.AsynchronousMessage> messages) throws Exception {
+    @PactTestFor(pactMethod = "createRecommendationCreatedPact")
+    void testRecommendationCreated(List<V4Interaction.AsynchronousMessage> messages) throws Exception {
 //
 //  // Convert the Pact message to a String (JSON payload)
 //    String jsonReceived = messages.get(0).contentsAsString();

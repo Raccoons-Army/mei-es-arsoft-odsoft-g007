@@ -24,8 +24,8 @@ public class RecommendationEventsRabbitmqPublisherImpl implements Recommendation
     private final RecommendationViewAMQPMapper recommendationViewAMQPMapper;
 
     @Override
-    public void sendRecommendationCreated(Recommendation recommendation) {
-        sendRecommendationEvent(recommendation, recommendation.getVersion(), RecommendationEvents.RECOMMENDATION_CREATED);
+    public RecommendationViewAMQP sendRecommendationCreated(Recommendation recommendation) {
+        return sendRecommendationEvent(recommendation, recommendation.getVersion(), RecommendationEvents.RECOMMENDATION_CREATED);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class RecommendationEventsRabbitmqPublisherImpl implements Recommendation
         sendRecommendationEvent(recommendation, currentVersion, RecommendationEvents.RECOMMENDATION_UPDATED);
     }
 
-    private void sendRecommendationEvent(Recommendation recommendation, long version, String recommendationEventType) {
+    private RecommendationViewAMQP sendRecommendationEvent(Recommendation recommendation, long version, String recommendationEventType) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -45,8 +45,12 @@ public class RecommendationEventsRabbitmqPublisherImpl implements Recommendation
             this.template.convertAndSend(direct.getName(), recommendationEventType, jsonString);
 
             System.out.println(" [x] Sent '" + recommendationViewAMQP + "'");
+
+            return recommendationViewAMQP;
+
         } catch (Exception ex) {
             System.out.println(" [x] Exception sending recommendation event: '" + ex.getMessage() + "'");
+            return null;
         }
     }
 }

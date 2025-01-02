@@ -22,6 +22,8 @@
 
         <!-- automatically run annotation processors within the incremental compilation -->
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+        <spring-cloud-contract.version>4.1.4</spring-cloud-contract.version>
+        <PACT_FOLDER>./target/pacts</PACT_FOLDER>
     </properties>
 
     <dependencies>
@@ -123,6 +125,58 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+
+        <!-- Spring Rabbit Test for mocking RabbitMQ components -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.17.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>rabbitmq</artifactId>
+            <version>1.17.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.fridujo</groupId>
+            <artifactId>rabbitmq-mock</artifactId>
+            <version>1.0.14</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- spring cloud contract test dependencies -->
+        <dependency>
+            <groupId>au.com.dius.pact.provider</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+        <dependency>
+            <groupId>au.com.dius.pact.consumer</groupId>
+            <artifactId>junit5</artifactId>
+            <version>4.6.15</version> <!-- Use the latest version -->
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- Dev tools -->
