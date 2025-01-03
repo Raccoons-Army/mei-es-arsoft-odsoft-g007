@@ -1,0 +1,1433 @@
+{
+	"info": {
+		"_postman_id": "a4a2614a-090d-4c3f-8d93-784a9e24efd8",
+		"name": "LMS-Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14152456"
+	},
+	"item": [
+		{
+			"name": "Author",
+			"item": [
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtag\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "ETag",
+										"value": "{{authorEtag}}",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not Found\", function(){\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "ETag",
+										"value": "{{authorEtag}}",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/7",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author wo/ photo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); \r",
+											"\r",
+											"    let authorNumber = pm.response.json().authorNumber;\r",
+											"    pm.environment.set(\"authorNumberCreatedWithoutPhoto\", authorNumber); \r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Irineu Joaquim",
+											"type": "text"
+										},
+										{
+											"key": "bio",
+											"value": "bio do Irineu Joaquim",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Author w/ blank bio",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Bad request\", function(){\r",
+											"    pm.response.to.have.status(400); \r",
+											"});\r",
+											"\r",
+											"pm.test(\"Message and details validation\", function () {\r",
+											"    const jsonData = pm.response.json(); // Parse the JSON response\r",
+											"\r",
+											"    // check if the main message is correct\r",
+											"    pm.expect(jsonData.message).to.eql(\"Method argument validation failed\");\r",
+											"\r",
+											"    // find the detail with field \"bio\" and errorMessage \"size must be between 1 and 4096\"\r",
+											"    const validationError = jsonData.details.find(detail => \r",
+											"        detail.field === \"bio\" && \r",
+											"        detail.errorMessage === \"size must be between 1 and 4096\"\r",
+											"    );\r",
+											"\r",
+											"    // ensure the validation error exists\r",
+											"    pm.expect(validationError).to.not.be.undefined;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Irineu",
+											"type": "text"
+										},
+										{
+											"key": "bio",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Author",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let author = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"authorEtagWithoutPhoto\", author); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{authorEtagWithoutPhoto}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Alexandre Pereiraa\",\r\n    \"bio\":\"Alexandre Pereira é licenciado e mestre em Engenharia Electrotécnica e de Computadores, pelo Instituto Superior Técnico..\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Reader (as Pedro)",
+					"item": [
+						{
+							"name": "Get Author By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/{{authorNumberCreatedWithoutPhoto}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"{{authorNumberCreatedWithoutPhoto}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Author By Id - Author doesnt exist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not found\", function(){\r",
+											"    pm.response.to.have.status(404);    \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors/30",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors",
+										"30"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Authors by Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"    pm.response.to.have.status(200); ",
+											"});",
+											"",
+											"pm.test(\"Items array is not empty\", function () {",
+											"    const jsonData = pm.response.json(); ",
+											"    pm.expect(jsonData.items).to.be.an(\"array\").that.is.not.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors?name=J",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "J"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Authors by Name - empty results",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"    pm.response.to.have.status(200); ",
+											"});",
+											"",
+											"pm.test(\"Items array is empty\", function () {",
+											"    const jsonData = pm.response.json(); ",
+											"    pm.expect(jsonData.items).to.be.an(\"array\").that.is.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/authors?name=z1",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"authors"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "z1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Define the login payload",
+							"const loginPayload = {",
+							"    username: \"maria@gmail.com\",",
+							"    password: \"Mariaroberta!123\"",
+							"};",
+							"",
+							"// Get the host and baseUrl from environment variables",
+							"const host = pm.environment.get(\"host\");",
+							"const baseUrl = pm.environment.get(\"baseUrl\");",
+							"",
+							"// Perform the login request",
+							"pm.sendRequest({",
+							"    url: `${host}${baseUrl}/public/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify(loginPayload)",
+							"    }",
+							"}, function (err, response) {",
+							"    if (err) {",
+							"        console.error(\"Login failed: \", err);",
+							"    } else {",
+							"        // Parse the response to extract the token",
+							"        const responseBody = response.json();",
+							"        const token = response.headers.get(\"Authorization\");",
+							"",
+							"        if (token) {",
+							"            // Save the token to the environment variable",
+							"            pm.environment.set(\"librarianToken\", token);",
+							"            console.log(\"Token saved successfully!\");",
+							"        } else {",
+							"            console.error(\"Token not found in response: \", responseBody);",
+							"        }",
+							"    }",
+							"});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Book",
+			"item": [
+				{
+					"name": "As Reader (as Pedro)",
+					"item": [
+						{
+							"name": "Get Book By ISBN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/9789896379636",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9789896379636"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book By ISBN - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not Found\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/9782722203426",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"9782722203426"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Genre",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?genre=Infantil",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "Infantil"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Genre - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not found\", function(){\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?genre=testt",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "testt"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Title",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?title=Histórias de Vigaristas e Canalhas",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "Histórias de Vigaristas e Canalhas"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Title - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not found\", function(){\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?title=o",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "o"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Books By Author Name - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not Found\", function(){\r",
+											"    pm.response.to.have.status(404); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?authorName=Guaxinim da Silva",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "authorName",
+											"value": "Guaxinim da Silva"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"    pm.response.to.have.status(200); ",
+											"",
+											"});",
+											"",
+											"pm.test(\"Items array is not empty\", function () {",
+											"    const jsonData = pm.response.json(); ",
+											"    pm.expect(jsonData.items).to.be.an(\"array\").that.is.not.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"page\": {\r\n        \"number\" : 1,\r\n        \"limit\" : 10\r\n    },\r\n    \"query\": {\r\n        \"title\" : \"\",\r\n        \"genre\" : \"\",\r\n        \"authorName\" : \"\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/search",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books - empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"    pm.response.to.have.status(200); ",
+											"",
+											"});",
+											"",
+											"pm.test(\"Items array is empty\", function () {",
+											"    const jsonData = pm.response.json(); ",
+											"    pm.expect(jsonData.items).to.be.an(\"array\").that.is.empty;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"page\": {\r\n        \"number\" : 1,\r\n        \"limit\" : 10\r\n    },\r\n    \"query\": {\r\n        \"title\" : \"\",\r\n        \"genre\" : \"\",\r\n        \"authorName\" : \"aaa\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/search",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{readerToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"// Define the login payload",
+									"const loginPayload = {",
+									"    username: \"pedro@gmail.com\",",
+									"    password: \"Pedrodascenas!123\"",
+									"};",
+									"",
+									"// Get the host and baseUrl from environment variables",
+									"const host = pm.environment.get(\"host\");",
+									"const baseUrl = pm.environment.get(\"baseUrl\");",
+									"",
+									"// Perform the login request",
+									"pm.sendRequest({",
+									"    url: `${host}${baseUrl}/public/login`,",
+									"    method: 'POST',",
+									"    header: {",
+									"        'Content-Type': 'application/json'",
+									"    },",
+									"    body: {",
+									"        mode: 'raw',",
+									"        raw: JSON.stringify(loginPayload)",
+									"    }",
+									"}, function (err, response) {",
+									"    if (err) {",
+									"        console.error(\"Login failed: \", err);",
+									"    } else {",
+									"        // Parse the response to extract the token",
+									"        const responseBody = response.json();",
+									"        const token = response.headers.get(\"Authorization\");",
+									"",
+									"        if (token) {",
+									"            // Save the token to the environment variable",
+									"            pm.environment.set(\"librarianToken\", token);",
+									"            console.log(\"Token saved successfully!\");",
+									"        } else {",
+									"            console.error(\"Token not found in response: \", responseBody);",
+									"        }",
+									"    }",
+									"});",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "As Librarian",
+					"item": [
+						{
+							"name": "Create Book",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){",
+											"",
+											"    pm.response.to.have.status(201); ",
+											"",
+											"    let bookEtagCreated = pm.response.headers.get(\"ETag\");",
+											"    pm.environment.set(\"bookEtagCreated\", bookEtagCreated);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generateRandomISBN13() {",
+											"    // Generate the first 12 digits randomly",
+											"    let isbn = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));",
+											"",
+											"    // Calculate the checksum using the ISBN-13 formula",
+											"    let checksum = 0;",
+											"    isbn.forEach((digit, index) => {",
+											"        checksum += digit * (index % 2 === 0 ? 1 : 3);",
+											"    });",
+											"    checksum = (10 - (checksum % 10)) % 10;",
+											"",
+											"    // Add the checksum as the 13th digit",
+											"    isbn.push(checksum);",
+											"",
+											"    return isbn.join('');",
+											"}",
+											"",
+											"// Generate the ISBN",
+											"let randomISBN13 = generateRandomISBN13();",
+											"",
+											"// Save it in an environment variable",
+											"pm.environment.set(\"randomISBN\", randomISBN13);",
+											"",
+											"// Log it for reference",
+											"console.log(\"Generated ISBN-13:\", randomISBN13);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "genre",
+											"value": "Infantil",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "irineu's life",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "how to be irineu",
+											"type": "text"
+										},
+										{
+											"key": "authors[]",
+											"value": "{{authorNumberCreatedWithoutPhoto}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Book",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{bookEtagCreated}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "description ",
+											"value": "olá olá",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Book - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Conflict (?)\", function(){",
+											"    pm.response.to.have.status(409); ",
+											"});",
+											"",
+											"pm.test(\"Error message is correct\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    ",
+											"    const errorDetail = jsonData.details.find(detail => ",
+											"        detail.error === \"Could not update book: Entity Book with id 58925423853ssa not found\"",
+											"    );",
+											"",
+											"    pm.expect(errorDetail).to.not.be.undefined; // ensure the error exists",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{bookEtagCreated}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "description ",
+											"value": "olá olá",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/58925423853ssa",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"58925423853ssa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book by ISBN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(200); \r",
+											"\r",
+											"    let bookEtagCreated = pm.response.headers.get(\"ETag\");\r",
+											"    pm.environment.set(\"bookEtagCreated\", bookEtagCreated); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/{{randomISBN}}",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"{{randomISBN}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Book by ISBN - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"NOt FOund\", function(){\r",
+											"    pm.response.to.have.status(404);  \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books/5495489325843985932",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books",
+										"5495489325843985932"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books By genre",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"OK\", function(){",
+											"",
+											"    pm.response.to.have.status(200); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?genre=Infantil",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "Infantil"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Books By genre - not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Not Found\", function(){",
+											"    pm.response.to.have.status(404); ",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/books?genre=Inf",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"books"
+									],
+									"query": [
+										{
+											"key": "genre",
+											"value": "Inf"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{librarianToken}}",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"// Define the login payload",
+									"const loginPayload = {",
+									"    username: \"maria@gmail.com\",",
+									"    password: \"Mariaroberta!123\"",
+									"};",
+									"",
+									"// Get the host and baseUrl from environment variables",
+									"const host = pm.environment.get(\"host\");",
+									"const baseUrl = pm.environment.get(\"baseUrl\");",
+									"",
+									"// Perform the login request",
+									"pm.sendRequest({",
+									"    url: `${host}${baseUrl}/public/login`,",
+									"    method: 'POST',",
+									"    header: {",
+									"        'Content-Type': 'application/json'",
+									"    },",
+									"    body: {",
+									"        mode: 'raw',",
+									"        raw: JSON.stringify(loginPayload)",
+									"    }",
+									"}, function (err, response) {",
+									"    if (err) {",
+									"        console.error(\"Login failed: \", err);",
+									"    } else {",
+									"        // Parse the response to extract the token",
+									"        const responseBody = response.json();",
+									"        const token = response.headers.get(\"Authorization\");",
+									"",
+									"        if (token) {",
+									"            // Save the token to the environment variable",
+									"            pm.environment.set(\"librarianToken\", token);",
+									"            console.log(\"Token saved successfully!\");",
+									"        } else {",
+									"            console.error(\"Token not found in response: \", responseBody);",
+									"        }",
+									"    }",
+									"});",
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

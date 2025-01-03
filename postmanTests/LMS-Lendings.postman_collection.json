@@ -1,0 +1,652 @@
+{
+	"info": {
+		"_postman_id": "03a3aead-b815-4a53-a18e-78e090da2082",
+		"name": "LMS-Lendings",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14152456"
+	},
+	"item": [
+		{
+			"name": "As Reader (as Pedro)",
+			"item": [
+				{
+					"name": "SetReturned",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ok\", function(){",
+									"    pm.response.to.have.status(200); ",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{readerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "{{lendingEtag}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"commentary\": \"Não gostei\",\r\n    \"positive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/3",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2025",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SetReturned - book already returned",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Bad Request\", function(){",
+									"    pm.response.to.have.status(400); ",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{readerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "{{lendingEtag}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"commentary\": \"Não gostei\",\r\n    \"positive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/3",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2025",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SetReturned - book already returned Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Not Found\", function(){",
+									"    pm.response.to.have.status(404); ",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{readerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "If-Match",
+								"value": "{{lendingEtag}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"commentary\": \"Não gostei\",\r\n    \"positive\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/33232",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2025",
+								"33232"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ReaderGetLending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"    pm.response.to.have.status(200); \r",
+									"\r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/3",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{readerToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Define the login payload",
+							"const loginPayload = {",
+							"    username: \"pedro@gmail.com\",",
+							"    password: \"Pedrodascenas!123\"",
+							"};",
+							"",
+							"// Get the host and baseUrl from environment variables",
+							"const host = pm.environment.get(\"host\");",
+							"const baseUrl = pm.environment.get(\"baseUrl\");",
+							"",
+							"// Perform the login request",
+							"pm.sendRequest({",
+							"    url: `${host}${baseUrl}/public/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify(loginPayload)",
+							"    }",
+							"}, function (err, response) {",
+							"    if (err) {",
+							"        console.error(\"Login failed: \", err);",
+							"    } else {",
+							"        // Parse the response to extract the token",
+							"        const responseBody = response.json();",
+							"        const token = response.headers.get(\"Authorization\");",
+							"",
+							"        if (token) {",
+							"            // Save the token to the environment variable",
+							"            pm.environment.set(\"librarianToken\", token);",
+							"            console.log(\"Token saved successfully!\");",
+							"        } else {",
+							"            console.error(\"Token not found in response: \", responseBody);",
+							"        }",
+							"    }",
+							"});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "As Librarian",
+			"item": [
+				{
+					"name": "Lend Book",
+					"item": [
+						{
+							"name": "Create Lending",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Created\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(201); \r",
+											"\r",
+											"    let lending = pm.response.headers.get(\"ETag\")\r",
+											"    pm.environment.set(\"lendingEtag\", lending); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{librarianToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isbn\": \"9789896378905\",\r\n    \"readerNumber\": \"2025/3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Lending - Reader has 3 lendings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Bad Request\", function(){\r",
+											"\r",
+											"    pm.response.to.have.status(403); \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isbn\": \"9789896378905\",\r\n    \"readerNumber\": \"2025/3\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}{{baseUrl}}/lendings",
+									"host": [
+										"{{host}}{{baseUrl}}"
+									],
+									"path": [
+										"lendings"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetLending - not returned, not over limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/3",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2025",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLending - returned, not over limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/1",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2025",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLending - not returned, overdue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"    \r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/8",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOverdueLendings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"page\":{\r\n        \"number\":\"1\",\r\n        \"limit\":\"5\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/overdue",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"overdue"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data of lending",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJleGFtcGxlLmlvIiwic3ViIjoiNCxtYXJpYUBnbWFpbC5jb20iLCJleHAiOjE3MTU1ODA2OTUsImlhdCI6MTcxNTU0NDY5NSwicm9sZXMiOiJMSUJSQVJJQU4ifQ.YP5r1bc0MIYXTG78vKyevLRvOCrMOeDTFUaQ2bulqb7w_5JTWtyq_psJ2TuF6QxVlfE8ZdTOuptfwm0qzpSGzKMeOtifbh3Rw5FkGhT3S1OwH82RqjRvGVh0hJapKV98-KHrMr7ayKdcRLuFs23Ri1QQqfxSAat1wNUYvGx1VLppd5P4ljaM5vRImfARXuioYri___fc3P7lmX-OVMS3QF1h1QU2L9r5RAkrNjjAOPazJE2Dfdl-pNVAoFgcW8meA_BkkUW2gszMHpPZ-i6R-uGh7wiewDM1xJWoHQplLTNYAY2kJQXGpZz_NT2WEQrNfuhNzUStNjQmr79K_zT3SdI8q_bWHH_TEflYqvFC6zFdLbbwRIko5VQCGQW8qi2jgGcT_nLjKJh6rZ_YE2bTnPyhSC18CKobV_CoemV1UxHjJPQvw8jCYYkwcSs2ZK9LawyTfn_roMfSb5DTpW0vLtPsvsVz9DJurGf1--6uPaRIpCddXgvG0nk73ae3-w8Jk-IenReu1jQh8UnHDqsoiv6Z3jYx_L1rHJOsnLC4DrZLAVcBmJqzQb8RGLBP_m9mIDadz1pe1IXaA0QTYygwySAxMaiTBBXpwFz6jzfoBOIDrXp17XdvoHpUWBHZ_DQxDLBmrfngi9u5d-c3T3t3RueQoi4_nz-0--9Mo8l0k9c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/1",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{librarianToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Define the login payload",
+							"const loginPayload = {",
+							"    username: \"maria@gmail.com\",",
+							"    password: \"Mariaroberta!123\"",
+							"};",
+							"",
+							"// Get the host and baseUrl from environment variables",
+							"const host = pm.environment.get(\"host\");",
+							"const baseUrl = pm.environment.get(\"baseUrl\");",
+							"",
+							"// Perform the login request",
+							"pm.sendRequest({",
+							"    url: `${host}${baseUrl}/public/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify(loginPayload)",
+							"    }",
+							"}, function (err, response) {",
+							"    if (err) {",
+							"        console.error(\"Login failed: \", err);",
+							"    } else {",
+							"        // Parse the response to extract the token",
+							"        const responseBody = response.json();",
+							"        const token = response.headers.get(\"Authorization\");",
+							"",
+							"        if (token) {",
+							"            // Save the token to the environment variable",
+							"            pm.environment.set(\"librarianToken\", token);",
+							"            console.log(\"Token saved successfully!\");",
+							"        } else {",
+							"            console.error(\"Token not found in response: \", responseBody);",
+							"        }",
+							"    }",
+							"});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "aa246049-ceb2-42ff-8ca4-6d6716d4777b",
+		"name": "LMS-Suggestions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14152456"
+	},
+	"item": [
+		{
+			"name": "As Reader (as Pedro)",
+			"item": [
+				{
+					"name": "Create Suggestion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){",
+									"    pm.response.to.have.status(201); ",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{readerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isbn\": \"9780306406157\",\n    \"readerNumber\": \"2025/3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/suggestions",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Suggestion - already exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Conflict\", function(){",
+									"    pm.response.to.have.status(409); ",
+									"});",
+									"",
+									"pm.test(\"Message and error validation\", function () {",
+									"    const jsonData = pm.response.json(); // Parse the JSON response",
+									"",
+									"    // check if the main message is correct",
+									"    pm.expect(jsonData.message).to.eql(\"Conflict\");",
+									"",
+									"    // find the detail with the specific error message",
+									"    const specificError = jsonData.details.find(detail => ",
+									"        detail.error === \"Suggestion for Book with ISBN 9780306406157 already exists\"",
+									"    );",
+									"",
+									"    // ensure the specific error exists",
+									"    pm.expect(specificError).to.not.be.undefined;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{readerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"isbn\": \"9780306406157\",\n    \"readerNumber\": \"2025/3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/suggestions",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Define the login payload",
+							"const loginPayload = {",
+							"    username: \"pedro@gmail.com\",",
+							"    password: \"Pedrodascenas!123\"",
+							"};",
+							"",
+							"// Get the host and baseUrl from environment variables",
+							"const host = pm.environment.get(\"host\");",
+							"const baseUrl = pm.environment.get(\"baseUrl\");",
+							"",
+							"// Perform the login request",
+							"pm.sendRequest({",
+							"    url: `${host}${baseUrl}/public/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify(loginPayload)",
+							"    }",
+							"}, function (err, response) {",
+							"    if (err) {",
+							"        console.error(\"Login failed: \", err);",
+							"    } else {",
+							"        // Parse the response to extract the token",
+							"        const responseBody = response.json();",
+							"        const token = response.headers.get(\"Authorization\");",
+							"",
+							"        if (token) {",
+							"            // Save the token to the environment variable",
+							"            pm.environment.set(\"librarianToken\", token);",
+							"            console.log(\"Token saved successfully!\");",
+							"        } else {",
+							"            console.error(\"Token not found in response: \", responseBody);",
+							"        }",
+							"    }",
+							"});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
