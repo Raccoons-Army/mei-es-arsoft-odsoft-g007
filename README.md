@@ -4,18 +4,24 @@
 - [`lms/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms) contains the Library Management REST API and all its documentation.
 - [`docs/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs) has:
   - [`baseProject/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs/baseProject) where there's all the documentation made by the students that developed the API
-  - [`SystemAnalysisAndDesign/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs/SystemAnalysis) where there's all the documentation made by us. Contains the Logic Views, Implementation Views, Physical Views and Process Views from the SAI (system-as-is) and STB (system-to-be)
+  - [`refactoring1/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs/SystemAnalysis) where there's all the documentation made by us. Contains the Logic Views, Implementation Views, Physical Views and Process Views from the SAI (system-as-is) and STB (system-to-be)
 
 # Index
 - [SAI (system-as-is)](#sai-system-as-is)
     - [Logic View](#logic-view)
     - [Implementation View](#implementation-view)
-- [STB (system-to-be)](#stb-system-to-be)
+- [STB (system-to-be) [Part 1]](#stb-system-to-be)
     - [Logic View](#logic-view-1)
     - [Implementation View](#implementation-view-1)
     - [Physical View](#physical-view)
     - [Recommendation feature](#recommendation-feature)
     - [OAuth IAM - Google and Facebook](#oauth-iam---google-and-facebook)
+- [STB (system-to-be) [Part 2]](#stb-system-to-be)
+    - [Logic View](#logic-view-1)
+    - [Implementation View](#implementation-view-1)
+    - [Physical View](#physical-view)
+    - [Recommendations feature](#recommendations-feature)
+    - [Suggestions feature](#suggestions-feature)
 - [ASR](#asr)
 - [Architectural design alternatives and rational](#architectural-design-alternatives-and-rational)
 
@@ -26,56 +32,92 @@ The way the system was presented to use at the begining of the project.
 ### Logic View
 
 #### Logic View Level 1
-![SAI_Logic_View_L1](docs/SystemAnalysisAndDesign/logicViews/SAIVLN1.svg)
+![SAI_Logic_View_L1](docs/refactoring1/logicViews/SAIVLN1.svg)
 
 #### Logic View Level 2
-![SAI_Logic_View_L2](docs/SystemAnalysisAndDesign/logicViews/SAIVLN2.svg)
+![SAI_Logic_View_L2](docs/refactoring1/logicViews/SAIVLN2.svg)
 
 #### Logic View Level 3
-![SAI_Logic_View_L3](docs/SystemAnalysisAndDesign/logicViews/SAIVLN3.svg)
+![SAI_Logic_View_L3](docs/refactoring1/logicViews/SAIVLN3.svg)
 
 ### Implementation View
 
 #### Implementation View Level 2
-![SAI_Implementation_View_L2](docs/SystemAnalysisAndDesign/implementationViews/SAIVIN2.svg)
+![SAI_Implementation_View_L2](docs/refactoring1/implementationViews/SAIVIN2.svg)
 
 #### Implementation View Level 3
-![SAI_Implementation_View_L3](docs/SystemAnalysisAndDesign/implementationViews/SAIVIN3.svg)
+![SAI_Implementation_View_L3](docs/refactoring1/implementationViews/SAIVIN3.svg)
 
+<br>  
 
-
-## STB (system-to-be)
-The way we've change the system to the point that it is now.
+## STB (system-to-be) [Part 1]
+The way we've change the system to the point that it is now (sprint 1 03/11/2024).
 
 ### Logic View
 
 #### Logic View Level 1
-![STB_Logic_View_L1](docs/SystemAnalysisAndDesign/logicViews/STBVLN1.svg)
+![STB_Logic_View_L1](docs/refactoring1/logicViews/STBVLN1.svg)
 
 #### Logic View Level 2
-![STB_Logic_View_L2](docs/SystemAnalysisAndDesign/logicViews/STBVLN2.svg)
+![STB_Logic_View_L2](docs/refactoring1/logicViews/STBVLN2.svg)
 
 #### Logic View Level 3
-![STB_Logic_View_L3](docs/SystemAnalysisAndDesign/logicViews/STBVLN3.svg)
+![STB_Logic_View_L3](docs/refactoring1/logicViews/STBVLN3.svg)
 
 ### Implementation View
 
 #### Implementation View Level 2
-![STB_Implementation_View_L2](docs/SystemAnalysisAndDesign/implementationViews/STBVIN2.svg)
+![STB_Implementation_View_L2](docs/refactoring1/implementationViews/STBVIN2.svg)
 
 #### Implementation View Level 3
-![STB_Implementation_View_L3](docs/SystemAnalysisAndDesign/implementationViews/STBVIN3.svg)
+![STB_Implementation_View_L3](docs/refactoring1/implementationViews/STBVIN3.svg)
 
 ### Physical View
 
 #### Physical View Level 2
-![STB_Physical_View_L1](docs/SystemAnalysisAndDesign/physicalViews/STBVFN2.svg)
+![STB_Physical_View_L1](docs/refactoring1/physicalViews/STBVFN2.svg)
 
 ### Recommendation feature
-![STB_Physical_View_L1](docs/SystemAnalysisAndDesign/sequenceDiagrams/recommendation_SD_N2.svg)
+![STB_Physical_View_L1](docs/refactoring1/sequenceDiagrams/recommendation_SD_N2.svg)
 
 ### OAuth IAM - Google and Facebook
-![STB_Physical_View_L1](docs/SystemAnalysisAndDesign/sequenceDiagrams/loginIAM_SD_STB.svg)
+![STB_Physical_View_L1](docs/refactoring1/sequenceDiagrams/loginIAM_SD_STB.svg)
+
+<br>
+
+## STB (system-to-be) [Part 2]
+The way we've change the system to the point that it is now (sprint 2 05/01/2025). Microservices! :D
+
+### Logic View
+
+#### Logic View Level 1
+![MS_Logic_View_L1](docs/refactoring2/logicViews/lvl1.svg)
+
+#### Logic View Level 2
+![MS_Logic_View_L2](docs/refactoring2/logicViews/lvl2.svg)
+
+#### Logic View Level 3 (Lendings microservice)
+![MS_Logic_View_L3](docs/refactoring2/logicViews/lvl3.svg)
+
+### Implementation View
+
+#### Implementation View Level 2
+![MS_Implementation_View_L2](docs/refactoring2/implementationViews/lvl2.svg)
+
+#### Implementation View Level 3
+![MS_Implementation_View_L3](docs/refactoring2/implementationViews/lvl3.svg)
+
+### Physical View
+
+#### Physical View Level 2
+![MS_Physical_View_L1](docs/refactoring2/physicalViews/lvl2.svg)
+
+### Recommendations feature
+
+### Suggestions feature
+
+
+<br>
 
 ## ASR
 
