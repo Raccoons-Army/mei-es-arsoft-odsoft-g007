@@ -10,13 +10,13 @@
 - [SAI (system-as-is)](#sai-system-as-is)
     - [Logic View](#logic-view)
     - [Implementation View](#implementation-view)
-- [STB (system-to-be) [Part 1]](#stb-system-to-be)
+- [STB (system-to-be) [Part 1]](#stb-system-to-be-part-1)
     - [Logic View](#logic-view-1)
     - [Implementation View](#implementation-view-1)
     - [Physical View](#physical-view)
     - [Recommendation feature](#recommendation-feature)
     - [OAuth IAM - Google and Facebook](#oauth-iam---google-and-facebook)
-- [STB (system-to-be) [Part 2]](#stb-system-to-be)
+- [STB (system-to-be) [Part 2]](#stb-system-to-be-part-2)
     - [Logic View](#logic-view-1)
     - [Implementation View](#implementation-view-1)
     - [Physical View](#physical-view)
@@ -110,7 +110,9 @@ The way we've change the system to the point that it is now (sprint 2 05/01/2025
 ### Physical View
 
 #### Physical View Level 2
-![MS_Physical_View_L1](docs/refactoring2/physicalViews/lvl2.svg)
+![MS_Physical_View_L2](docs/refactoring2/physicalViews/lvl2.svg)
+##### Inside the Dev-server, Test-server and Prod-server:
+![MS_Physical_View_L2](docs/refactoring2/physicalViews/lvl2_1.svg)
 
 ### Recommendations feature
 
