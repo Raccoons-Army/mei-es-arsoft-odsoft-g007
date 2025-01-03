@@ -91,7 +91,7 @@ public class AuthorJpaRepoImpl implements AuthorRepository {
     public Author save(Author author) {
         JpaAuthorModel jpaAuthor = authorMapper.toJpaAuthor(author);
 
-        if (author.getPk() != null) {
+        if (author.getAuthorNumber() != null) {
             // Update existing entity
             em.merge(jpaAuthor);
         } else {

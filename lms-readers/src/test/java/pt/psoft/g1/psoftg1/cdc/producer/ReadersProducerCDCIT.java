@@ -26,6 +26,7 @@ import pt.psoft.g1.psoftg1.publishers.ReaderEventsPublisher;
 import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQP;
 import pt.psoft.g1.psoftg1.readermanagement.infraestructure.publishers.impl.ReaderEventsRabbitMQPublisherImpl;
 import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderViewAMQPMapper;
+import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderViewAMQPMapperImpl;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 
@@ -36,7 +37,7 @@ import java.util.List;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE
-        ,classes = {ReaderEventsRabbitMQPublisherImpl.class, ReaderService.class}
+        ,classes = {ReaderEventsRabbitMQPublisherImpl.class, ReaderService.class, ReaderViewAMQPMapperImpl.class}
         , properties = {
         "stubrunner.amqp.mockConnection=true",
         "spring.profiles.active=test"
@@ -51,6 +52,9 @@ public class ReadersProducerCDCIT {
 
         @Autowired
         ReaderEventsPublisher readerEventsPublisher;
+
+        @Autowired
+        ReaderViewAMQPMapperImpl readerViewAMQPMapper;
 
         @MockBean
         RabbitTemplate template;
@@ -70,24 +74,26 @@ public class ReadersProducerCDCIT {
             context.setTarget(new MessageTestTarget());
         }
 
-        @PactVerifyProvider("a reader created event")
-        public MessageAndMetadata readerCreated() throws JsonProcessingException {
-            List<String> interestList = new ArrayList<>();
-            interestList.add("Fantasia");
-            interestList.add("Infantil");
+    @PactVerifyProvider("a reader created event")
+    public MessageAndMetadata readerCreated() throws JsonProcessingException {
+        List<String> interestList = new ArrayList<>();
+        interestList.add("Fantasia");
+        interestList.add("Infantil");
 
-            ReaderDetails readerDetails = new ReaderDetails("2024/10",
-                    "17-12-2001", "915367890", true, true,
-                    true, "photo", "pedro@gmail.com", interestList);
+        System.err.println("IM COOKED");
+        ReaderDetails readerDetails = new ReaderDetails("2024/10",
+                "2001-12-17", "915367890", true, true,
+                true, "photo", "pedro@gmail.com", interestList);
 
-            ReaderViewAMQP readerViewAMQP = readerEventsPublisher.sendReaderCreated(readerDetails);
+        ReaderViewAMQP readerViewAMQP = readerEventsPublisher.sendReaderCreated(readerDetails);
 
-            Message<String> message = new ReadersMessageBuilder().withReader(readerViewAMQP).build();
+        Message<String> message = new ReadersMessageBuilder().withReader(readerViewAMQP).build();
 
-            return generateMessageAndMetadata(message);
-        }
+        return generateMessageAndMetadata(message);
+    }
 
-        private MessageAndMetadata generateMessageAndMetadata(Message<String> message) {
+
+    private MessageAndMetadata generateMessageAndMetadata(Message<String> message) {
             HashMap<String, Object> metadata = new HashMap<String, Object>();
             message.getHeaders().forEach((k, v) -> metadata.put(k, v));
 

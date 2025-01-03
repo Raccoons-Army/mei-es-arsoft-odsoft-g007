@@ -43,7 +43,7 @@ public class JpaUserModel implements Serializable {
     @NotBlank
     private String username;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "USER_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_USER_ID"))
     private final Set<Role> authorities = new HashSet<>();
 

@@ -33,10 +33,6 @@ public class Author extends EntityWithPhoto {
         return version;
     }
 
-    public String getPk() {
-        return authorNumber;
-    }
-
     public Author(String authorNumber, String name, String bio, String photoURI) {
         this.authorNumber = authorNumber;
         setName(name);
