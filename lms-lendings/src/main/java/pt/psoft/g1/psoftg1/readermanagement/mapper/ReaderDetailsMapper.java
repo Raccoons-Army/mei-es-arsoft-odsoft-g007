@@ -5,9 +5,15 @@ import org.mapstruct.Mapping;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderDTO;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
+import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
+import pt.psoft.g1.psoftg1.usermanagement.model.Role;
+import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ReaderMapper.class})
 public abstract class ReaderDetailsMapper {
@@ -33,4 +39,20 @@ public abstract class ReaderDetailsMapper {
     @Mapping(target = "version", source = "version")
     public abstract ReaderDetails fromMongoReaderDetailsModel(MongoReaderDetailsModel mongoReaderDetailsModel);
     public abstract List<ReaderDetails> fromMongoReaderDetailsModel(List<MongoReaderDetailsModel> mongoReaderDetailsModel);
+
+    // Custom mapping method
+    ReaderNumber map(String value) {
+        return value == null ? null : new ReaderNumber(value);
+    }
+
+    public ReaderDTO toDto(ReaderDetails readerDetails) {
+        return new ReaderDTO(readerDetails.getReader().getUsername(), readerDetails.getReaderNumber());
+    }
+
+    // Mapping List<User> to List<UserDTO>
+    public List<ReaderDTO> toDtoList(List<ReaderDetails> readerDetails) {
+        return readerDetails.stream()
+                .map(this::toDto) // Map each User to UserDTO
+                .collect(Collectors.toList());
+    }
 }

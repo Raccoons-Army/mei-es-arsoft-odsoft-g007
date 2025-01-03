@@ -24,6 +24,20 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 @Configuration
 public class RabbitmqClientConfig {
 
+    public static final String LENDING_DB_SYNC_QUEUE = "lendings_db_sync_queue";
+
+    public static final String READER_DB_SYNC_QUEUE = "readers_db_sync_queue";
+
+    @Bean
+    public Queue lendingDbSyncQueue() {
+        return new Queue(LENDING_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue readerDbSyncQueue() {
+        return new Queue(READER_DB_SYNC_QUEUE, false);
+    }
+
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

@@ -25,6 +25,7 @@ import org.springframework.messaging.Message;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQPMapper;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQPMapperImpl;
 import pt.psoft.g1.psoftg1.bookmanagement.infrastructure.publishers.impl.BookEventsRabbitmqPublisherImpl;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.publishers.BookEventsPublisher;
@@ -38,7 +39,7 @@ import java.util.List;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.NONE
-        ,classes = {BookEventsRabbitmqPublisherImpl.class, BookService.class}
+        ,classes = {BookEventsRabbitmqPublisherImpl.class, BookService.class, BookViewAMQPMapperImpl.class}
         , properties = {
         "stubrunner.amqp.mockConnection=true",
         "spring.profiles.active=test"
@@ -52,6 +53,9 @@ public class BooksProducerCDCIT {
 
         @Autowired
         BookEventsPublisher bookEventsPublisher;
+
+        @Autowired
+        BookViewAMQPMapperImpl bookViewAMQPMapper;
 
         @MockBean
         RabbitTemplate template;

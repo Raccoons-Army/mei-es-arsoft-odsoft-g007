@@ -22,6 +22,34 @@ import pt.psoft.g1.psoftg1.suggestedbookmanagement.service.SuggestedBookService;
 @Configuration
 public class RabbitmqClientConfig {
 
+    public static final String BOOK_DB_SYNC_QUEUE = "books_db_sync_queue";
+
+    public static final String AUTHOR_DB_SYNC_QUEUE = "authors_db_sync_queue";
+
+    public static final String GENRE_DB_SYNC_QUEUE = "genres_db_sync_queue";
+
+    public static final String SUGGESTED_DB_SYNC_QUEUE = "suggestedBooks_db_sync_queue";
+
+    @Bean
+    public Queue bookDbSyncQueue() {
+        return new Queue(BOOK_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue authorDbSyncQueue() {
+        return new Queue(AUTHOR_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue genreDbSyncQueue() {
+        return new Queue(GENRE_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue suggestedDbSyncQueue() {
+        return new Queue(SUGGESTED_DB_SYNC_QUEUE, false);
+    }
+
     @Bean(name = "booksExchange")
     public DirectExchange direct() {
         return new DirectExchange("LMS.books");

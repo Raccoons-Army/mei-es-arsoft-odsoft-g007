@@ -19,6 +19,27 @@ import pt.psoft.g1.psoftg1.shared.model.RecommendationEvents;
 @Configuration
 public class RabbitmqClientConfig {
 
+    public static final String RECOMMENDATION_DB_SYNC_QUEUE = "recommendations_db_sync_queue";
+
+    public static final String BOOK_DB_SYNC_QUEUE = "books_db_sync_queue";
+
+    public static final String READER_DB_SYNC_QUEUE = "readers_db_sync_queue";
+
+    @Bean
+    public Queue recommendationDbSyncQueue() {
+        return new Queue(RECOMMENDATION_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue bookDbSyncQueue() {
+        return new Queue(BOOK_DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue readerDbSyncQueue() {
+        return new Queue(READER_DB_SYNC_QUEUE, false);
+    }
+
     @Bean(name = "booksExchange")
     public DirectExchange direct() {
         return new DirectExchange("LMS.books");
