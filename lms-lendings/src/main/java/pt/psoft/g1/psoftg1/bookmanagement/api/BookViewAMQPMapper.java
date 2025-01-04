@@ -12,8 +12,11 @@ public abstract class BookViewAMQPMapper extends MapperInterface {
 
     @Mapping(target = "isbn", source = "isbn")
     @Mapping(target = "version", source = "version")
-
     public abstract BookViewAMQP toBookViewAMQP(Book book);
-
     public abstract List<BookViewAMQP> toBookViewAMQP(List<Book> bookList);
+
+    @Mapping(target = "isbn", source = "isbn")
+    @Mapping(target = "version", source = "version")
+    public abstract Book toBook(BookViewAMQP bookViewAMQP);
+    public abstract List<Book> toBook(List<BookViewAMQP> bookViewAMQPList);
 }

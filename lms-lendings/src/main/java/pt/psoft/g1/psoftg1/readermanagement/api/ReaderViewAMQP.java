@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.readermanagement.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @Schema(description = "A Reader Details form AMQP communication")
 public class ReaderViewAMQP {

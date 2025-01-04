@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQPMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.configuration.RabbitmqClientConfig;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQP;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQP;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQPMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderDTO;
@@ -49,12 +53,19 @@ public class DatabaseSyncClient {
     @Autowired
     private FactoryUser factoryUser;
 
+    @Autowired
+    private ReaderViewAMQPMapper readerViewAMQPMapper;
+    @Autowired
+    private BookViewAMQPMapper bookViewAMQPMapper;
+
     public void syncDatabase() {
         try {
             // Send RPC request to the queue
             String response = (String) rabbitTemplate.convertSendAndReceive(RabbitmqClientConfig.LENDING_DB_SYNC_QUEUE, "SYNC_REQUEST");
 
             String responseReaders = (String) rabbitTemplate.convertSendAndReceive(RabbitmqClientConfig.READER_DB_SYNC_QUEUE, "SYNC_REQUEST");
+
+            String responseBooks = (String) rabbitTemplate.convertSendAndReceive(RabbitmqClientConfig.BOOK_DB_SYNC_QUEUE, "SYNC_REQUEST");
 
             // Handle the case where no other instance responds
             if (response == null) {
@@ -72,17 +83,29 @@ public class DatabaseSyncClient {
                         new TypeReference<>() {}
                 );
 
-                List<ReaderDTO> readersList = objectMapper.readValue(
+                List<ReaderViewAMQP> readersAmqp = objectMapper.readValue(
                         responseReaders,
                         new TypeReference<>() {}
                 );
 
-                for(ReaderDTO readerDTO : readersList) {
-                    Optional<ReaderDetails> readerDetailsExists = readerRepository.findByReaderNumber(readerDTO.getReaderNumber());
+                List<BookViewAMQP> booksAmqp = objectMapper.readValue(
+                        responseBooks,
+                        new TypeReference<>() {}
+                );
+
+                List<ReaderDetails> readersList = readerViewAMQPMapper.toReaderDetails(readersAmqp);
+                for(ReaderDetails reader : readersList) {
+                    Optional<ReaderDetails> readerDetailsExists = readerRepository.findByReaderNumber(reader.getReaderNumber());
                     if(readerDetailsExists.isEmpty()) {
-                        ReaderDetails reader = new ReaderDetails(readerDTO.getReaderNumber(), factoryUser);
-                        reader.defineReader(readerDTO.getUsername());
                         readerRepository.save(reader);
+                    }
+                }
+
+                List<Book> booksList = bookViewAMQPMapper.toBook(booksAmqp);
+                for(Book book : booksList) {
+                    Optional<Book> bookExists = bookRepository.findByIsbn(book.getIsbn());
+                    if(bookExists.isEmpty()) {
+                        bookRepository.save(book);
                     }
                 }
 
@@ -102,7 +125,7 @@ public class DatabaseSyncClient {
                             book = bookExists.get();
                         }
 
-                        ReaderDetails readerDetails = new ReaderDetails();
+                        ReaderDetails readerDetails = null;
                         if(readerDetailsExists.isPresent()) {
                             readerDetails = readerDetailsExists.get();
                         }

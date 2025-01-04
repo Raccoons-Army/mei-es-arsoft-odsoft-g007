@@ -44,15 +44,4 @@ public abstract class ReaderDetailsMapper {
     ReaderNumber map(String value) {
         return value == null ? null : new ReaderNumber(value);
     }
-
-    public ReaderDTO toDto(ReaderDetails readerDetails) {
-        return new ReaderDTO(readerDetails.getReader().getUsername(), readerDetails.getReaderNumber());
-    }
-
-    // Mapping List<User> to List<UserDTO>
-    public List<ReaderDTO> toDtoList(List<ReaderDetails> readerDetails) {
-        return readerDetails.stream()
-                .map(this::toDto) // Map each User to UserDTO
-                .collect(Collectors.toList());
-    }
 }

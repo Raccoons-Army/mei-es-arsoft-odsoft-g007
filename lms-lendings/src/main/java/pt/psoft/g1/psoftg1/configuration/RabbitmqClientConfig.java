@@ -25,8 +25,8 @@ import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 public class RabbitmqClientConfig {
 
     public static final String LENDING_DB_SYNC_QUEUE = "lendings_db_sync_queue";
-
     public static final String READER_DB_SYNC_QUEUE = "readers_db_sync_queue";
+    public static final String BOOK_DB_SYNC_QUEUE = "books_db_sync_queue";
 
     @Bean
     public Queue lendingDbSyncQueue() {

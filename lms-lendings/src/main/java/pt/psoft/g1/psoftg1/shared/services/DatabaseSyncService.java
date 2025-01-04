@@ -50,22 +50,5 @@ public class DatabaseSyncService {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
         }
     }
-
-    @RabbitListener(queues = RabbitmqClientConfig.READER_DB_SYNC_QUEUE)
-    public String handleReaderDatabaseSyncRequest(String request) {
-        try {
-            // Fetch all data from the database
-            List<ReaderDetails> allData = readerRepository.findAll();
-
-            List<ReaderDTO> dtoList = readerDetailsMapper.toDtoList(allData);
-
-            // Convert the DTOs to JSON for transfer
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(dtoList);
-
-        } catch (Exception e) {
-            return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
-        }
-    }
 }
 
