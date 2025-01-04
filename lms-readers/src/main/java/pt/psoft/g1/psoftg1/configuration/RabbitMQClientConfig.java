@@ -18,10 +18,16 @@ public class RabbitMQClientConfig {
 
 
     public static final String DB_SYNC_QUEUE = "readers_db_sync_queue";
+    public static final String DB_USERS_SYNC_QUEUE = "auth_db_sync_queue";
 
     @Bean
-    public Queue authDbSyncQueue() {
+    public Queue readersDbSyncQueue() {
         return new Queue(DB_SYNC_QUEUE, false);
+    }
+
+    @Bean
+    public Queue usersDbSyncQueue() {
+        return new Queue(DB_USERS_SYNC_QUEUE, false);
     }
 
     @Bean(name = "readersExchange")

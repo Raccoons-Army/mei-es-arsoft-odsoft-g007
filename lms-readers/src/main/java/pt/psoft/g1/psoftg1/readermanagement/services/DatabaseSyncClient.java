@@ -13,6 +13,8 @@ import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQP;
 import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderViewAMQPMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserViewAMQP;
+import pt.psoft.g1.psoftg1.usermanagement.api.UserViewAMQPMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
@@ -36,12 +38,15 @@ public class DatabaseSyncClient {
 
     @Autowired
     private ReaderViewAMQPMapper readerViewAMQPMapper;
+    @Autowired
+    private UserViewAMQPMapper userViewAMQPMapper;
 
     @Transactional
     public void syncDatabase() {
         try {
             // Send RPC request to the queue
             String response = (String) rabbitTemplate.convertSendAndReceive(RabbitMQClientConfig.DB_SYNC_QUEUE, "SYNC_REQUEST");
+            String responseUsers = (String) rabbitTemplate.convertSendAndReceive(RabbitMQClientConfig.DB_USERS_SYNC_QUEUE, "SYNC_REQUEST");
 
             // Handle the case where no other instance responds
             if (response == null) {
@@ -54,13 +59,27 @@ public class DatabaseSyncClient {
                 ObjectMapper objectMapper = new ObjectMapper();
 
                 // Deserialize the response into a list of Users
+                List<UserViewAMQP> usersAMQPList = objectMapper.readValue(
+                        response,
+                        new TypeReference<>() {}
+                );
+
+
+                // Deserialize the response into a list of Readers
                 List<ReaderViewAMQP> readersAMQPList = objectMapper.readValue(
                         response,
                         new TypeReference<>() {}
                 );
 
-                List<ReaderDetails> readersList = readerViewAMQPMapper.toReaderDetails(readersAMQPList);
+                List<User> usersList = userViewAMQPMapper.toUser(usersAMQPList);
+                for (User user : usersList) {
+                    Optional<User> userExists = userRepository.findByUsername(user.getUsername());
+                    if(userExists.isEmpty()) {
+                        userRepository.save(user);
+                    }
+                }
 
+                List<ReaderDetails> readersList = readerViewAMQPMapper.toReaderDetails(readersAMQPList);
                 // Save data to the new instance's H2 database
                 for (ReaderDetails readerDetails : readersList) {
                     Optional<ReaderDetails> readerExists = readerRepository.findByReaderNumber(readerDetails.getReaderNumber());

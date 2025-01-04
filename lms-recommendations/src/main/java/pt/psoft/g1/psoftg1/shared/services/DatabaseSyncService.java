@@ -25,12 +25,6 @@ public class DatabaseSyncService {
     private RecommendationRepository recommendationRepository;
 
     @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private ReaderRepository readerRepository;
-
-    @Autowired
     private RecommendationMapper recommendationMapper;
 
     @RabbitListener(queues = RabbitmqClientConfig.RECOMMENDATION_DB_SYNC_QUEUE)
@@ -45,36 +39,6 @@ public class DatabaseSyncService {
             // Convert the DTOs to JSON for transfer
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.writeValueAsString(recommendationDTOS);
-
-        } catch (Exception e) {
-            return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
-        }
-    }
-
-    @RabbitListener(queues = RabbitmqClientConfig.BOOK_DB_SYNC_QUEUE)
-    public String handleBookDatabaseSyncRequest(String request) {
-        try {
-            // Fetch all data from the database
-            List<Book> allData = bookRepository.findAll();
-
-            // Convert the DTOs to JSON for transfer
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(allData);
-
-        } catch (Exception e) {
-            return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
-        }
-    }
-
-    @RabbitListener(queues = RabbitmqClientConfig.READER_DB_SYNC_QUEUE)
-    public String handleReaderDatabaseSyncRequest(String request) {
-        try {
-            // Fetch all data from the database
-            List<ReaderDetails> allData = readerRepository.findAll();
-
-            // Convert the DTOs to JSON for transfer
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(allData);
 
         } catch (Exception e) {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
