@@ -6,6 +6,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.psoft.g1.psoftg1.configuration.RabbitmqClientConfig;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderDetailsViewAMQP;
+import pt.psoft.g1.psoftg1.readermanagement.api.ReaderViewAMQPMapper;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.suggestionmanagement.api.SuggestionViewAMQP;
@@ -30,11 +32,14 @@ public class DatabaseSyncClient {
 
     @Autowired
     private SuggestionViewAMQPMapper suggestionMapper;
+    @Autowired
+    private ReaderViewAMQPMapper readerViewAMQPMapper;
 
     public void syncDatabase() {
         try {
             // Send RPC request to the queue
             String response = (String) rabbitTemplate.convertSendAndReceive(RabbitmqClientConfig.DB_SYNC_QUEUE, "SYNC_REQUEST");
+            String responseReader = (String) rabbitTemplate.convertSendAndReceive(RabbitmqClientConfig.READER_DB_SYNC_QUEUE, "SYNC_REQUEST");
 
             // Handle the case where no other instance responds
             if (response == null) {
@@ -51,6 +56,16 @@ public class DatabaseSyncClient {
                         response,
                         new TypeReference<>() {}
                 );
+                List<ReaderDetailsViewAMQP> readersAmqp = objectMapper.readValue(responseReader, new TypeReference<>() {
+                });
+
+                List<ReaderDetails> readers = readerViewAMQPMapper.toReaderDetails(readersAmqp);
+                for (ReaderDetails readerDetails : readers) {
+                    Optional<ReaderDetails> readerExists = readerRepository.findByReaderNumber(readerDetails.getReaderNumber());
+                    if (readerExists.isEmpty()) {
+                        readerRepository.save(readerDetails);
+                    }
+                }
 
                 // Map the DTOs to Suggestion entities
                 List<Suggestion> suggestions = suggestionMapper.toSuggestionList(dtoList);

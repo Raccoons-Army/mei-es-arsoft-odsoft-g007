@@ -18,6 +18,7 @@ public class RabbitmqClientConfig {
 
 
     public static final String DB_SYNC_QUEUE = "suggestions_db_sync_queue";
+    public static final String READER_DB_SYNC_QUEUE = "readers_db_sync_queue";
 
     @Bean
     public Queue suggestionDbSyncQueue() {
