@@ -6,14 +6,9 @@ import pt.psoft.g1.psoftg1.readermanagement.dbSchema.JpaReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.dbSchema.MongoReaderDetailsModel;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderDTO;
 import pt.psoft.g1.psoftg1.usermanagement.mapper.ReaderMapper;
-import pt.psoft.g1.psoftg1.usermanagement.model.FactoryUser;
-import pt.psoft.g1.psoftg1.usermanagement.model.Role;
-import pt.psoft.g1.psoftg1.usermanagement.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ReaderMapper.class})
 public abstract class ReaderDetailsMapper {

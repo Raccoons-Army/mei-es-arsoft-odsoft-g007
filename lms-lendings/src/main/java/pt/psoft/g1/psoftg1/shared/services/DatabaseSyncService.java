@@ -11,9 +11,6 @@ import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewAMQPMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.mapper.ReaderDetailsMapper;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderDTO;
 
 import java.util.List;
 
@@ -25,13 +22,7 @@ public class DatabaseSyncService {
     private LendingRepository lendingRepository;
 
     @Autowired
-    private ReaderRepository readerRepository;
-
-    @Autowired
     private LendingViewAMQPMapper lendingMapper;
-
-    @Autowired
-    private ReaderDetailsMapper readerDetailsMapper;
 
     @RabbitListener(queues = RabbitmqClientConfig.LENDING_DB_SYNC_QUEUE)
     public String handleLendingDatabaseSyncRequest(String request) {

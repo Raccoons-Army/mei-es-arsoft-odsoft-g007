@@ -45,13 +45,7 @@ public class DatabaseSyncClient {
     private ReaderRepository readerRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private IdGenerationStrategy<String> idGenerationStrategy;
-
-    @Autowired
-    private FactoryUser factoryUser;
 
     @Autowired
     private ReaderViewAMQPMapper readerViewAMQPMapper;
