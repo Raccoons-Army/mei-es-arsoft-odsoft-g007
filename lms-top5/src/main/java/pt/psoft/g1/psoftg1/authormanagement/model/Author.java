@@ -13,7 +13,7 @@ public class Author {
     private String authorNumber;
 
     @Setter
-    private long version;
+    private Long version;
 
     private Name name;
 

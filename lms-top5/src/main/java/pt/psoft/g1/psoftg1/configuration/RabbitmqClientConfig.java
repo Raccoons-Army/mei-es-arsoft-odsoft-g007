@@ -22,6 +22,10 @@ import pt.psoft.g1.psoftg1.shared.model.*;
 @Configuration
 public class RabbitmqClientConfig {
 
+    public static final String BOOK_DB_SYNC_QUEUE = "books_db_sync_queue";
+    public static final String AUTHOR_DB_SYNC_QUEUE = "authors_db_sync_queue";
+    public static final String GENRE_DB_SYNC_QUEUE = "genres_db_sync_queue";
+
     @Bean(name = "booksExchange")
     public DirectExchange booksExchange() {
         return new DirectExchange("LMS.books");

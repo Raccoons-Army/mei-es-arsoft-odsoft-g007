@@ -11,8 +11,12 @@ import java.util.List;
 public abstract class GenreViewAMQPMapper extends MapperInterface {
 
     @Mapping(target = "genre", source = "genre")
-
     public abstract GenreViewAMQP toGenreViewAMQP(Genre genre);
 
     public abstract List<GenreViewAMQP> toGenreViewAMQP(List<Genre> genreList);
+
+    @Mapping(target = "genre", source = "genre")
+    public abstract Genre toGenre(GenreViewAMQP genreViewAMQP);
+
+    public abstract List<Genre> toGenre(List<GenreViewAMQP> genreViewAMQPList);
 }
