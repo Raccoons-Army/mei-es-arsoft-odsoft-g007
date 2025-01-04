@@ -55,6 +55,7 @@ pipeline {
                                         sourceFiles: "${DOCKER_COMPOSE_FILE}",
                                         remoteDirectory: "./nginx",
                                         execCommand: """
+                                            docker stack rm nginx_stack >> /tmp/nginx_deploy.log 2>&1
                                             docker stack deploy -c ./nginx/${DOCKER_COMPOSE_FILE} nginx_stack >> /tmp/nginx_deploy.log 2>&1
                                         """
                                     )
