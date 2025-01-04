@@ -112,6 +112,7 @@ public class SecurityConfig {
                 .requestMatchers("/").permitAll().requestMatchers(format("%s/**", restApiDocPath)).permitAll()
                 .requestMatchers(format("%s/**", swaggerPath)).permitAll()
                 // Our public endpoints
+                .requestMatchers("/actuator/health").permitAll() // health check
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
                 .requestMatchers("/api/oauth2/**").permitAll() // IAM Authentication
                 .requestMatchers(HttpMethod.POST, "/api/readers").permitAll() //unregistered should be able to register

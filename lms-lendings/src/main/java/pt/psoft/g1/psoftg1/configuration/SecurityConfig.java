@@ -111,6 +111,7 @@ public class SecurityConfig {
                 .requestMatchers("/").permitAll().requestMatchers(format("%s/**", restApiDocPath)).permitAll()
                 .requestMatchers(format("%s/**", swaggerPath)).permitAll()
                 // Our public endpoints
+                .requestMatchers("/actuator/health").permitAll() // health check
                 .requestMatchers("/api/public/**").permitAll() // public assets & end-points
                 //lendings
                 .requestMatchers(HttpMethod.GET,"/api/lendings/overdue").hasRole(Role.LIBRARIAN)
