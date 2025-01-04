@@ -41,13 +41,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--   healthcheck     -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-
         <!-- database drivers -->
         <dependency>
             <groupId>com.h2database</groupId>
