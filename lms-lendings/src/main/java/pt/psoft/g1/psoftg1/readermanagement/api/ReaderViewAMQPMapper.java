@@ -27,7 +27,7 @@ public abstract class ReaderViewAMQPMapper extends MapperInterface {
 
     public abstract List<ReaderViewAMQP> toReaderViewAMQP(List<ReaderDetails> readerList);
 
-    @Mapping(target = "readerNumber", expression = "java(new ReaderNumber(readerViewAMQP.getReaderNumber()))")
+    @Mapping(target = "readerNumber", source = "readerNumber")
     @Mapping(target = "reader.username", source = "readerUsername")
     @Mapping(target = "version", source = "version")
     public abstract ReaderDetails toReaderDetails(ReaderViewAMQP readerViewAMQP);
