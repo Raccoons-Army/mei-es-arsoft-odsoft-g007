@@ -115,6 +115,7 @@ The way we've change the system to the point that it is now (sprint 2 05/01/2025
 ![MS_Physical_View_L2](docs/refactoring2/physicalViews/lvl2_1.svg)
 
 ### Recommendations feature
+![MS_Recommendations_SD_L2](docs/refactoring2/sequenceDiagrams/recommendation_lvl2.svg)
 
 ### Suggestions feature
 
