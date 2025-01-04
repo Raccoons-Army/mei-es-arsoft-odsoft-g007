@@ -5,15 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.configuration.RabbitmqClientConfig;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
-import pt.psoft.g1.psoftg1.recommendationmanagement.mapper.RecommendationMapper;
+import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationViewAMQP;
+import pt.psoft.g1.psoftg1.recommendationmanagement.api.RecommendationViewAMQPMapper;
 import pt.psoft.g1.psoftg1.recommendationmanagement.model.Recommendation;
 import pt.psoft.g1.psoftg1.recommendationmanagement.repositories.RecommendationRepository;
-import pt.psoft.g1.psoftg1.recommendationmanagement.services.RecommendationDTO;
 
 import java.util.List;
 
@@ -25,7 +21,7 @@ public class DatabaseSyncService {
     private RecommendationRepository recommendationRepository;
 
     @Autowired
-    private RecommendationMapper recommendationMapper;
+    private RecommendationViewAMQPMapper recommendationViewAMQP;
 
     @RabbitListener(queues = RabbitmqClientConfig.RECOMMENDATION_DB_SYNC_QUEUE)
     public String handleRecommendationDatabaseSyncRequest(String request) {
@@ -33,12 +29,11 @@ public class DatabaseSyncService {
             // Fetch all data from the database
             List<Recommendation> allData = recommendationRepository.findAll();
 
-            // Convert to DTOs using the mapper
-            List<RecommendationDTO> recommendationDTOS = recommendationMapper.toDto(allData);
-
             // Convert the DTOs to JSON for transfer
+            List<RecommendationViewAMQP> recommendationsAmqp = recommendationViewAMQP.toRecommendationViewAMQP(allData);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(recommendationDTOS);
+            return objectMapper.writeValueAsString(recommendationsAmqp);
 
         } catch (Exception e) {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
