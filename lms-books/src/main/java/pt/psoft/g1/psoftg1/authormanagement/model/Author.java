@@ -15,7 +15,7 @@ public class Author extends EntityWithPhoto {
     private String authorNumber;
 
     @Setter
-    private long version;
+    private Long version;
 
     private Name name;
 
