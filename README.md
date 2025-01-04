@@ -118,7 +118,7 @@ The way we've change the system to the point that it is now (sprint 2 05/01/2025
 ![MS_Recommendations_SD_L2](docs/refactoring2/sequenceDiagrams/recommendation_lvl2.svg)
 
 ### Suggestions feature
-
+![MS_Suggestions_SD_L2](docs/refactoring2/sequenceDiagrams/suggestion_lvl2.svg)
 
 <br>
 
@@ -233,3 +233,58 @@ In our project, we implemented **Modifiability** by **Reducing Coupling** betwee
 - Complexity in managing event flow and ensuring event delivery.
 - Debugging can become more challenging as the flow of events may not be linear.
 ---
+
+### Technical Memo's - Sprint 2
+
+#### Issue 1 - The current LMS system is limited to a single application instance, resulting in significantly low availability and increased risk of downtime.
+
+**Problem:** How to address the low availability of the LMS system.
+
+**Summary of solution:**
+- Reengineer the LMS application by adopting a decentralized/distributed architecture.
+- **Active Redundancy:** All components are actively processing the same data or performing the same function simultaneously.
+- **Ignore Faulty Behavior:** In a distributed system, if a single node becomes unresponsive, it may be ignored or excluded temporarily without affecting the overall availability.
+
+**Factors:**
+- The current monolithic LMS system relies on a single application, creating a critical single point of failure, increasing the risk of downtime.
+
+**Solution:**
+- Migrate the monolith LMS application to a Microservice architecture.
+- Using Docker Swarm and automatic CI/CD mechanisms, deploy various instances/replicas of the various LMS microservices.
+
+**Motivation:**
+- The solution considers the need to increase availability.
+- The solution considers the need to increase releasibility.
+
+**Alternatives:**
+- Run various instances of the monolith application.
+
+**Pending issues:**
+- How to deploy the software in a fast and automatic manner.
+- How can the various databases in a microservices architecture be kept in sync?
+---
+#### Issue 2 - Low performance in replying to client requests.
+
+**Problem:** How to address the low performance of the LMS system.
+
+**Summary of solution:**
+- **Increase Resources:** Scale out(horizontal scaling) by adding more containers/instances.
+- **Maintain multiple copies of services/data:** maintain multiple copies of data and services to reduce latency and improve availability.
+
+**Factors:**
+- Low performance occurs in overload peek scenarios
+- The hardware capable to address the required performance in the overload peek scenarios is expensive and, becuase its operation is also expensive, it cannot be used unless necessary.
+
+**Solution:**
+- Using Docker Swarm and automatic CI/CD mechanisms, deploy various instances/replicas of the various LMS microservices.
+- Implement a dynamic autoscaling script for each microservice, to monitor its resources and scale up and down accordingly.
+
+**Motivation:**
+- The solution considers the need to use the software parsimoniously.
+
+**Alternatives:**
+- Deploy the LMS System to better hardware that are capable of handle the overload peek scenarios.
+
+**Pending issues:**
+- How to deploy the software in a fast and automatic manner.
+- How can the various databases in a microservices architecture be kept in sync?
