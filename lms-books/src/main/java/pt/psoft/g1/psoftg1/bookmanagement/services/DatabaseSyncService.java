@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQP;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQPMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
@@ -12,8 +14,12 @@ import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQPMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.configuration.RabbitmqClientConfig;
+import pt.psoft.g1.psoftg1.genremanagement.api.GenreViewAMQP;
+import pt.psoft.g1.psoftg1.genremanagement.api.GenreViewAMQPMapper;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.api.SuggestionViewAMQP;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.api.SuggestionViewAMQPMapper;
 import pt.psoft.g1.psoftg1.suggestedbookmanagement.model.SuggestedBook;
 import pt.psoft.g1.psoftg1.suggestedbookmanagement.repositories.SuggestedBookRepository;
 
@@ -37,6 +43,12 @@ public class DatabaseSyncService {
 
     @Autowired
     private BookViewAMQPMapper bookMapper;
+    @Autowired
+    private AuthorViewAMQPMapper authorViewAMQPMapper;
+    @Autowired
+    private GenreViewAMQPMapper genreViewAMQPMapper;
+    @Autowired
+    private SuggestionViewAMQPMapper suggestionViewAMQPMapper;
 
     @RabbitListener(queues = RabbitmqClientConfig.BOOK_DB_SYNC_QUEUE)
     public String handleDatabaseSyncRequest(String request) {
@@ -63,8 +75,10 @@ public class DatabaseSyncService {
             List<Author> allData = authorRepository.findAll();
 
             // Convert the DTOs to JSON for transfer
+            List<AuthorViewAMQP> authorDTOs = authorViewAMQPMapper.toAuthorViewAMQP(allData);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(allData);
+            return objectMapper.writeValueAsString(authorDTOs);
 
         } catch (Exception e) {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
@@ -78,8 +92,10 @@ public class DatabaseSyncService {
             List<Genre> allData = genreRepository.findAll();
 
             // Convert the DTOs to JSON for transfer
+            List<GenreViewAMQP> genreDTOs = genreViewAMQPMapper.toGenreViewAMQP(allData);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(allData);
+            return objectMapper.writeValueAsString(genreDTOs);
 
         } catch (Exception e) {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();
@@ -93,8 +109,10 @@ public class DatabaseSyncService {
             List<SuggestedBook> allData = suggestedBookRepository.findAll();
 
             // Convert the DTOs to JSON for transfer
+            List<SuggestionViewAMQP> suggestedBookDTOs = suggestionViewAMQPMapper.toSuggestionViewAMQP(allData);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(allData);
+            return objectMapper.writeValueAsString(suggestedBookDTOs);
 
         } catch (Exception e) {
             return "ERROR: Unable to process sync request. Cause: " + e.getMessage();

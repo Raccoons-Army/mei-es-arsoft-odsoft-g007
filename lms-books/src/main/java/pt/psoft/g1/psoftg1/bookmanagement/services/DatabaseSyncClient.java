@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQP;
+import pt.psoft.g1.psoftg1.authormanagement.api.AuthorViewAMQPMapper;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQP;
@@ -12,8 +14,12 @@ import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewAMQPMapper;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.configuration.RabbitmqClientConfig;
+import pt.psoft.g1.psoftg1.genremanagement.api.GenreViewAMQP;
+import pt.psoft.g1.psoftg1.genremanagement.api.GenreViewAMQPMapper;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.api.SuggestionViewAMQP;
+import pt.psoft.g1.psoftg1.suggestedbookmanagement.api.SuggestionViewAMQPMapper;
 import pt.psoft.g1.psoftg1.suggestedbookmanagement.model.SuggestedBook;
 import pt.psoft.g1.psoftg1.suggestedbookmanagement.repositories.SuggestedBookRepository;
 
@@ -41,6 +47,12 @@ public class DatabaseSyncClient {
 
     @Autowired
     private BookViewAMQPMapper bookMapper;
+    @Autowired
+    private AuthorViewAMQPMapper authorViewAMQPMapper;
+    @Autowired
+    private GenreViewAMQPMapper genreViewAMQPMapper;
+    @Autowired
+    private SuggestionViewAMQPMapper suggestionViewAMQPMapper;
 
     public void syncDatabase() {
         try {
@@ -66,50 +78,42 @@ public class DatabaseSyncClient {
                 // Deserialize the response into a list of SuggestionViewAMQP DTOs
                 List<BookViewAMQP> dtoList = objectMapper.readValue(
                         response,
-                        new TypeReference<>() {}
-                );
-
-                List<Author> authors = objectMapper.readValue(
-                        responseAuthor,
-                        new TypeReference<>() {}
-                );
-
-                List<Genre> genres = objectMapper.readValue(
-                        responseGenre,
-                        new TypeReference<>() {}
-                );
-
-                List<SuggestedBook> suggestedBooks = objectMapper.readValue(
-                        responseSuggested,
-                        new TypeReference<>() {}
-                );
-
-                for(Author author : authors) {
-                    Optional<Author> authorExists = authorRepository.findByAuthorNumber(author.getAuthorNumber());
-                    if(authorExists.isEmpty()) {
-                        Author newAuthor;
-                        if(author.getPhoto() == null) {
-                            newAuthor = new Author(author.getAuthorNumber(), author.getName(), author.getBio(), null);
-                        }else{
-                            newAuthor = new Author(author.getAuthorNumber(), author.getName(), author.getBio(), author.getPhoto().getPhotoFile());
+                        new TypeReference<>() {
                         }
-                        authorRepository.save(newAuthor);
+                );
+
+                List<AuthorViewAMQP> authorsAmqp = objectMapper.readValue(
+                        responseAuthor,
+                        new TypeReference<>() {
+                        }
+                );
+
+                List<GenreViewAMQP> genresAmqp = objectMapper.readValue(
+                        responseGenre,
+                        new TypeReference<>() {
+                        }
+                );
+
+                List<SuggestionViewAMQP> suggestedBooksAmqp = objectMapper.readValue(
+                        responseSuggested,
+                        new TypeReference<>() {
+                        }
+                );
+
+                List<Author> authors = authorViewAMQPMapper.toAuthor(authorsAmqp);
+                for (Author author : authors) {
+                    Optional<Author> authorExists = authorRepository.findByAuthorNumber(author.getAuthorNumber());
+                    if (authorExists.isEmpty()) {
+                        authorRepository.save(author);
                     }
                 }
 
-                for(Genre genre : genres) {
+                List<Genre> genres = genreViewAMQPMapper.toGenre(genresAmqp);
+                for (Genre genre : genres) {
                     Optional<Genre> genreExists = genreRepository.findByString(genre.getGenre());
-                    if(genreExists.isEmpty()) {
+                    if (genreExists.isEmpty()) {
                         Genre newGenre = new Genre(genre.getGenre());
                         genreRepository.save(newGenre);
-                    }
-                }
-
-                for(SuggestedBook suggestedBook : suggestedBooks) {
-                    Optional<SuggestedBook> suggestedBookExists = suggestedBookRepository.findById(suggestedBook.getPk());
-                    if(suggestedBookExists.isEmpty()) {
-                        SuggestedBook newSuggestedBook = new SuggestedBook(suggestedBook.getIsbn().toString());
-                        suggestedBookRepository.save(newSuggestedBook);
                     }
                 }
 
@@ -119,7 +123,7 @@ public class DatabaseSyncClient {
                 // Save data to the new instance's H2 database
                 for (Book book : books) {
                     Optional<Book> bookExists = bookRepository.findByIsbn(book.getIsbn());
-                    if(bookExists.isEmpty()) {
+                    if (bookExists.isEmpty()) {
                         List<Author> bookAuthors = new ArrayList<>();
                         for (Author author : book.getAuthors()) {
                             Optional<Author> authorExists = authorRepository.findByAuthorNumber(author.getAuthorNumber());
@@ -129,6 +133,15 @@ public class DatabaseSyncClient {
                         genreExists.ifPresent(book::setGenre);
                         book.setAuthors(bookAuthors);
                         bookRepository.save(book);
+                    }
+                }
+
+                List<SuggestedBook> suggestedBooks = suggestionViewAMQPMapper.toSuggestedBook(suggestedBooksAmqp);
+                for (SuggestedBook suggestedBook : suggestedBooks) {
+                    Optional<SuggestedBook> suggestedBookExists = suggestedBookRepository.findById(suggestedBook.getPk());
+                    if (suggestedBookExists.isEmpty()) {
+                        SuggestedBook newSuggestedBook = new SuggestedBook(suggestedBook.getIsbn().toString());
+                        suggestedBookRepository.save(newSuggestedBook);
                     }
                 }
 

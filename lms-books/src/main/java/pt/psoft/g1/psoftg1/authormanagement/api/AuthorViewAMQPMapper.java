@@ -16,8 +16,13 @@ public abstract class AuthorViewAMQPMapper extends MapperInterface {
     @Mapping(target = "name", source = "name")
     @Mapping(target = "bio", source = "bio")
     @Mapping(target = "version", source = "version")
-
     public abstract AuthorViewAMQP toAuthorViewAMQP(Author author);
-
     public abstract List<AuthorViewAMQP> toAuthorViewAMQP(List<Author> authorList);
+
+    @Mapping(target = "authorNumber", source = "authorNumber")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "bio", source = "bio")
+    @Mapping(target = "version", source = "version")
+    public abstract Author toAuthor(AuthorViewAMQP authorViewAMQP);
+    public abstract List<Author> toAuthor(List<AuthorViewAMQP> authorViewAMQPList);
 }
