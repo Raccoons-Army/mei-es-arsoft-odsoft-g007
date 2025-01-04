@@ -31,7 +31,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{librarianToken}}",
+									"value": "{{readerToken}}",
 									"type": "string"
 								}
 							]
@@ -78,7 +78,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{librarianToken}}",
+									"value": "{{readerToken}}",
 									"type": "string"
 								}
 							]
@@ -125,7 +125,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{librarianToken}}",
+									"value": "{{readerToken}}",
 									"type": "string"
 								}
 							]
@@ -155,6 +155,44 @@
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
+					"// Define the login payload",
+					"const loginPayload = {",
+					"    username: \"pedro@gmail.com\",",
+					"    password: \"Pedrodascenas!123\"",
+					"};",
+					"",
+					"// Get the host and baseUrl from environment variables",
+					"const host = pm.environment.get(\"host\");",
+					"const baseUrl = pm.environment.get(\"baseUrl\");",
+					"",
+					"// Perform the login request",
+					"pm.sendRequest({",
+					"    url: `${host}${baseUrl}/public/login`,",
+					"    method: 'POST',",
+					"    header: {",
+					"        'Content-Type': 'application/json'",
+					"    },",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify(loginPayload)",
+					"    }",
+					"}, function (err, response) {",
+					"    if (err) {",
+					"        console.error(\"Login failed: \", err);",
+					"    } else {",
+					"        // Parse the response to extract the token",
+					"        const responseBody = response.json();",
+					"        const token = response.headers.get(\"Authorization\");",
+					"",
+					"        if (token) {",
+					"            // Save the token to the environment variable",
+					"            pm.environment.set(\"readerToken\", token);",
+					"            console.log(\"Token saved successfully!\");",
+					"        } else {",
+					"            console.error(\"Token not found in response: \", responseBody);",
+					"        }",
+					"    }",
+					"});",
 					""
 				]
 			}

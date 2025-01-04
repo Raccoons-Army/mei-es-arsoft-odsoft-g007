@@ -53,14 +53,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{baseUrl}}/lendings/2025/3",
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/1",
 							"host": [
 								"{{host}}{{baseUrl}}"
 							],
 							"path": [
 								"lendings",
 								"2025",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -110,21 +110,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{baseUrl}}/lendings/2025/3",
+							"raw": "{{host}}{{baseUrl}}/lendings/2025/1",
 							"host": [
 								"{{host}}{{baseUrl}}"
 							],
 							"path": [
 								"lendings",
 								"2025",
-								"3"
+								"1"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "SetReturned - book already returned Copy",
+					"name": "SetReturned - lending not found",
 					"event": [
 						{
 							"listen": "test",
@@ -179,42 +179,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "ReaderGetLending",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"OK\", function(){\r",
-									"    pm.response.to.have.status(200); \r",
-									"\r",
-									"    let lending = postman.getResponseHeader(\"ETag\");\r",
-									"    pm.environment.set(\"lendingEtag\", lending); \r",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{baseUrl}}/lendings/2024/3",
-							"host": [
-								"{{host}}{{baseUrl}}"
-							],
-							"path": [
-								"lendings",
-								"2024",
-								"3"
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"auth": {
@@ -265,7 +229,7 @@
 							"",
 							"        if (token) {",
 							"            // Save the token to the environment variable",
-							"            pm.environment.set(\"librarianToken\", token);",
+							"            pm.environment.set(\"readerToken\", token);",
 							"            console.log(\"Token saved successfully!\");",
 							"        } else {",
 							"            console.error(\"Token not found in response: \", responseBody);",
@@ -571,6 +535,42 @@
 								"lendings",
 								"2024",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ReaderGetLending",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"OK\", function(){\r",
+									"    pm.response.to.have.status(200); \r",
+									"\r",
+									"    let lending = postman.getResponseHeader(\"ETag\");\r",
+									"    pm.environment.set(\"lendingEtag\", lending); \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{baseUrl}}/lendings/2024/3",
+							"host": [
+								"{{host}}{{baseUrl}}"
+							],
+							"path": [
+								"lendings",
+								"2024",
+								"3"
 							]
 						}
 					},

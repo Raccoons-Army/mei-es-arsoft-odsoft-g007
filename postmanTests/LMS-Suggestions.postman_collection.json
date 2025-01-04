@@ -163,7 +163,7 @@
 							"",
 							"        if (token) {",
 							"            // Save the token to the environment variable",
-							"            pm.environment.set(\"librarianToken\", token);",
+							"            pm.environment.set(\"readerToken\", token);",
 							"            console.log(\"Token saved successfully!\");",
 							"        } else {",
 							"            console.error(\"Token not found in response: \", responseBody);",
