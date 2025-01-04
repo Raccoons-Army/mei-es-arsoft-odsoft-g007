@@ -197,14 +197,20 @@ pipeline {
             }
         }
 
-        // stage('Smoke Test') {
-        //     steps {
-        //         script {
-        //             // run the smoke test
-        //             sh 'curl -s -o /dev/null -w "%{http_code}" ${DEPLOYED_SERVICE_URL} -m 10'
-        //         }
-        //     }
-        // }
+        stage('Smoke Test') {
+            steps {
+                script {
+                    def healthCheckUrl = "${DEPLOYED_SERVICE_URL}/actuator/health"
+                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${healthCheckUrl}", returnStdout: true).trim()
+
+                    if (response != '200') {
+                        error "Health check failed with response code ${response}"
+                    } else {
+                        echo "Health check passed with response code ${response}"
+                    }
+                }
+            }
+        }
 
         stage('Send Email') {
             steps {
