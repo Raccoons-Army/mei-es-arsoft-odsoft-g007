@@ -11,8 +11,7 @@ import java.util.List;
 public abstract class ReaderViewAMQPMapper extends MapperInterface {
 
     @Mapping(target = "readerNumber", expression = "java(reader.getReaderNumber())")
-    @Mapping(target = "readerUsername", source = "reader.reader.username")
-    @Mapping(target = "birthDate", ignore = true) 
+    @Mapping(target = "birthDate", ignore = true)
     @Mapping(target = "phoneNumber", ignore = true) 
     @Mapping(target = "gdprConsent", ignore = true) 
     @Mapping(target = "marketingConsent", ignore = true) 
@@ -20,13 +19,10 @@ public abstract class ReaderViewAMQPMapper extends MapperInterface {
     @Mapping(target = "interestList", ignore = true) 
     @Mapping(target = "version", source = "version")
     public abstract ReaderViewAMQP toReaderViewAMQP(ReaderDetails reader);
-
     public abstract List<ReaderViewAMQP> toReaderViewAMQP(List<ReaderDetails> readerList);
 
     @Mapping(target = "readerNumber", source = "readerNumber")
-    @Mapping(target = "reader.username", source = "readerUsername")
     @Mapping(target = "version", source = "version")
     public abstract ReaderDetails toReaderDetails(ReaderViewAMQP readerViewAMQP);
-
     public abstract List<ReaderDetails> toReaderDetails(List<ReaderViewAMQP> readerViewAMQPList);
 }
