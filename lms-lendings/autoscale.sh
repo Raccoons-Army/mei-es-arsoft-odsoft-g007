@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Thresholds for CPU and memory usage to scale the service
-CPU_UP_THRESHOLD=75    # CPU usage percentage to scale up
-CPU_DOWN_THRESHOLD=20  # CPU usage percentage to scale down
-MEM_UP_THRESHOLD=80    # Memory usage percentage to scale up
-MEM_DOWN_THRESHOLD=30  # Memory usage percentage to scale down
+CPU_UP_THRESHOLD=6000    # CPU usage percentage (scaled by 100) to scale up
+CPU_DOWN_THRESHOLD=2000  # CPU usage percentage (scaled by 100) to scale down
+MEM_UP_THRESHOLD=5000    # Memory usage percentage (scaled by 100) to scale up
+MEM_DOWN_THRESHOLD=2000  # Memory usage percentage (scaled by 100) to scale down
 
 # Minimum and Maximum number of replicas to prevent over-scaling or under-scaling
 MIN_REPLICAS=2
@@ -12,12 +12,18 @@ MAX_REPLICAS=10
 
 # Function to get the current CPU usage of the service
 get_cpu_usage() {
-  docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//'
+  cpu_usage=$(docker stats --no-stream --format "{{.CPUPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//' | head -n 1)
+  # Ensure the value is an integer (multiply by 100 if necessary)
+  cpu_usage_int=$(echo "$cpu_usage" | awk '{print int($1 * 100)}')
+  echo $cpu_usage_int
 }
 
 # Function to get the current memory usage of the service
 get_mem_usage() {
-  docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//'
+  mem_usage=$(docker stats --no-stream --format "{{.MemPerc}}" $(docker ps -q -f "name=lendings_stack_lmslendings") | sed 's/%//' | head -n 1)
+  # Ensure the value is an integer (multiply by 100 if necessary)
+  mem_usage_int=$(echo "$mem_usage" | awk '{print int($1 * 100)}')
+  echo $mem_usage_int
 }
 
 # Function to get the current number of replicas for a service
@@ -44,8 +50,8 @@ scale_service() {
 CPU_USAGE=$(get_cpu_usage)
 MEM_USAGE=$(get_mem_usage)
 
-echo "Current CPU Usage: $CPU_USAGE%"
-echo "Current Memory Usage: $MEM_USAGE%"
+echo "Current CPU Usage: ${CPU_USAGE}%"
+echo "Current Memory Usage: ${MEM_USAGE}%"
 
 # Get current number of replicas
 CURRENT_REPLICAS=$(get_replicas lendings_stack_lmslendings)
@@ -54,15 +60,13 @@ CURRENT_REPLICAS=$(get_replicas lendings_stack_lmslendings)
 DESIRED_REPLICAS=$CURRENT_REPLICAS
 
 # Scale Up Logic
-if [[ $(echo "$CPU_USAGE $CPU_UP_THRESHOLD" | awk '{print ($1 > $2)}') -eq 1 ]] ||
-   [[ $(echo "$MEM_USAGE $MEM_UP_THRESHOLD" | awk '{print ($1 > $2)}') -eq 1 ]]; then
+if [[ $CPU_USAGE -gt $CPU_UP_THRESHOLD ]] || [[ $MEM_USAGE -gt $MEM_UP_THRESHOLD ]]; then
   echo "High resource usage detected. Scaling up..."
-  DESIRED_REPLICAS=$((CURRENT_REPLICAS + 1))
+  DESIRED_REPLICAS=$((CURRENT_REPLICAS + 2))
 fi
 
 # Scale Down Logic
-if [[ $(echo "$CPU_USAGE $CPU_DOWN_THRESHOLD" | awk '{print ($1 < $2)}') -eq 1 ]] &&
-   [[ $(echo "$MEM_USAGE $MEM_DOWN_THRESHOLD" | awk '{print ($1 < $2)}') -eq 1 ]]; then
+if [[ $CPU_USAGE -lt $CPU_DOWN_THRESHOLD ]] && [[ $MEM_USAGE -lt $MEM_DOWN_THRESHOLD ]]; then
   echo "Low resource usage detected. Scaling down..."
   DESIRED_REPLICAS=$((CURRENT_REPLICAS - 1))
 fi
@@ -76,6 +80,12 @@ fi
 
 echo "Adjusted desired replicas: $DESIRED_REPLICAS"
 
-# Scale the services
-scale_db $DESIRED_REPLICAS
-scale_service $DESIRED_REPLICAS
+if [[ $DESIRED_REPLICAS -ne $CURRENT_REPLICAS ]]; then
+  echo "Scaling services from $CURRENT_REPLICAS to $DESIRED_REPLICAS replicas"
+
+  # Scale the services
+  scale_db $DESIRED_REPLICAS
+  scale_service $DESIRED_REPLICAS
+else
+  echo "Desired replicas match current replicas ($CURRENT_REPLICAS). No scaling needed."
+fi

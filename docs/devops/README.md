@@ -121,3 +121,54 @@ Extra: we also created a simple pipeline to deploy RabbitMQ and Nginx in the dev
 
 ### Auto Scaling
 To run the auto scaling we created a cron job that runs every minute and checks if the CPU usage of the docker swarm stack is above 75% and if it is, it scales the service and a H2 database up by 1 replica. If the CPU usage is below 20% it scales the service down and its H2 database by 1 replica. We also applied the same scale logic if the memory usage of the docker swarm stack is above 80% and below 30%.
+
+### JMeter Performance Test
+To increase the performance of the LMS System of at least 25% when dealing with an overload peek scenario, we implemented an automatic scaling script in conjunction with the Docker Swarm in order to monitor the resources being used by the services and then scale up or down accordingly.
+To verify this performance increase of our system we decided to realize a test using JMeter, a performance testing tool. This test was conducted locally in one of the developers' computer.
+
+For this test we used 4 types of services:
+ - **RabbitMQ:** message broker
+ - **LMS-Auth+User:** LMS Authentication Microservice(2 instances/replicas)
+ - **LMS-Books:** LMS Books Microservice(initially 2 instances/replicas)
+ - **Nginx:** load-balancing
+
+Endpoint: GET localhost:9080/api/books/9789896379636
+The port 9080 is related to NGINX, which will redirect the requests to the respective instances of the microservice.
+
+The pattern used for the testing was the following:
+ - **Start Threads Count:** 100 , the test will start at 0 threads and will rapidly increase the number of threads till we reach 100
+ - **Startup Time(sec):** 30 , the time will take to reach the maximum number of threads, in this case 100
+ - **Hold Load For(sec):** 120 , amount of time the test will have with maximum load, in this case 100 threads during 120 seconds
+
+#### Important information about the autoscaling script used
+
+Thresholds for CPU and memory usage to scale the service:
+ - CPU_UP_THRESHOLD=6000    (CPU usage percentage (scaled by 100) to scale up)
+ - CPU_DOWN_THRESHOLD=2000  (CPU usage percentage (scaled by 100) to scale down)
+ - MEM_UP_THRESHOLD=5000    (Memory usage percentage (scaled by 100) to scale up)
+ - MEM_DOWN_THRESHOLD=2000  (Memory usage percentage (scaled by 100) to scale down)
+
+Minimum and Maximum number of replicas to prevent over-scaling or under-scaling:
+ - MIN_REPLICAS=2
+ - MAX_REPLICAS=10
+
+The script will run in an infinite loop in periods of 2 seconds to rapidly increase the number of replicas, if the script notices that the CPU or Memory are being heavily used he will add 2 more replicas.
+
+#### Test Prediction/Objective
+Our LMS Books Microservice starts with two instances running by default. When we initiate the JMeter test, the load increases rapidly, causing a noticeable spike in CPU and memory usage. As a response, the script instructs Docker Swarm to dynamically scale the service by adding two additional replicas, continuing to adjust as needed.
+
+#### Test Results and Analysis
+
+An image showing the response time (in milliseconds) over the duration of the test.
+![JMeter Response Time(ms)](./assets/jmeter_responseTime.png)
+
+An image showing the active threads over the duration of the test.
+![JMeter Active Threads](./assets/jmeter_activeThreads.png)
+
+Analyzing the respective images of response time and active threads, we observe that at the 30-second mark of the test, the maximum number of threads (100) was reached. It was around this time that the response time peaked at 600ms.
+
+At this point, we can infer that there were likely 2 to 4 replicas of the LMS Books microservice running. From this moment onward, the script progressively increased the number of replicas in increments of 2, ultimately reaching the maximum of 10 instances by the end of the test.
+
+It is clear that from the 30-second mark onward, the response time steadily decreased as the number of instances increased, demonstrating a significant performance improvement by the LMS Books microservice when handling a very high demand for requests.
+
+It is also worth noting that when the test concluded and the CPU and memory usage significantly decreased, the script began scaling down the replicas. It reduced the number of replicas from 10 back to the minimum of 2, as the high demand for requests subsided. This behavior effectively managed hardware resources in a cost-efficient and optimized manner.
