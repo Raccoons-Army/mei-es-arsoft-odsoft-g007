@@ -24,6 +24,7 @@ class AuthorTest {
     @Test
     void whenVersionIsStaleItIsNotPossibleToPatch() {
         final var subject = new Author("aa1",validName);
+        subject.setVersion(1L);
 
         assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
     }
