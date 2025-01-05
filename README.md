@@ -2,7 +2,14 @@
 
 ## Folder structure
 
-- [`lms/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms) contains the Library Management REST API and all its documentation.
+- [`lms-auth+user/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-auth+user) contains the microservices for the authentication and user management.
+- [`lms-books/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-books) contains the microservices for the book, author and genres management.
+- [`lms-lendings/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-lendings) contains the microservices for the lending management.
+- [`lms-recommendations/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-recommendations) contains the microservices for the recommendation management.
+- [`lms-suggestion/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-suggestions) contains the microservices for the suggestion management.
+- [`lms-top5/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/lms-top5) contains the microservices for the top5 management.
+- [`nginx`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/nginx) contains the Nginx configuration file and deployment file.
+- [`rabbitmq/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/rabbitmq) contains the RabbitMQ pipeline script and deployment file.
 - [`docs/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs) has:
   - [`baseProject/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs/baseProject) where there's all the documentation made by the students that developed the API
   - [`refactoring1/`](https://github.com/Raccoons-Army/mei-es-arsoft-odsoft-g007/tree/main/docs/refactoring1) where there's all the documentation made by us. Contains the Logic Views, Implementation Views, Physical Views and Process Views from the SAI (system-as-is) and STB (system-to-be)
