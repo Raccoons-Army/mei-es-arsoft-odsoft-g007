@@ -12,7 +12,7 @@ Each microservice has its own 3 pipelines, one per each branch and environment: 
 <br>
 
 ### Pipeline 
-Every microservice has the same pipeline structure, it is divided in 8 stages:
+Every microservice has the same pipeline structure:
  1. Checkout
  2. Clean & Compile
  3. Static Code Analysis
@@ -32,8 +32,12 @@ Every microservice has the same pipeline structure, it is divided in 8 stages:
  6. Packaging
  7. Prepare to Deploy
  8. Deploy
- 9. Runnig in parallel
- 10. Plugins used
+ 9. Docker build and push
+ 10. Smoke Test
+ 11. Send Email & Wait for Approval
+ 12. Other topics
+    1. Runnig in parallel
+    2. Plugins used
 
 Now, we will explain some of the stages in more detail.
 
@@ -57,15 +61,20 @@ We are running 3 types of tests: unit tests, integration tests and mutation test
 In this stage we are generating the reports of the tests we ran in the previous stage. We are using Surefire and Failsafe to generate the reports of the unit and integration tests, and Jacoco to generate the coverage report. To obtain better performance and because they aren't dependent on each other, we are running them in parallel as well.
 For a plus, we also publish the HTML of the reports for the old school guys that like to see the reports in a more simple way.
 
-##### Deloyment TODO
-- ...
-- ...
+##### Docker build and push & Deloyment
+Before we deploy the service we build the docker image and push it to the docker hub.
+On the deployment stage we are using the Publish Over SSH plugin to deploy the env file, the docker-compose file, that we use to deploy the microservice into the docker swarm, and the autoscale script to the server.
 All the docker image were published to [here](https://hub.docker.com/repositories/raccoonsarmy)
 
-##### Running in parallel
+#### Smoke Test
+In this stage we are running a simple smoke test to check if the service is running correctly. We are using a simple curl command to call an health check endpoint to check if the service is up and running.
+
+#### Other topics
+
+**Running in parallel**
 As we mentioned, we are running some stages in parallel so we can have better pipeline performance. Before having them running in parallel we had a pipeline that took around 4.5 minutes to finish, now it takes around 3.5 minutes. The static code analysis was a big part of the time it took to the pipeline finish, so it was expected to have a better performance after running them in parallel. 
 
-##### Plugins used
+**Plugins used**
 This were the plugins we used to implement the pipeline:
 
 Deployment:
@@ -85,7 +94,7 @@ Our enviroments are running on LXD containers on a on-premise server named **rac
 
 ![Deployment Servers](./assets/deploymentServers.svg)
 
-Each server runs docker swarm TODO ...
+Each server runs a single docker swarm node which is where we deploy our microservices.
 
 Pros and cons of this infrastructure:
 - Pros:
@@ -104,12 +113,11 @@ Check the [README](../../serversConfig/README.md) for more information on the se
 
 ### Routing & Load Balancing
 We are using a reverse proxy to route the requests to the correct microservice. We are using Nginx as the reverse proxy and we use the same configuration file for each environment for simplicity.
-We are using docker swarm so by itself it already has a load balancing mechanism. We are using the round-robin strategy to balance the requests between the replicas of the services.
+We are using docker swarm so by itself it already has a load balancing mechanism. Docker swarm, by default, uses Ingress Load Balancing to distribute the incoming requests to the services in the swarm, where it applies a round-robin strategy to balance the requests between the replicas of the services.
 Extra: we also created a simple pipeline to deploy RabbitMQ and Nginx in the dev, test and prod servers.
 
 ![Routing & Load Balacing](./assets/routingAndTraffic.svg)
 
 
-### Auto Scaling TODO
-falar acerca do que faz auto scaling, como esta configurado, etc
-falar sobre q no deployment ativamos o auto scaling e criamos um cron job que corre a cada minuto
+### Auto Scaling
+To run the auto scaling we created a cron job that runs every minute and checks if the CPU usage of the docker swarm stack is above 75% and if it is, it scales the service and a H2 database up by 1 replica. If the CPU usage is below 20% it scales the service down and its H2 database by 1 replica. We also applied the same scale logic if the memory usage of the docker swarm stack is above 80% and below 30%.
