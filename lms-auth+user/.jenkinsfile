@@ -200,13 +200,16 @@ pipeline {
         stage('Smoke Test') {
             steps {
                 script {
-                    def healthCheckUrl = "${DEPLOYED_SERVICE_URL}auth/actuator/health"
-                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${healthCheckUrl}", returnStdout: true).trim()
+                    retry(5) {
+                        def healthCheckUrl = "${DEPLOYED_SERVICE_URL}auth/actuator/health"
+                        def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${healthCheckUrl}", returnStdout: true).trim()
 
-                    if (response != '200') {
-                        error "Health check failed with response code ${response}"
-                    } else {
-                        echo "Health check passed with response code ${response}"
+                        if (response != '200') {
+                            sleep 3 // delay 3s to see if the service boots
+                            error "Health check failed with response code ${response}"
+                        } else {
+                            echo "Health check passed with response code ${response}"
+                        }
                     }
                 }
             }
