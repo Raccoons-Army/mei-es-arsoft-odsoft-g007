@@ -138,6 +138,33 @@ pipeline {
             }
         }
 
+        stage('Send Email') {
+            steps {
+                script{
+                    def committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
+                    emailext (
+                        to: committerEmail,
+                        subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
+                        body: """
+                                    <p>The service will be deployed and accessible in the following URL:</p>
+                                    <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
+                                    <p>Please review the deployment and choose an action:</p>
+                                    <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
+                                """,
+                        recipientProviders: [buildUser()] // in case of manual trigger, send email to the user who triggered the build
+                    )
+                }
+            }
+        }
+
+        stage("Wait for Approval") {
+            steps {
+                script {
+                        input(id: 'Proceed', message: 'Do you want to proceed with this build?')
+                }    
+            }  
+        }
+
         stage('Deploy') {
             steps {
                 script {
@@ -213,33 +240,6 @@ pipeline {
                     }
                 }
             }
-        }
-
-        stage('Send Email') {
-            steps {
-                script{
-                    def committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
-                    emailext (
-                        to: committerEmail,
-                        subject: "Waiting for Approval - ${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]",
-                        body: """
-                                    <p>The service has been deployed to the following URL:</p>
-                                    <p><a href="${DEPLOYED_SERVICE_URL}">${DEPLOYED_SERVICE_URL}</a></p>
-                                    <p>Please review the deployment and choose an action:</p>
-                                    <p><a href='${env.BUILD_URL}/input/'>${env.JOB_NAME} [ ${env.BUILD_NUMBER} ]</a></p>
-                                """,
-                        recipientProviders: [buildUser()] // in case of manual trigger, send email to the user who triggered the build
-                    )
-                }
-            }
-        }
-
-        stage("Wait for Approval") {
-            steps {
-                script {
-                        input(id: 'Proceed', message: 'Do you want to proceed with this build?')
-                }    
-            }  
         }
     }
     
